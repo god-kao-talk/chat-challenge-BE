@@ -17,15 +17,15 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.security.handler.LoginFailureHandler;
+import com.challenge.chat.security.handler.LoginSuccessHandler;
+import com.challenge.chat.security.jwt.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import com.challenge.chat.security.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.challenge.chat.security.jwt.service.JwtService;
-import com.challenge.chat.security.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
-import com.challenge.chat.security.login.handler.LoginFailureHandler;
-import com.challenge.chat.security.login.handler.LoginSuccessHandler;
-import com.challenge.chat.security.login.service.LoginService;
 import com.challenge.chat.security.oauth.handler.OAuth2LoginFailureHandler;
 import com.challenge.chat.security.oauth.handler.OAuth2LoginSuccessHandler;
 import com.challenge.chat.security.oauth.service.CustomOAuth2UserService;
+import com.challenge.chat.security.service.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -69,7 +69,7 @@ public class SecurityConfig {
 
 			// 아이콘, css, js 관련
 			// 기본 페이지, css, image, js 하위 폴더에 있는 자료들은 모두 접근 가능, h2-console에 접근 가능
-			.requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
+			.requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
 			.requestMatchers("/ws/**").permitAll() //웹소캣 통신?
 			.anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
 			.and()
@@ -143,12 +143,13 @@ public class SecurityConfig {
 
 	@Bean
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-		JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, memberRepository);
+		JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService,
+			memberRepository);
 		return jwtAuthenticationFilter;
 	}
 
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource(){
+	public CorsConfigurationSource corsConfigurationSource() {
 
 		CorsConfiguration config = new CorsConfiguration();
 		config.addAllowedOrigin("http://localhost:3000");
