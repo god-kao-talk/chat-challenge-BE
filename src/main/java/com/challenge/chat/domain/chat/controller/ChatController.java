@@ -3,7 +3,6 @@ package com.challenge.chat.domain.chat.controller;
 import java.util.List;
 
 import org.springframework.context.event.EventListener;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -21,7 +20,7 @@ import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.EnterUserDto;
 import com.challenge.chat.domain.chat.service.ChatService;
-import com.challenge.chat.global.dto.DefaultDataRes;
+import com.challenge.chat.global.dto.ResponseDto;
 import com.challenge.chat.security.oauth.dto.CustomOAuth2User;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class ChatController {
 	private final SimpMessagingTemplate msgOperation;
 
 	@PostMapping("/chat")
-	public ResponseEntity<DefaultDataRes<String>> createChatRoom(@RequestBody ChatRoomDto chatRoomDto,
+	public ResponseDto createChatRoom(@RequestBody ChatRoomDto chatRoomDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		chatRoomDto.setHost(customOAuth2User.getEmail());
 		return chatService.createChatRoom(chatRoomDto.getRoomName(), chatRoomDto.getHost(),
