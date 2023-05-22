@@ -69,7 +69,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 		jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
 
-		String redirectUrl = "https://localhost:3000?" + "Authorization" + "=" +
+		String redirectUrl = "http://localhost:3000?" + "Authorization" + "=" +
 			URLEncoder.encode("Bearer " + accessToken, "UTF-8") +
 			"&" + "Authorization-refresh" + "=" + URLEncoder.encode("Bearer " + refreshToken, "UTF-8");
 		response.sendRedirect(redirectUrl);

@@ -80,7 +80,7 @@ public class SecurityConfig {
 		// 순서 : LogoutFilter -> JwtAuthenticationProcessingFilter -> CustomJsonUsernamePasswordAuthenticationFilter
 		// http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
 		// http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
-		http.addFilterBefore(jwtAuthenticationProcessingFilter(), LogoutFilter.class);
+		http.addFilterAfter(jwtAuthenticationProcessingFilter(), LogoutFilter.class);
 
 		return http.build();
 	}
