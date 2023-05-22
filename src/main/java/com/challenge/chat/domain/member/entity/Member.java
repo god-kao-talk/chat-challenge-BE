@@ -13,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,7 @@ public class Member {
 	private String refreshToken; // 리프레시 토큰
 
 	@ManyToOne
+	@JoinColumn(name = "CHAT_ROOM_ID")
 	private ChatRoom room;
 
 	// 유저 권한 설정 메소드
