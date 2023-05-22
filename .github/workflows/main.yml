@@ -3,7 +3,7 @@ name: Build and Deploy Spring Boot to AWS EC2
 # main 브랜치에 푸쉬 했을때
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
 
 # 해당 코드에서 사용될 변수 설정
 env:
