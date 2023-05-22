@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: oauth
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 553314181149-kbfnsd7c2iu3liiih33ollfdjh4driuj.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - profile
+              - email
+#            redirect-uri: https://www.hhaegg.o-r.kr/login/oauth2/code/google
