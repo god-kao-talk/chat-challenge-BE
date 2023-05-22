@@ -17,21 +17,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.challenge.chat.domain.member.repository.MemberRepository;
-import com.challenge.chat.security.handler.LoginFailureHandler;
-import com.challenge.chat.security.handler.LoginSuccessHandler;
-import com.challenge.chat.security.jwt.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import com.challenge.chat.security.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.challenge.chat.security.jwt.service.JwtService;
-
-// import com.challenge.chat.security.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
-// import com.challenge.chat.security.login.handler.LoginFailureHandler;
-// import com.challenge.chat.security.login.handler.LoginSuccessHandler;
-// import com.challenge.chat.security.login.service.LoginService;
-
 import com.challenge.chat.security.oauth.handler.OAuth2LoginFailureHandler;
 import com.challenge.chat.security.oauth.handler.OAuth2LoginSuccessHandler;
 import com.challenge.chat.security.oauth.service.CustomOAuth2UserService;
-import com.challenge.chat.security.oauth.service.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -147,7 +137,6 @@ public class SecurityConfig {
 	// 	customJsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
 	// 	return customJsonUsernamePasswordLoginFilter;
 	// }
-
 	@Bean
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
 		JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService,

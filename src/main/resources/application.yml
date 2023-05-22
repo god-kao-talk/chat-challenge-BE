@@ -4,4 +4,4 @@ spring:
       local:
         - common
         - oauth
-        - local
+
