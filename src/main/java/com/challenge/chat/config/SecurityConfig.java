@@ -19,10 +19,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.security.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.challenge.chat.security.jwt.service.JwtService;
-import com.challenge.chat.security.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
-import com.challenge.chat.security.login.handler.LoginFailureHandler;
-import com.challenge.chat.security.login.handler.LoginSuccessHandler;
-import com.challenge.chat.security.login.service.LoginService;
+// import com.challenge.chat.security.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
+// import com.challenge.chat.security.login.handler.LoginFailureHandler;
+// import com.challenge.chat.security.login.handler.LoginSuccessHandler;
+// import com.challenge.chat.security.login.service.LoginService;
 import com.challenge.chat.security.oauth.handler.OAuth2LoginFailureHandler;
 import com.challenge.chat.security.oauth.handler.OAuth2LoginSuccessHandler;
 import com.challenge.chat.security.oauth.service.CustomOAuth2UserService;
@@ -39,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final LoginService loginService;
+	// private final LoginService loginService;
 	private final JwtService jwtService;
 	private final MemberRepository memberRepository;
 	private final ObjectMapper objectMapper;
@@ -82,8 +82,9 @@ public class SecurityConfig {
 		// 원래 스프링 시큐리티 필터 순서가 LogoutFilter 이후에 로그인 필터 동작
 		// 따라서, LogoutFilter 이후에 우리가 만든 필터 동작하도록 설정
 		// 순서 : LogoutFilter -> JwtAuthenticationProcessingFilter -> CustomJsonUsernamePasswordAuthenticationFilter
-		http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
-		http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
+		// http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
+		// http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(jwtAuthenticationProcessingFilter(), LogoutFilter.class);
 
 		return http.build();
 	}
@@ -105,25 +106,25 @@ public class SecurityConfig {
 	public AuthenticationManager authenticationManager() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setPasswordEncoder(passwordEncoder());
-		provider.setUserDetailsService(loginService);
+		// provider.setUserDetailsService(loginService);
 		return new ProviderManager(provider);
 	}
 
 	/**
 	 * 로그인 성공 시 호출되는 LoginSuccessJWTProviderHandler 빈 등록
 	 */
-	@Bean
-	public LoginSuccessHandler loginSuccessHandler() {
-		return new LoginSuccessHandler(jwtService, memberRepository);
-	}
+	// @Bean
+	// public LoginSuccessHandler loginSuccessHandler() {
+	// 	return new LoginSuccessHandler(jwtService, memberRepository);
+	// }
 
 	/**
 	 * 로그인 실패 시 호출되는 LoginFailureHandler 빈 등록
 	 */
-	@Bean
-	public LoginFailureHandler loginFailureHandler() {
-		return new LoginFailureHandler();
-	}
+	// @Bean
+	// public LoginFailureHandler loginFailureHandler() {
+	// 	return new LoginFailureHandler();
+	// }
 
 	/**
 	 * CustomJsonUsernamePasswordAuthenticationFilter 빈 등록
@@ -131,15 +132,15 @@ public class SecurityConfig {
 	 * setAuthenticationManager(authenticationManager())로 위에서 등록한 AuthenticationManager(ProviderManager) 설정
 	 * 로그인 성공 시 호출할 handler, 실패 시 호출할 handler로 위에서 등록한 handler 설정
 	 */
-	@Bean
-	public CustomJsonUsernamePasswordAuthenticationFilter customJsonUsernamePasswordAuthenticationFilter() {
-		CustomJsonUsernamePasswordAuthenticationFilter customJsonUsernamePasswordLoginFilter
-			= new CustomJsonUsernamePasswordAuthenticationFilter(objectMapper);
-		customJsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
-		customJsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
-		customJsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
-		return customJsonUsernamePasswordLoginFilter;
-	}
+	// @Bean
+	// public CustomJsonUsernamePasswordAuthenticationFilter customJsonUsernamePasswordAuthenticationFilter() {
+	// 	CustomJsonUsernamePasswordAuthenticationFilter customJsonUsernamePasswordLoginFilter
+	// 		= new CustomJsonUsernamePasswordAuthenticationFilter(objectMapper);
+	// 	customJsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
+	// 	customJsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
+	// 	customJsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
+	// 	return customJsonUsernamePasswordLoginFilter;
+	// }
 
 	@Bean
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
