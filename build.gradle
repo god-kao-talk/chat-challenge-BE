@@ -35,6 +35,10 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 
     implementation 'org.webjars:stomp-websocket:2.3.3'
+
+    //mysql
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
 }
 
 tasks.named('test') {
