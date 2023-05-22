@@ -33,6 +33,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
     runtimeOnly 'com.h2database:h2'
+
+    implementation 'org.webjars:stomp-websocket:2.3.3'
 }
 
 tasks.named('test') {

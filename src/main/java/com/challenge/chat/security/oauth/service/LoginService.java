@@ -1,4 +1,4 @@
-package com.challenge.chat.security.service;
+package com.challenge.chat.security.oauth.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

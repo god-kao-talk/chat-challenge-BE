@@ -25,7 +25,7 @@ import com.challenge.chat.security.jwt.service.JwtService;
 import com.challenge.chat.security.oauth.handler.OAuth2LoginFailureHandler;
 import com.challenge.chat.security.oauth.handler.OAuth2LoginSuccessHandler;
 import com.challenge.chat.security.oauth.service.CustomOAuth2UserService;
-import com.challenge.chat.security.service.LoginService;
+import com.challenge.chat.security.oauth.service.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
