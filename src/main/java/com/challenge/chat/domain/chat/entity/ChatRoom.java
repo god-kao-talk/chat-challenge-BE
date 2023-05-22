@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatRoom {
 	@Id
+	@Column(name = "CHAT_ROOM_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
