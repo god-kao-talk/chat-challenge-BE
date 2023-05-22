@@ -31,7 +31,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 		ServletException {
 		log.info("OAuth2 Login 성공!");
 		try {
-			CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+			CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
 
 			// User의 Role이 GUEST일 경우 처음 요청한 회원이므로 회원가입 페이지로 리다이렉트
 			// if(oAuth2User.getRole() == MemberRole.GUEST) {
@@ -69,7 +69,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 		jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
 
-		String redirectUrl = "http://localhost:3000?" + "Authorization" + "=" +
+		String redirectUrl = "http://localhost:3000/userslist?" + "Authorization" + "=" +
 			URLEncoder.encode("Bearer " + accessToken, "UTF-8") +
 			"&" + "Authorization-refresh" + "=" + URLEncoder.encode("Bearer " + refreshToken, "UTF-8");
 		response.sendRedirect(redirectUrl);
