@@ -201,6 +201,7 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
-# End of https://www.toptal.com/developers/gitignore/api/java,gradle,windows,macos,intellij+all
+
 /src/main/java/com/challenge/chat/security/login/**
 /src/main/resources/application-oauth.yml
+

@@ -2,6 +2,7 @@ package com.challenge.chat.domain.member.entity;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +46,10 @@ public class Member {
 	private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
 	private String refreshToken; // 리프레시 토큰
+
+	@ManyToOne
+	private ChatRoom room;
+
 	// 유저 권한 설정 메소드
 	public void authorizeUser() {
 		this.role = MemberRole.USER;
@@ -56,6 +62,14 @@ public class Member {
 
 	public void updateRefreshToken(String updateRefreshToken) {
 		this.refreshToken = updateRefreshToken;
+	}
+
+	public void enterRoom(ChatRoom room) {
+		this.room = room;
+	}
+
+	public void exitRoom(ChatRoom room) {
+		this.room = null;
 	}
 }
 
