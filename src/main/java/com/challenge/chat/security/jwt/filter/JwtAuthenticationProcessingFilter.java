@@ -124,6 +124,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		log.info("checkAccessTokenAndAuthentication() 호출");
+		log.info("request getHeader 값 입니다. {}", request.getHeader("Authorization"));
 
 		jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
