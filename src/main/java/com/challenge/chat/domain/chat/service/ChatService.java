@@ -8,7 +8,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,7 @@ import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.repository.MemberRepository;
-import com.challenge.chat.global.dto.DefaultDataRes;
+import com.challenge.chat.global.dto.ResponseDto;
 import com.challenge.chat.security.oauth.dto.CustomOAuth2User;
 
 import lombok.RequiredArgsConstructor;
@@ -38,21 +37,21 @@ public class ChatService {
 	private final MemberRepository memberRepository;
 	private final ChatRepository chatRepository;
 
-	public ResponseEntity<DefaultDataRes<String>> createChatRoom(String roomName, String host,
+	public ResponseDto createChatRoom(String roomName, String host,
 		CustomOAuth2User customOAuth2User) {
 		//이미 reciever와 sender로 생성된 채팅방이 있는지 확인
 		Optional<ChatRoom> findChatRoom = validExistChatRoom(host, roomName);
 		//있으면 ChatRoom의 roomId 반환
 		if (findChatRoom.isPresent())
-			return ResponseEntity.ok(new DefaultDataRes<>("already has room and find Chatting Room Success!",
-				findChatRoom.get().getRoomId()));
+			return ResponseDto.setSuccess("already has room and find Chatting Room Success!",
+				findChatRoom.get().getRoomId());
 
 		//없으면 receiver와 sender의 방을 생성해주고 roomId 반환
 		//ChatRoom newChatRoom = ChatRoom.of(receiver, sender);
 		//String roomId, String roomName, String host, String guest
 		ChatRoom newChatRoom = new ChatRoom(roomName, host, customOAuth2User.getEmail());
 		chatRoomRepository.save(newChatRoom);
-		return ResponseEntity.ok(new DefaultDataRes<>("create ChatRoom success", newChatRoom.getRoomId()));
+		return ResponseDto.setSuccess("create ChatRoom success", newChatRoom.getRoomId());
 	}
 
 	public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
