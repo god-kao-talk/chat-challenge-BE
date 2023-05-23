@@ -16,7 +16,7 @@ public class ChatDto {
 
 	private MessageType type;
 	private String sender;
-	private String email;
+	private String userId;
 	private String roomId;
 	private String date;
 	private String message;
@@ -24,7 +24,7 @@ public class ChatDto {
 	public ChatDto(Chat chat) {
 		this.type = chat.getType();
 		this.sender = chat.getSender();
-		this.email = chat.getEmail();
+		this.userId = chat.getEmail();
 		this.roomId = chat.getRoom().getRoomId();
 		this.message = chat.getMessage();
 	}
