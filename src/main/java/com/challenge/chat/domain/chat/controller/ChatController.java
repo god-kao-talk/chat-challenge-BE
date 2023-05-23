@@ -22,7 +22,6 @@ import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.EnterUserDto;
 import com.challenge.chat.domain.chat.service.ChatService;
 import com.challenge.chat.global.dto.ResponseDto;
-import com.challenge.chat.security.oauth.dto.CustomOAuth2User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +45,8 @@ public class ChatController {
 
 	@GetMapping("/chat/{roomId}")
 	public EnterUserDto findChatRoom(@PathVariable String roomId,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		return chatService.findRoom(roomId, customOAuth2User.getEmail());
+		@AuthenticationPrincipal User user) {
+		return chatService.findRoom(roomId, user.getUsername());
 	}
 
 	@MessageMapping("/chat/enter")

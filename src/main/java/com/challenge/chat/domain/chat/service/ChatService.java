@@ -66,11 +66,11 @@ public class ChatService {
 		ChatRoom chatRoom = validExistChatRoom(chatDto.getRoomId());
 		// 예외처리
 		//반환 결과를 socket session에 사용자의 id로 저장
-		Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getEmail());
+		Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getUserId());
 		headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
 		headerAccessor.getSessionAttributes().put("nickName", chatDto.getSender());
 
-		Member member = userIDCheck(chatDto.getEmail());
+		Member member = userIDCheck(chatDto.getUserId());
 		ChatRoom room = roomIdCheck(chatDto.getRoomId());
 		member.enterRoom(room);
 
@@ -93,7 +93,7 @@ public class ChatService {
 			.type(MessageType.LEAVE)
 			.roomId(roomId)
 			.sender(nickName)
-			.email(userId)
+			.userId(userId)
 			.message(nickName + "님 퇴장!! ヽ(*。>Д<)o゜")
 			.build();
 
@@ -159,7 +159,7 @@ public class ChatService {
 	public void sendChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
 
 		ChatRoom room = roomIdCheck(chatDto.getRoomId());
-		Member member = userIDCheck(chatDto.getEmail());
+		Member member = userIDCheck(chatDto.getUserId());
 		MessageType type = MessageType.TALK;
 
 		Date date = new Date();
