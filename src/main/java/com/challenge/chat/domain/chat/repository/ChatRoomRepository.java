@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-	Optional<ChatRoom> findByRoomId(String roomId);
+	Optional<ChatRoom> findByRoomId(String room_id);
 
-	Optional<ChatRoom> findByHostAndRoomName(String host, String roomName);
+	Optional<ChatRoom> findByRoomName(String roomName);
 
 	void deleteByRoomId(String roomId);
 

@@ -106,8 +106,8 @@ public class ChatService {
 		return chatDto;
 	}
 
-	public Optional<ChatRoom> validExistChatRoom(String host, String roomName) {
-		return chatRoomRepository.findByHostAndRoomName(host, roomName);
+	public Optional<ChatRoom> validExistChatRoom(String roomName) {
+		return chatRoomRepository.findByRoomName(roomName);
 	}
 
 	public ChatRoom validExistChatRoom(String roomId) {

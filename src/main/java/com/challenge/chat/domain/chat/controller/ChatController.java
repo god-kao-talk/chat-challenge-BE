@@ -37,10 +37,8 @@ public class ChatController {
 	@PostMapping("/chat")
 	public ResponseDto createChatRoom(@RequestBody ChatRoomDto chatRoomDto,
 		@AuthenticationPrincipal User user) {
-		chatRoomDto.setHost(user.getUsername());
 		log.info("User의 email 입니다. {}", user.getUsername());
-		return chatService.createChatRoom(chatRoomDto.getRoomName(), chatRoomDto.getHost(),
-			user);
+		return chatService.createChatRoom(chatRoomDto, user);
 	}
 
 	@GetMapping("/chat/{roomId}")
