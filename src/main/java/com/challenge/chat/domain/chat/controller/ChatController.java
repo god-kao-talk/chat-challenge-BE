@@ -37,10 +37,8 @@ public class ChatController {
 	@PostMapping("/chat")
 	public ResponseDto createChatRoom(@RequestBody ChatRoomDto chatRoomDto,
 		@AuthenticationPrincipal User user) {
-		chatRoomDto.setHost(user.getUsername());
 		log.info("User의 email 입니다. {}", user.getUsername());
-		return chatService.createChatRoom(chatRoomDto.getRoomName(), chatRoomDto.getHost(),
-			user);
+		return chatService.createChatRoom(chatRoomDto, user);
 	}
 
 	@GetMapping("/chat/{roomId}")
@@ -50,29 +48,28 @@ public class ChatController {
 	}
 
 	@MessageMapping("/chat/enter")
-	@SendTo("/sub/chat/room")
+	@SendTo("/topic/chat/room")
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		ChatDto newchatdto = chatService.enterChatRoom(chatDto, headerAccessor);
-		msgOperation.convertAndSend("/sub/chat/room" + chatDto.getRoomId(), newchatdto);
+		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatdto);
 	}
 
 	@MessageMapping("/chat/send")
-	@SendTo("/sub/chat/room")
+	@SendTo("/topic/chat/room")
 	public void sendChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		chatService.sendChatRoom(chatDto, headerAccessor);
-		msgOperation.convertAndSend("/sub/chat/room" + chatDto.getRoomId(), chatDto);
+		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
 	}
 
 	@EventListener
 	public void webSocketDisconnectListener(SessionDisconnectEvent event) {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 		ChatDto chatDto = chatService.disconnectChatRoom(headerAccessor);
-		msgOperation.convertAndSend("/sub/chat/room" + chatDto.getRoomId(), chatDto);
+		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
 	}
 
 	@GetMapping("/room")
 	public List<ChatRoomDto> showRoomList() {
 		return chatService.showRoomList();
 	}
-
 }

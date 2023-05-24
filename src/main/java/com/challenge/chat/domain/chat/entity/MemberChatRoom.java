@@ -1,13 +1,8 @@
 package com.challenge.chat.domain.chat.entity;
 
-import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.member.entity.Member;
-import com.challenge.chat.global.entity.TimeStamped;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,28 +14,23 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Chat extends TimeStamped {
+public class MemberChatRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String message;
-
-	@Enumerated(EnumType.STRING)
-	private MessageType type;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "MEMBER_ID")
-	private Member member;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "ROOM_ID")
 	private ChatRoom room;
 
-	public Chat(ChatDto chatDto, ChatRoom room, Member member, MessageType type) {
-		this.message = chatDto.getMessage();
+	@ManyToOne
+	@JoinColumn(name = "MEMBER_ID")
+	private Member member;
+
+	public MemberChatRoom(ChatRoom room, Member member) {
 		this.room = room;
 		this.member = member;
-		this.type = type;
+		room.getMemberList().add(this);
+		member.getRoomList().add(this);
 	}
 }
