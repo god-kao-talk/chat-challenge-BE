@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,6 +17,7 @@ import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.EnterUserDto;
 import com.challenge.chat.domain.chat.entity.Chat;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
+import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
@@ -37,10 +37,9 @@ public class ChatService {
 	private final MemberRepository memberRepository;
 	private final ChatRepository chatRepository;
 
-	public ResponseDto createChatRoom(String roomName, String host,
-		User user) {
+	public ResponseDto createChatRoom(ChatRoomDto chatRoomDto, User user) {
 		//이미 reciever와 sender로 생성된 채팅방이 있는지 확인
-		Optional<ChatRoom> findChatRoom = validExistChatRoom(host, roomName);
+		Optional<ChatRoom> findChatRoom = validExistChatRoom(chatRoomDto.getId());
 		//있으면 ChatRoom의 roomId 반환
 		if (findChatRoom.isPresent())
 			return ResponseDto.setSuccess("already has room and find Chatting Room Success!",
@@ -49,7 +48,7 @@ public class ChatService {
 		//없으면 receiver와 sender의 방을 생성해주고 roomId 반환
 		//ChatRoom newChatRoom = ChatRoom.of(receiver, sender);
 		//String roomId, String roomName, String host, String guest
-		ChatRoom newChatRoom = new ChatRoom(roomName, host, user.getUsername());
+		ChatRoom newChatRoom = new ChatRoom(chatRoomDto.getRoomName());
 		chatRoomRepository.save(newChatRoom);
 		return ResponseDto.setSuccess("create ChatRoom success", newChatRoom.getRoomId());
 	}
@@ -63,7 +62,7 @@ public class ChatService {
 		//        chatDto.setDate(dateformat);
 
 		// 채팅방 찾기
-		ChatRoom chatRoom = validExistChatRoom(chatDto.getRoomId());
+		ChatRoom chatRoom = roomIdCheck(chatDto.getRoomId());
 		// 예외처리
 		//반환 결과를 socket session에 사용자의 id로 저장
 		Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getUserId());
@@ -72,12 +71,13 @@ public class ChatService {
 
 		Member member = userIDCheck(chatDto.getUserId());
 		ChatRoom room = roomIdCheck(chatDto.getRoomId());
-		member.enterRoom(room);
+
+		//멤버와 룸을 서로 연결
+
+		MemberChatRoom memberChatRoom = new MemberChatRoom(room, member);
 
 		chatDto.setMessage(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
 
-		Long headCount = memberRepository.countAllByRoomId(chatRoom.getId());
-		chatRoom.updateCount(headCount);
 		return chatDto;
 	}
 
@@ -87,7 +87,7 @@ public class ChatService {
 		String userId = (String)headerAccessor.getSessionAttributes().get("userId");
 		Member member = userNameCheck(nickName);
 		ChatRoom room = roomIdCheck(roomId);
-		member.exitRoom(room);
+		// member.exitRoom(room);
 
 		ChatDto chatDto = ChatDto.builder()
 			.type(MessageType.LEAVE)
@@ -97,23 +97,11 @@ public class ChatService {
 			.message(nickName + "님 퇴장!! ヽ(*。>Д<)o゜")
 			.build();
 
-		Long headCount = memberRepository.countAllByRoomId(room.getId());
-		room.updateCount(headCount);
-		if (headCount == 0) {
-			chatRoomRepository.deleteByRoomId(roomId);
-		}
-
 		return chatDto;
 	}
 
-	public Optional<ChatRoom> validExistChatRoom(String host, String roomName) {
-		return chatRoomRepository.findByHostAndRoomName(host, roomName);
-	}
-
-	public ChatRoom validExistChatRoom(String roomId) {
-		return chatRoomRepository.findByRoomId(roomId).orElseThrow(
-			() -> new NoSuchElementException("채팅방이 존재하지 않습니다.")
-		);
+	public Optional<ChatRoom> validExistChatRoom(String roomName) {
+		return chatRoomRepository.findByRoomName(roomName);
 	}
 
 	public List<ChatRoomDto> showRoomList() {
@@ -124,6 +112,10 @@ public class ChatService {
 			chatRoomDtoList.add(chatRoomDto);
 		}
 		return chatRoomDtoList;
+	}
+
+	public Optional<ChatRoom> validExistChatRoom(Long id) {
+		return chatRoomRepository.findById(id);
 	}
 
 	public ChatRoom roomIdCheck(String roomId) {
@@ -147,7 +139,7 @@ public class ChatService {
 	public EnterUserDto findRoom(String roomId, String email) {
 		ChatRoom chatRoom = roomIdCheck(roomId);
 		Member member = userIDCheck(email);
-		List<Chat> chatList = chatRepository.findAllByRoom_IdOrderByCreatedAtAsc(chatRoom.getId());
+		List<Chat> chatList = chatRepository.findAllByRoomOrderByCreatedAtAsc(chatRoom.getId());
 		List<ChatDto> chatDtoList = new ArrayList<>();
 		for (Chat chat : chatList) {
 			ChatDto chatDto = new ChatDto(chat);
