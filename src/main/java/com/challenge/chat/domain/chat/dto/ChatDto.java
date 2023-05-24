@@ -23,8 +23,8 @@ public class ChatDto {
 
 	public ChatDto(Chat chat) {
 		this.type = chat.getType();
-		this.sender = chat.getSender();
-		this.userId = chat.getEmail();
+		this.sender = chat.getMember().getNickname();
+		this.userId = chat.getMember().getEmail();
 		this.roomId = chat.getRoom().getRoomId();
 		this.message = chat.getMessage();
 	}
