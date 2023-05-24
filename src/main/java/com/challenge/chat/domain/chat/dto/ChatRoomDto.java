@@ -10,17 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ChatRoomDto {
-	private String roomId;
+	private Long id;
 	private String roomName;
-	private String host;
-	private Long headCount;
-	// private String profile_image;
 
 	public ChatRoomDto(ChatRoom chatRoom) {
-		this.roomId = chatRoom.getRoomId();
+		this.id = chatRoom.getId();
 		this.roomName = chatRoom.getRoomName();
-		this.host = chatRoom.getHost();
-		// this.profile_image = profile_image;
 	}
-
 }

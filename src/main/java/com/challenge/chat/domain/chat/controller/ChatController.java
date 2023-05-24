@@ -72,5 +72,4 @@ public class ChatController {
 	public List<ChatRoomDto> showRoomList() {
 		return chatService.showRoomList();
 	}
-
 }
