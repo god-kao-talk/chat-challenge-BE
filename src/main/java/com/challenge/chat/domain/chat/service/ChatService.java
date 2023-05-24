@@ -38,13 +38,6 @@ public class ChatService {
 	private final ChatRepository chatRepository;
 
 	public ResponseDto createChatRoom(ChatRoomDto chatRoomDto, User user) {
-		//이미 reciever와 sender로 생성된 채팅방이 있는지 확인
-		Optional<ChatRoom> findChatRoom = validExistChatRoom(chatRoomDto.getId());
-		//있으면 ChatRoom의 roomId 반환
-		if (findChatRoom.isPresent())
-			return ResponseDto.setSuccess("already has room and find Chatting Room Success!",
-				findChatRoom.get().getRoomId());
-
 		//없으면 receiver와 sender의 방을 생성해주고 roomId 반환
 		//ChatRoom newChatRoom = ChatRoom.of(receiver, sender);
 		//String roomId, String roomName, String host, String guest
@@ -139,7 +132,7 @@ public class ChatService {
 	public EnterUserDto findRoom(String roomId, String email) {
 		ChatRoom chatRoom = roomIdCheck(roomId);
 		Member member = userIDCheck(email);
-		List<Chat> chatList = chatRepository.findAllByRoomOrderByCreatedAtAsc(chatRoom.getId());
+		List<Chat> chatList = chatRepository.findAllByRoomIdOrderByCreatedAtAsc(chatRoom.getId());
 		List<ChatDto> chatDtoList = new ArrayList<>();
 		for (Chat chat : chatList) {
 			ChatDto chatDto = new ChatDto(chat);

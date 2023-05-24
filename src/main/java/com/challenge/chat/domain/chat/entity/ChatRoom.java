@@ -24,9 +24,10 @@ import lombok.NoArgsConstructor;
 public class ChatRoom extends TimeStamped {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ROOM_ID")
 	private Long id;
 
-	@Column(name = "ROOM_ID")
+	@Column(name = "ROOM_UUID")
 	private String roomId;
 
 	@Column(nullable = false)
