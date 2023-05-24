@@ -51,18 +51,18 @@ public class ChatController {
 
 	// version 1 단체 채팅방 입장하기
 	@MessageMapping("/chat/enter")
-	@SendTo("/topic/chat/room")
+//	@SendTo("/topic/chat/room")
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		ChatDto newchatdto = chatService.enterChatRoom(chatDto, headerAccessor);
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatdto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), newchatdto);
 	}
 
 	// version 1 단체 채팅방 채팅 Send
 	@MessageMapping("/chat/send")
-	@SendTo("/topic/chat/room")
+//	@SendTo("/topic/chat/room")
 	public void sendChatRoom(ChatDto chatDto) throws Exception {
 		chatService.sendChatRoom(chatDto);
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
 	}
 
 	// version 1 채팅방 나가기
@@ -70,6 +70,6 @@ public class ChatController {
 	public void webSocketDisconnectListener(SessionDisconnectEvent event) {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 		ChatDto chatDto = chatService.disconnectChatRoom(headerAccessor);
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
 	}
 }
