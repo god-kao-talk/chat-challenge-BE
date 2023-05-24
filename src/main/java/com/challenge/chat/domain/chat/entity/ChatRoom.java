@@ -2,6 +2,7 @@ package com.challenge.chat.domain.chat.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.challenge.chat.global.entity.TimeStamped;
 
@@ -25,7 +26,6 @@ public class ChatRoom extends TimeStamped {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "ROOM_ID")
 	private String roomId;
 
@@ -36,11 +36,7 @@ public class ChatRoom extends TimeStamped {
 	private List<MemberChatRoom> memberList = new ArrayList<>();
 
 	public ChatRoom(String roomName) {
+		this.roomId = UUID.randomUUID().toString();
 		this.roomName = roomName;
 	}
-
-	public void updateCount(Long headCount) {
-		this.headCount = headCount;
-	}
-
 }

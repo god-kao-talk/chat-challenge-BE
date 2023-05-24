@@ -11,10 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChatRoomDto {
 	private Long id;
+	private String roomId;
 	private String roomName;
 
 	public ChatRoomDto(ChatRoom chatRoom) {
 		this.id = chatRoom.getId();
+		this.roomId = chatRoom.getRoomId();
 		this.roomName = chatRoom.getRoomName();
 	}
 }

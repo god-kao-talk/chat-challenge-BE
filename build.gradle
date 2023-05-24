@@ -39,8 +39,6 @@ dependencies {
     //mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
 
 }
 
