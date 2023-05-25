@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,30 +22,33 @@ public class MemberService {
 
     public List<MemberDto> getMemberList(){
         log.info("Service 멤버 리스트 조회");
-        List<MemberDto> memberDtoList = memberRepository.findAll()
+
+        return memberRepository.findAll()
                 .stream()
-                .map(
-                member -> {
-                    Long id = member.getId();
-                    String email = member.getEmail();
-                    String imageUrl = member.getImageUrl();
-                    String nickname = member.getNickname();
-                    return new MemberDto(id, email, imageUrl, nickname);
-                })
+                .map(MemberDto::new)
                 .collect(Collectors.toList());
-        return memberDtoList;
     }
 
-    public MemberDto getMemberInfo(String email) {
+    public MemberDto getMemberByEmail(String email) {
         log.info("Service 멤버 단일 조회");
-        Member member = getMemberByEmail(email);
-        MemberDto memberDto = new MemberDto(member.getId(), member.getEmail(), member.getImageUrl(), member.getNickname());
-        return memberDto;
+        Member member = findMemberByEmail(email);
+        return new MemberDto(member);
     }
 
-    public Member getMemberByEmail(String email) {
+    public MemberDto getMemberByUserId(long userId){
+        log.info("Service 멤버 userId로 검색");
+        Member member = findMemberById(userId);
+        return new MemberDto(member);
+    }
+
+    // 공통 메서드
+    public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
-        );
+                () -> new NoSuchElementException("존재하지 않는 유저입니다."));
+    }
+
+    public Member findMemberById(long userId){
+        return memberRepository.findById(userId).orElseThrow(
+                () -> new NoSuchElementException("존재하지 않는 유저입니다."));
     }
 }

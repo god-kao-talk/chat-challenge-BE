@@ -59,7 +59,7 @@ public class ChatService {
 	public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
 		log.info("Service 채팅방 입장");
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
-		Member member = memberService.getMemberByEmail(chatDto.getUserId());
+		Member member = memberService.findMemberByEmail(chatDto.getUserId());
 		// 중간 테이블에 save
 		MemberChatRoom memberChatRoom = new MemberChatRoom(chatRoom, member);
 		memberChatRoomRepository.save(memberChatRoom);
@@ -95,7 +95,7 @@ public class ChatService {
 	public EnterUserDto viewChat(String roomId, String email) {
 		log.info("Service 채팅방 메세지 조회");
 		ChatRoom chatRoom = getRoomByRoomId(roomId);
-		Member member = memberService.getMemberByEmail(email);
+		Member member = memberService.findMemberByEmail(email);
 		List<Chat> chatList = chatRepository.findAllByRoomIdOrderByCreatedAtAsc(chatRoom.getId());
 		List<ChatDto> chatDtoList = new ArrayList<>();
 		for (Chat chat : chatList) {
@@ -110,7 +110,7 @@ public class ChatService {
 		log.info("Service 채팅 SEND");
 
 		ChatRoom room = getRoomByRoomId(chatDto.getRoomId());
-		Member member = memberService.getMemberByEmail(chatDto.getUserId());
+		Member member = memberService.findMemberByEmail(chatDto.getUserId());
 		MessageType type = MessageType.TALK;
 
 		Date date = new Date();

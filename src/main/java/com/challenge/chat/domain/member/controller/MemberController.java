@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,8 +26,14 @@ public class MemberController {
     }
 
     @GetMapping("/users/myinfo")
-    public MemberDto getMemberInfo(@AuthenticationPrincipal User user){
+    public MemberDto getMemberByEmail(@AuthenticationPrincipal User user){
         log.info("Controller 멤버 단일 조회");
-        return memberService.getMemberInfo(user.getUsername());
+        return memberService.getMemberByEmail(user.getUsername());
+    }
+
+    @GetMapping("/users/{userId}")
+    public MemberDto getMemberByUserId(@PathVariable long userId){
+        log.info("Controller 멤버 userId로 검색");
+        return memberService.getMemberByUserId(userId);
     }
 }

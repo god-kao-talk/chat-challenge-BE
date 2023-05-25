@@ -1,5 +1,6 @@
 package com.challenge.chat.domain.member.dto;
 
+import com.challenge.chat.domain.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,10 +13,10 @@ public class MemberDto {
     private String imageUrl;
     private String nickname;
 
-    public MemberDto(Long id, String email, String imageUrl, String nickname){
-        this.id = id;
-        this.email = email;
-        this.imageUrl = imageUrl;
-        this.nickname = nickname;
+    public MemberDto(Member member){
+        this.id = member.getId();
+        this.email = member.getEmail();
+        this.imageUrl = member.getImageUrl();
+        this.nickname = member.getNickname();
     }
 }
