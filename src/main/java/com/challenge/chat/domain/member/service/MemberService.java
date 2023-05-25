@@ -1,6 +1,7 @@
 package com.challenge.chat.domain.member.service;
 
 import com.challenge.chat.domain.member.dto.MemberDto;
+import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,5 +32,18 @@ public class MemberService {
                 })
                 .collect(Collectors.toList());
         return memberDtoList;
+    }
+
+    public MemberDto getMemberInfo(String email) {
+        log.info("Service 멤버 단일 조회");
+        Member member = getMemberByEmail(email);
+        MemberDto memberDto = new MemberDto(member.getEmail(), member.getImageUrl(), member.getNickname());
+        return memberDto;
+    }
+
+    public Member getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+        );
     }
 }

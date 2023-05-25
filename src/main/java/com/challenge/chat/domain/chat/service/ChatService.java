@@ -12,6 +12,7 @@ import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
 import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class ChatService {
 	private final ChatRoomRepository chatRoomRepository;
 	private final MemberRepository memberRepository;
 	private final ChatRepository chatRepository;
+	private final MemberService memberService;
 
 	// 채팅방 조회
 	public List<ChatRoomDto> showRoomList() {
@@ -57,7 +59,7 @@ public class ChatService {
 	public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
 		log.info("Service 채팅방 입장");
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
-		Member member = getMemberByEmail(chatDto.getUserId());
+		Member member = memberService.getMemberByEmail(chatDto.getUserId());
 		// 중간 테이블에 save
 		MemberChatRoom memberChatRoom = new MemberChatRoom(chatRoom, member);
 		memberChatRoomRepository.save(memberChatRoom);
@@ -93,7 +95,7 @@ public class ChatService {
 	public EnterUserDto viewChat(String roomId, String email) {
 		log.info("Service 채팅방 메세지 조회");
 		ChatRoom chatRoom = getRoomByRoomId(roomId);
-		Member member = getMemberByEmail(email);
+		Member member = memberService.getMemberByEmail(email);
 		List<Chat> chatList = chatRepository.findAllByRoomIdOrderByCreatedAtAsc(chatRoom.getId());
 		List<ChatDto> chatDtoList = new ArrayList<>();
 		for (Chat chat : chatList) {
@@ -108,7 +110,7 @@ public class ChatService {
 		log.info("Service 채팅 SEND");
 
 		ChatRoom room = getRoomByRoomId(chatDto.getRoomId());
-		Member member = getMemberByEmail(chatDto.getUserId());
+		Member member = memberService.getMemberByEmail(chatDto.getUserId());
 		MessageType type = MessageType.TALK;
 
 		Date date = new Date();
@@ -125,12 +127,4 @@ public class ChatService {
 			() -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")
 		);
 	}
-
-	public Member getMemberByEmail(String email) {
-		return memberRepository.findByEmail(email).orElseThrow(
-			() -> new IllegalArgumentException("존재하지 않는 유저입니다.")
-		);
-	}
-
-
 }
