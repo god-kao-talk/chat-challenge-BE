@@ -79,9 +79,7 @@ class MemberServiceTest {
 	void getMemberByEmailFail() {
 		//given
 		String email = "test1234@test.com";
-		given(memberRepository.findByEmail(any()))
-			.willThrow(new NoSuchElementException("존재하지 않는 유저입니다."));
-
+		given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
 
 		//when, then
 		assertThatThrownBy(() -> memberService.getMemberByEmail(email))
@@ -112,8 +110,7 @@ class MemberServiceTest {
 	void getMemberByUserIdFail() {
 		//given
 		long id = 1L;
-		given(memberRepository.findById(any()))
-			.willThrow(new NoSuchElementException("존재하지 않는 유저입니다."));
+		given(memberRepository.findById(any())).willReturn(Optional.empty());
 
 		//when, then
 		assertThatThrownBy(() -> memberService.findMemberById(id))
