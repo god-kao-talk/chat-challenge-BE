@@ -31,21 +31,21 @@ public class ChatController {
 	// 채팅방 조회
 	@GetMapping("/room")
 	public List<ChatRoomDto> showRoomList() {
+		log.info("Controller showRoomList, 채팅방 조회 호출");
 		return chatService.showRoomList();
 	}
 
 	// version 1 단체 채팅방 생성
 	@PostMapping("/chat")
-	public ResponseDto<?> createChatRoom(@RequestBody ChatRoomDto chatRoomDto,
-		@AuthenticationPrincipal User user) {
-		log.info("User의 email 입니다. {}", user.getUsername());
+	public ResponseDto<?> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal User user) {
+		log.info("Controller createChatRoom, 채팅방 생성 User의 email 입니다. {}", user.getUsername());
 		return chatService.createChatRoom(chatRoomDto);
 	}
 
 	// version 1 단체 채팅방 채팅 내역 조회
 	@GetMapping("/chat/{roomId}")
-	public EnterUserDto viewChat(@PathVariable String roomId,
-									 @AuthenticationPrincipal User user) {
+	public EnterUserDto viewChat(@PathVariable String roomId, @AuthenticationPrincipal User user) {
+		log.info("Controller viewChat, 채팅 내역 조회");
 		return chatService.viewChat(roomId, user.getUsername());
 	}
 
@@ -53,6 +53,7 @@ public class ChatController {
 	@MessageMapping("/chat/enter")
 //	@SendTo("/topic/chat/room")
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
+		log.info("Controller enterChatRoom, 채팅방 입장");
 		ChatDto newchatdto = chatService.enterChatRoom(chatDto, headerAccessor);
 		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), newchatdto);
 	}
@@ -61,6 +62,7 @@ public class ChatController {
 	@MessageMapping("/chat/send")
 //	@SendTo("/topic/chat/room")
 	public void sendChatRoom(ChatDto chatDto) throws Exception {
+		log.info("Controller sendChatRoom, 채팅 SEND {}", chatDto);
 		chatService.sendChatRoom(chatDto);
 		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
 	}
@@ -69,6 +71,7 @@ public class ChatController {
 	@EventListener
 	public void webSocketDisconnectListener(SessionDisconnectEvent event) {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+		log.info("Controller webSocketDisconnectListener, 채팅방 나가기");
 		ChatDto chatDto = chatService.disconnectChatRoom(headerAccessor);
 		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
 	}

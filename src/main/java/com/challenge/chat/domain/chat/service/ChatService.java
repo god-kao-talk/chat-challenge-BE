@@ -35,6 +35,7 @@ public class ChatService {
 
 	// 채팅방 조회
 	public List<ChatRoomDto> showRoomList() {
+		log.info("Service 채팅방 조회");
 		List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
 		List<ChatRoomDto> chatRoomDtoList = new ArrayList<>();
 		for (ChatRoom chatRoom : chatRoomList) {
@@ -46,6 +47,7 @@ public class ChatService {
 
 	// 채팅방 생성
 	public ResponseDto<?> createChatRoom(ChatRoomDto chatRoomDto) {
+		log.info("Service 채팅방 생성");
 		ChatRoom newChatRoom = new ChatRoom(chatRoomDto.getRoomName());
 		chatRoomRepository.save(newChatRoom);
 		return ResponseDto.setSuccess("create ChatRoom success", newChatRoom.getRoomId());
@@ -53,7 +55,7 @@ public class ChatService {
 
 	// 채팅방 입장
 	public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
-
+		log.info("Service 채팅방 입장");
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
 		Member member = getMemberByEmail(chatDto.getUserId());
 		// 중간 테이블에 save
@@ -71,6 +73,7 @@ public class ChatService {
 
 	// 채팅방 나가기
 	public ChatDto disconnectChatRoom(SimpMessageHeaderAccessor headerAccessor) {
+		log.info("Service 채팅방 나가기");
 		String roomId = (String)headerAccessor.getSessionAttributes().get("roomId");
 		String nickName = (String)headerAccessor.getSessionAttributes().get("nickName");
 		String userId = (String)headerAccessor.getSessionAttributes().get("userId");
@@ -88,6 +91,7 @@ public class ChatService {
 
 	// 채팅 메세지 조회
 	public EnterUserDto viewChat(String roomId, String email) {
+		log.info("Service 채팅방 메세지 조회");
 		ChatRoom chatRoom = getRoomByRoomId(roomId);
 		Member member = getMemberByEmail(email);
 		List<Chat> chatList = chatRepository.findAllByRoomIdOrderByCreatedAtAsc(chatRoom.getId());
@@ -101,6 +105,7 @@ public class ChatService {
 
 	// 채팅 보내기
 	public void sendChatRoom(ChatDto chatDto) {
+		log.info("Service 채팅 SEND");
 
 		ChatRoom room = getRoomByRoomId(chatDto.getRoomId());
 		Member member = getMemberByEmail(chatDto.getUserId());

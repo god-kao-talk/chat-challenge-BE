@@ -28,8 +28,8 @@ jobs:
       - name: gradlew에 실행 권한 부여
         run: chmod +x ./gradlew
 
-#       - name: jasypt key주입
-#         run: echo ${{secrets.JASYPT}} | base64 --decode >> ./src/main/resources/application-common.yml
+      - name: jasypt key주입
+        run: echo ${{secrets.JASYPT}} | base64 --decode >> ./src/main/resources/application-common.yml
         
       - name: 프로젝트 빌드
         run: ./gradlew clean build -x test
