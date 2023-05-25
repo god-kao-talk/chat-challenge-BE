@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 public class MemberDto {
 
     private String email;
-    private String nickname;
     private String imageUrl;
+    private String nickname;
 
-    public MemberDto(String email, String nickname, String imageUrl){
+    public MemberDto(String email, String imageUrl, String nickname){
         this.email = email;
-        this.nickname = nickname;
         this.imageUrl = imageUrl;
+        this.nickname = nickname;
     }
 }
