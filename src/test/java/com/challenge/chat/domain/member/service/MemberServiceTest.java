@@ -36,9 +36,9 @@ class MemberServiceTest {
 	void getMemberList() {
 		//given
 		List<Member> memberList = new ArrayList<>();
-		Member member1 = getMember(1L, "email1@test.com");
-		Member member2 = getMember(2L, "email2@test.com");
-		Member member3 = getMember(3L, "email3@test.com");
+		Member member1 = setMember(1L, "email1@test.com");
+		Member member2 = setMember(2L, "email2@test.com");
+		Member member3 = setMember(3L, "email3@test.com");
 		memberList.add(member1);
 		memberList.add(member2);
 		memberList.add(member3);
@@ -61,7 +61,7 @@ class MemberServiceTest {
 	void getMemberByEmail() {
 		//given
 		String email = "test1234@test.com";
-		Member member = getMember(1L, email);
+		Member member = setMember(1L, email);
 		given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
 
 		//when
@@ -94,7 +94,7 @@ class MemberServiceTest {
 		//given
 		long id = 1L;
 		String email = "test1234@test.com";
-		Member member = getMember(1L, email);
+		Member member = setMember(1L, email);
 		given(memberRepository.findById(id)).willReturn(Optional.of(member));
 
 		//when
@@ -120,7 +120,7 @@ class MemberServiceTest {
 			.isInstanceOf(NoSuchElementException.class);
 	}
 
-	private Member getMember(Long id, String email) {
+	private Member setMember(Long id, String email) {
 		return new Member(id, email, "password", "nickName"
 			, "image", MemberRole.USER, SocialType.GOOGLE, null
 			, "refreshToken", null);
