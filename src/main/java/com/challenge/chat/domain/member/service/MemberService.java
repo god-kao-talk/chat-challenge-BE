@@ -25,10 +25,11 @@ public class MemberService {
                 .stream()
                 .map(
                 member -> {
+                    Long id = member.getId();
                     String email = member.getEmail();
                     String imageUrl = member.getImageUrl();
                     String nickname = member.getNickname();
-                    return new MemberDto(email, imageUrl, nickname);
+                    return new MemberDto(id, email, imageUrl, nickname);
                 })
                 .collect(Collectors.toList());
         return memberDtoList;
@@ -37,7 +38,7 @@ public class MemberService {
     public MemberDto getMemberInfo(String email) {
         log.info("Service 멤버 단일 조회");
         Member member = getMemberByEmail(email);
-        MemberDto memberDto = new MemberDto(member.getEmail(), member.getImageUrl(), member.getNickname());
+        MemberDto memberDto = new MemberDto(member.getId(), member.getEmail(), member.getImageUrl(), member.getNickname());
         return memberDto;
     }
 
