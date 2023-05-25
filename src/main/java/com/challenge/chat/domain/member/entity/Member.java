@@ -1,33 +1,20 @@
 package com.challenge.chat.domain.member.entity;
 
-import java.util.List;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
 @AllArgsConstructor
+@Slf4j
 public class Member {
 
 	@Id
@@ -54,6 +41,7 @@ public class Member {
 	private List<MemberChatRoom> roomList;
 
 	public void updateRefreshToken(String updateRefreshToken) {
+		log.info("리프레시 토큰 DB에 저장 완료");
 		this.refreshToken = updateRefreshToken;
 	}
 }

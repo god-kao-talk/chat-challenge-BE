@@ -72,10 +72,12 @@ public class JwtService {
 	 */
 	public String createRefreshToken() {
 		Date now = new Date();
-		return JWT.create()
+		String refreshToken = JWT.create()
 			.withSubject(REFRESH_TOKEN_SUBJECT)
 			.withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
 			.sign(Algorithm.HMAC512(secretKey));
+		log.info("리프레시 토큰 발급 완료");
+		return refreshToken;
 	}
 
 	/**

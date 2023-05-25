@@ -1,8 +1,13 @@
 package com.challenge.chat.security.oauth.service;
 
-import java.util.Collections;
-import java.util.Map;
-
+import com.challenge.chat.domain.member.constant.SocialType;
+import com.challenge.chat.domain.member.entity.Member;
+import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.security.jwt.service.JwtService;
+import com.challenge.chat.security.oauth.dto.CustomOAuth2User;
+import com.challenge.chat.security.oauth.dto.OAuthAttributes;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -11,14 +16,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.challenge.chat.domain.member.constant.SocialType;
-import com.challenge.chat.domain.member.entity.Member;
-import com.challenge.chat.domain.member.repository.MemberRepository;
-import com.challenge.chat.security.oauth.dto.CustomOAuth2User;
-import com.challenge.chat.security.oauth.dto.OAuthAttributes;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -26,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
 	private final MemberRepository memberRepository;
+	private final JwtService jwtService;
 
 	private static final String NAVER = "naver";
 	private static final String KAKAO = "kakao";
@@ -90,6 +90,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		if(findUser == null) {
 			return saveUser(attributes, socialType);
 		}
+		if (!jwtService.isTokenValid(findUser.getRefreshToken())){
+			findUser.updateRefreshToken(jwtService.createRefreshToken());
+		}
 		return findUser;
 	}
 
@@ -99,6 +102,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	 */
 	private Member saveUser(OAuthAttributes attributes, SocialType socialType) {
 		Member createdUser = attributes.toEntity(socialType, attributes.getOauth2UserInfo());
+		createdUser.updateRefreshToken(jwtService.createRefreshToken());
 		return memberRepository.save(createdUser);
 	}
 }

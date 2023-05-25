@@ -1,14 +1,14 @@
 package com.challenge.chat.security.oauth.dto;
 
-import java.util.Map;
-import java.util.UUID;
-
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
-
+import com.challenge.chat.security.jwt.util.PasswordUtil;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 각 소셜에서 받아오는 데이터가 다르므로
@@ -19,6 +19,7 @@ public class OAuthAttributes {
 
 	private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
 	private OAuth2UserInfo oauth2UserInfo; // 소셜 타입별 로그인 유저 정보(닉네임, 이메일, 프로필 사진 등등)
+	private PasswordUtil passwordUtil;
 
 	@Builder
 	public OAuthAttributes(String nameAttributeKey, OAuth2UserInfo oauth2UserInfo) {
@@ -53,12 +54,13 @@ public class OAuthAttributes {
 	 */
 	public Member toEntity(SocialType socialType, OAuth2UserInfo oauth2UserInfo) {
 		return Member.builder()
-			.socialType(socialType)
-			.socialId(oauth2UserInfo.getId())
-			.email(UUID.randomUUID() + "@socialUser.com")
-			.nickname(oauth2UserInfo.getNickname())
-			.imageUrl(oauth2UserInfo.getImageUrl())
-			.role(MemberRole.GUEST)
-			.build();
+				.socialType(socialType)
+				.socialId(oauth2UserInfo.getId())
+				.email(UUID.randomUUID() + "@socialUser.com")
+				.nickname(oauth2UserInfo.getNickname())
+				.imageUrl(oauth2UserInfo.getImageUrl())
+				.role(MemberRole.GUEST)
+				.password(passwordUtil.generateRandomPassword())
+				.build();
 	}
 }

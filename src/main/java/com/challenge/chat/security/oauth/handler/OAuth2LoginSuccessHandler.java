@@ -67,7 +67,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 		// response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
 
 		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-		jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
+//		jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
 
 		String redirectUrl = "http://localhost:3000/userslist?" + "Authorization" + "=" +
 			URLEncoder.encode("Bearer " + accessToken, "UTF-8") +
