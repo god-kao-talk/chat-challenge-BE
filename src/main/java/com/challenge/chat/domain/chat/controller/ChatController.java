@@ -37,7 +37,7 @@ public class ChatController {
 
 	// version 1 단체 채팅방 생성
 	@PostMapping("/chat")
-	public ResponseDto<?> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal User user) {
+	public ResponseDto<String> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal User user) {
 		log.info("Controller createChatRoom, 채팅방 생성 User의 email 입니다. {}", user.getUsername());
 		return chatService.createChatRoom(chatRoomDto);
 	}
@@ -51,7 +51,6 @@ public class ChatController {
 
 	// version 1 단체 채팅방 입장하기
 	@MessageMapping("/chat/enter")
-//	@SendTo("/topic/chat/room")
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		log.info("Controller enterChatRoom, 채팅방 입장");
 		ChatDto newchatdto = chatService.enterChatRoom(chatDto, headerAccessor);
@@ -60,7 +59,6 @@ public class ChatController {
 
 	// version 1 단체 채팅방 채팅 Send
 	@MessageMapping("/chat/send")
-//	@SendTo("/topic/chat/room")
 	public void sendChatRoom(ChatDto chatDto) throws Exception {
 		log.info("Controller sendChatRoom, 채팅 SEND {}", chatDto);
 		chatService.sendChatRoom(chatDto);

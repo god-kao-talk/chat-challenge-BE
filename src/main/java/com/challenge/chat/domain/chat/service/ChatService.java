@@ -48,7 +48,7 @@ public class ChatService {
 	}
 
 	// 채팅방 생성
-	public ResponseDto<?> createChatRoom(ChatRoomDto chatRoomDto) {
+	public ResponseDto<String> createChatRoom(ChatRoomDto chatRoomDto) {
 		log.info("Service 채팅방 생성");
 		ChatRoom newChatRoom = new ChatRoom(chatRoomDto.getRoomName());
 		chatRoomRepository.save(newChatRoom);
