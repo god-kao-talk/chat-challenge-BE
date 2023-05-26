@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: oauth
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ENC(BqXz+zkPlztuGEnq087JZZvP5Jjy/TGDLCZsFAfqscsPkgcpWACpOMON4Bwg/9cHeYDYKJUB25jGq5t6COe4MtZr3Ra7BBosNYP0TlMyRBxyxzfPEX71gQ==)
+            client-secret: ENC(O9Lq7E1QZO39aoVW0Z55fctcP/WmrzyVO/LmQByTzU2Ww2Hu+lDq6p3AYAvvcwVs)
+            scope:
+              - profile
+              - email
+#            redirect-uri: https://www.hhaegg.o-r.kr/login/oauth2/code/google
