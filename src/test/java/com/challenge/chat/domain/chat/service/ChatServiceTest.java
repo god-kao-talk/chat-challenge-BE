@@ -40,17 +40,12 @@ import com.challenge.chat.global.dto.ResponseDto;
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
 	@Mock
-	private MemberRepository memberRepository;
-	@Mock
 	private ChatRepository chatRepository;
 	@Mock
 	private ChatRoomRepository chatRoomRepository;
-	@Mock
-	private MemberChatRoomRepository memberChatRoomRepository;
 
 	@InjectMocks
 	private ChatService chatService;
-
 	@Mock
 	private MemberService memberService;
 
