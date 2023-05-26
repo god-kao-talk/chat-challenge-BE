@@ -7,14 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,11 +27,9 @@ import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
-import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
-import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.global.dto.ResponseDto;
 
@@ -208,7 +204,6 @@ class ChatServiceTest {
 	@DisplayName("roomId로 채팅방 가져오기 실패")
 	void getRoomByRoomIdFail() {
 		//given
-		ChatRoom chatRoom = null;
 		String roomId = "userId";
 
 		//given @Mock Stubbing
