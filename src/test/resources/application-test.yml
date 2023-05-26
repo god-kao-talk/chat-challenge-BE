@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:h2:mem:db;MODE=MYSQL
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
