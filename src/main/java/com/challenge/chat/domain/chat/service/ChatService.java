@@ -61,8 +61,14 @@ public class ChatService {
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
 		Member member = memberService.findMemberByEmail(chatDto.getUserId());
 		// 중간 테이블에 save
-		MemberChatRoom memberChatRoom = new MemberChatRoom(chatRoom, member);
+		// 중간 테이블에 이미 연결되어 있다면 새로 생성 안함
+		MemberChatRoom memberChatRoom =
+			memberChatRoomRepository.findByMemberAndRoom(member, chatRoom).orElse(
+				new MemberChatRoom(chatRoom, member)
+			);
+
 		memberChatRoomRepository.save(memberChatRoom);
+
 
 		//반환 결과를 socket session 에 사용자의 id로 저장
 		Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getUserId());
