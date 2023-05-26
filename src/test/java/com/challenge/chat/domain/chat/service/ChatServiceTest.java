@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
@@ -39,6 +41,8 @@ class ChatServiceTest {
 	private ChatRepository chatRepository;
 	@Mock
 	private ChatRoomRepository chatRoomRepository;
+	@Mock
+	private MemberChatRoomRepository memberChatRoomRepository;
 
 	@InjectMocks
 	private ChatService chatService;
@@ -85,7 +89,7 @@ class ChatServiceTest {
 	}
 
 	@Test
-	@DisplayName("채팅방 입장 성공")
+	@DisplayName("채팅방 입장 성공2")
 	void enterChatRoom() {
 		//given
 		Long memberId = 1L;
@@ -101,6 +105,7 @@ class ChatServiceTest {
 		//given @Mock Stubbing
 		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
 		given(memberService.findMemberByEmail(chatDto.getUserId())).willReturn(member);
+		given(memberChatRoomRepository.findByMemberAndRoom(member, chatRoom)).willReturn(Optional.of(new MemberChatRoom(chatRoom, member)));
 
 		//when
 		ChatDto resultChatDto = chatService.enterChatRoom(chatDto, accessor);
@@ -108,8 +113,72 @@ class ChatServiceTest {
 		//then
 		assertThat(chatDto).isEqualTo(resultChatDto);
 		assertThat(chatDto.getMessage()).isEqualTo(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
-
 	}
+
+	@Test
+	@DisplayName("채팅방 입장 성공2")
+	void enterChatRoom2() {
+		//given
+		ChatDto chatDto = setChatDto();
+		ChatRoom chatRoom = new ChatRoom("roomName");
+		Member member = setMember();
+
+		//given Accessor 만들기
+		Map<String, Object> attributes = new HashMap<>();
+		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
+		accessor.setSessionAttributes(attributes);
+
+		//given @Mock Stubbing
+		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
+		given(memberService.findMemberByEmail(chatDto.getUserId())).willReturn(member);
+		given(memberChatRoomRepository.findByMemberAndRoom(member, chatRoom)).willReturn(Optional.empty());
+
+		//when
+		ChatDto resultChatDto = chatService.enterChatRoom(chatDto, accessor);
+
+		//then
+		assertThat(chatDto).isEqualTo(resultChatDto);
+		assertThat(chatDto.getMessage()).isEqualTo(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
+	}
+	@Test
+	@DisplayName("채팅방 입장 실패1")
+	void enterChatRoomFail1() {
+		//given
+		ChatDto chatDto = setChatDto();
+
+		//given Accessor 만들기
+		Map<String, Object> attributes = new HashMap<>();
+		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
+		accessor.setSessionAttributes(attributes);
+
+		//given @Mock Stubbing
+		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.empty());
+
+		//when, then
+		assertThatThrownBy(() -> chatService.enterChatRoom(chatDto, accessor))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+	@Test
+	@DisplayName("채팅방 입장 실패2")
+	void enterChatRoomFail2() {
+		//given
+		ChatDto chatDto = setChatDto();
+		ChatRoom chatRoom = new ChatRoom("roomName");
+
+		//given Accessor 만들기
+		Map<String, Object> attributes = new HashMap<>();
+		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
+		accessor.setSessionAttributes(attributes);
+
+		//given @Mock Stubbing
+		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
+		given(memberService.findMemberByEmail(chatDto.getUserId())).willThrow(NoSuchElementException.class);
+
+		//when, then
+		assertThatThrownBy(() -> chatService.enterChatRoom(chatDto, accessor))
+			.isInstanceOf(NoSuchElementException.class);
+	}
+
 	@Test
 	@DisplayName("채팅방 나가기 성공")
 	void disconnectChatRoom() {
@@ -141,8 +210,7 @@ class ChatServiceTest {
 	@DisplayName("채팅방 메세지 조회 성공")
 	void viewChat() {
 		//given
-		Long memberId = 1L;
-		Member member = setMember(memberId);
+		Member member = setMember();
 		ChatRoom chatRoom = new ChatRoom("roomName");
 		List<Chat> chatList = new ArrayList<>();
 		List<ChatDto> chatDtoList = new ArrayList<>();
@@ -164,6 +232,35 @@ class ChatServiceTest {
 	}
 
 	@Test
+	@DisplayName("채팅방 메세지 조회 실패1")
+	void viewChatFail1() {
+		//given
+		Member member = setMember();
+		ChatRoom chatRoom = new ChatRoom("roomName");
+
+		//given @Mock Stubbing
+		given(chatRoomRepository.findByRoomId(chatRoom.getRoomId())).willReturn(Optional.empty());
+
+		//when, then
+		assertThatThrownBy(() -> chatService.viewChat(chatRoom.getRoomId(), member.getEmail()))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+	@Test
+	@DisplayName("채팅방 메세지 조회 실패2")
+	void viewChatFail2() {
+		//given
+		Member member = setMember();
+		ChatRoom chatRoom = new ChatRoom("roomName");
+
+		//given @Mock Stubbing
+		given(chatRoomRepository.findByRoomId(chatRoom.getRoomId())).willReturn(Optional.of(chatRoom));
+		given(memberService.findMemberByEmail(member.getEmail())).willThrow(NoSuchElementException.class);
+
+		//when, then
+		assertThatThrownBy(() -> chatService.viewChat(chatRoom.getRoomId(), member.getEmail()))
+			.isInstanceOf(NoSuchElementException.class);
+	}
+	@Test
 	@DisplayName("채팅 저장하기 성공")
 	void sendChatRoom() {
 		//given
@@ -173,8 +270,8 @@ class ChatServiceTest {
 		Chat chat = new Chat(chatDto, chatRoom, member, MessageType.TALK);
 
 		//given @Mock Stubbing
-		given(chatRoomRepository.findByRoomId(any())).willReturn(Optional.of(chatRoom));
-		given(memberService.findMemberByEmail(any())).willReturn(member);
+		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
+		given(memberService.findMemberByEmail(chatDto.getUserId())).willReturn(member);
 		given(chatRepository.save(any())).willReturn(null);
 
 		//when, then
@@ -182,6 +279,36 @@ class ChatServiceTest {
 		// verify =
 		verify(chatRepository, times(1)).save(refEq(chat));
 	}
+
+	@Test
+	@DisplayName("채팅 저장하기 실패1")
+	void sendChatRoomFail1() {
+		//given
+		ChatDto chatDto = setChatDto();
+
+		//given @Mock Stubbing
+		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.empty());
+
+		//when, then
+		assertThatThrownBy(() -> chatService.sendChatRoom(chatDto))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+	@Test
+	@DisplayName("채팅 저장하기 실패2")
+	void sendChatRoomFail2() {
+		//given
+		ChatDto chatDto = setChatDto();
+		ChatRoom chatRoom = new ChatRoom("roomName");
+
+		//given @Mock Stubbing
+		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
+		given(memberService.findMemberByEmail(chatDto.getUserId())).willThrow(NoSuchElementException.class);
+
+		//when, then
+		assertThatThrownBy(() -> chatService.sendChatRoom(chatDto))
+			.isInstanceOf(NoSuchElementException.class);
+	}
+
 
 	@Test
 	@DisplayName("roomId로 채팅방 가져오기 성공")
