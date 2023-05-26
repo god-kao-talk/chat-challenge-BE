@@ -27,20 +27,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: gradlew에 실행 권한 부여
-        run: chmod +x ./gradlew
-
       - name: Jasypt 키 주입
         run: |
           echo ${{secrets.JASYPT}} | base64 --decode >> ./src/main/resources/application-common.yml
           echo ${{secrets.JASYPT}} | base64 --decode >> ./src/test/resources/application-common.yml
-
+          
+      - name: gradlew에 실행 권한 부여
+        run: chmod +x ./gradlew
         
-      - name: Gradle 명령 실행을 위한 권한을 부여합니다
-        run: chmod +x gradlew
-
-      - name: Gradle build를 수행합니다
-        run: ./gradlew build
+      - name: 프로젝트 빌드
+        run: ./gradlew clean build
+        
+      # 프로젝트 압축
+      - name: Make zip file
+        run: zip -r ./chatchallenge.zip .
+        shell: bash
 
       - name: 테스트 결과를 PR에 코멘트로 등록합니다
         uses: EnricoMi/publish-unit-test-result-action@v1
