@@ -4,12 +4,12 @@ import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.EnterUserDto;
 import com.challenge.chat.domain.chat.service.ChatService;
-import com.challenge.chat.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -30,47 +30,53 @@ public class ChatController {
 
 	// 채팅방 조회
 	@GetMapping("/room")
-	public List<ChatRoomDto> showRoomList() {
+	public ResponseEntity<List<ChatRoomDto>> showRoomList() {
 		log.info("Controller showRoomList, 채팅방 조회 호출");
-		return chatService.showRoomList();
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(chatService.showRoomList());
 	}
 
-	// version 1 단체 채팅방 생성
+	// 채팅방 생성
 	@PostMapping("/chat")
-	public ResponseDto<String> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal User user) {
+	public ResponseEntity<String> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal User user) {
 		log.info("Controller createChatRoom, 채팅방 생성 User의 email 입니다. {}", user.getUsername());
-		return chatService.createChatRoom(chatRoomDto);
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(chatService.createChatRoom(chatRoomDto));
 	}
 
-	// version 1 단체 채팅방 채팅 내역 조회
+	// 채팅방 채팅 내역 조회
 	@GetMapping("/chat/{roomId}")
-	public EnterUserDto viewChat(@PathVariable String roomId, @AuthenticationPrincipal User user) {
+	public ResponseEntity<EnterUserDto> viewChat(@PathVariable String roomId, @AuthenticationPrincipal User user) {
 		log.info("Controller viewChat, 채팅 내역 조회");
-		return chatService.viewChat(roomId, user.getUsername());
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(chatService.viewChat(roomId, user.getUsername()));
 	}
 
-	// version 1 단체 채팅방 입장하기
+	// 채팅방 입장하기
 	@MessageMapping("/chat/enter")
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		log.info("Controller enterChatRoom, 채팅방 입장");
-		ChatDto newchatdto = chatService.enterChatRoom(chatDto, headerAccessor);
-		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), newchatdto);
+		msgOperation.convertAndSend(
+			"/topic/chat/room/" + chatDto.getRoomId(),
+			chatService.enterChatRoom(chatDto, headerAccessor));
 	}
 
-	// version 1 단체 채팅방 채팅 Send
+	// 채팅방 채팅 보내기
 	@MessageMapping("/chat/send")
 	public void sendChatRoom(ChatDto chatDto) throws Exception {
-		log.info("Controller sendChatRoom, 채팅 SEND {}", chatDto);
+		log.info("Controller sendChatRoom, 채팅 보내기 {}", chatDto);
 		chatService.sendChatRoom(chatDto);
-		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
+		msgOperation.convertAndSend(
+			"/topic/chat/room/" + chatDto.getRoomId(),
+			chatDto);
 	}
 
-	// version 1 채팅방 나가기
+	// 채팅방 나가기
 	@EventListener
 	public void webSocketDisconnectListener(SessionDisconnectEvent event) {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 		log.info("Controller webSocketDisconnectListener, 채팅방 나가기");
-		ChatDto chatDto = chatService.disconnectChatRoom(headerAccessor);
+		ChatDto chatDto = chatService.leaveChatRoom(headerAccessor);
 		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
 	}
 }
