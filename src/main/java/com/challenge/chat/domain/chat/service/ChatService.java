@@ -77,6 +77,7 @@ public class ChatService {
 	}
 
 	// 채팅방 나가기
+	@Transactional(readOnly = true)
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {
 		log.info("Service 채팅방 나가기");
 
@@ -94,6 +95,7 @@ public class ChatService {
 	}
 
 	// 채팅 메세지 조회
+	@Transactional(readOnly = true)
 	public EnterUserDto viewChat(String roomId, String email) {
 		log.info("Service 채팅방 메세지 조회");
 
