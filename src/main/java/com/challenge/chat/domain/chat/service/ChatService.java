@@ -56,7 +56,7 @@ public class ChatService {
 	}
 
 	// 채팅방 입장
-	public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
+	public List<ChatDto> enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
 		log.info("Service 채팅방 입장");
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
 		Member member = memberService.findMemberByEmail(chatDto.getUserId());
@@ -75,8 +75,16 @@ public class ChatService {
 		headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
 		headerAccessor.getSessionAttributes().put("nickName", chatDto.getSender());
 
+		Long roomId = chatRoomRepository.findByRoomId(chatDto.getRoomId()).get().getId();
+		List<Chat> chatList = chatRepository.findAllByRoomIdOrderByCreatedAtAsc(roomId);
+		List<ChatDto> newChatDtoList = new ArrayList<>();
+		for (Chat chat : chatList){
+			newChatDtoList.add(new ChatDto(chat));
+		}
 		chatDto.setMessage(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
-		return chatDto;
+		newChatDtoList.add(chatDto);
+
+		return newChatDtoList;
 	}
 
 	// 채팅방 나가기

@@ -53,8 +53,9 @@ public class ChatController {
 	@MessageMapping("/chat/enter")
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		log.info("Controller enterChatRoom, 채팅방 입장");
-		ChatDto newchatdto = chatService.enterChatRoom(chatDto, headerAccessor);
-		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), newchatdto);
+		List<ChatDto> newchatdtoList = chatService.enterChatRoom(chatDto, headerAccessor);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), newchatdtoList);
+		log.info("/topic/chat/room/{}{}",chatDto.getRoomId(),newchatdtoList);
 	}
 
 	// version 1 단체 채팅방 채팅 Send
