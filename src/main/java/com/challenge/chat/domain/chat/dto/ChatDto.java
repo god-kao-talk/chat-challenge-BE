@@ -6,14 +6,14 @@ import com.challenge.chat.domain.chat.entity.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ChatDto {
 
 	private MessageType type;
@@ -23,11 +23,21 @@ public class ChatDto {
 	private String date;
 	private String message;
 
-	public ChatDto(Chat chat) {
-		this.type = chat.getType();
-		this.sender = chat.getMember().getNickname();
-		this.userId = chat.getMember().getEmail();
-		this.roomId = chat.getRoom().getRoomId();
-		this.message = chat.getMessage();
+	public ChatDto(MessageType type, String sender, String userId, String roomId, String message) {
+		this.type = type;
+		this.sender = sender;
+		this.userId = userId;
+		this.roomId = roomId;
+		this.message = message;
+	}
+
+	public static ChatDto from(Chat chat) {
+		return new ChatDto(
+			chat.getType(),
+			chat.getMember().getNickname(),
+			chat.getMember().getEmail(),
+			chat.getRoom().getRoomId(),
+			chat.getMessage()
+		);
 	}
 }
