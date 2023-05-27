@@ -21,6 +21,7 @@ import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.dto.MemberDto;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.exception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -83,7 +84,7 @@ class MemberServiceTest {
 
 		//when, then
 		assertThatThrownBy(() -> memberService.getMemberByEmail(email))
-			.isInstanceOf(NoSuchElementException.class);
+			.isInstanceOf(RestApiException.class);
 	}
 
 	@Test
@@ -114,7 +115,7 @@ class MemberServiceTest {
 
 		//when, then
 		assertThatThrownBy(() -> memberService.findMemberById(id))
-			.isInstanceOf(NoSuchElementException.class);
+			.isInstanceOf(RestApiException.class);
 	}
 
 	private Member setMember(Long id, String email) {
