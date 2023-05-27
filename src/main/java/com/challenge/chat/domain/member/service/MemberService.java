@@ -3,13 +3,15 @@ package com.challenge.chat.domain.member.service;
 import com.challenge.chat.domain.member.dto.MemberDto;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.exception.RestApiException;
+import com.challenge.chat.exception.dto.MemberErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,11 +46,11 @@ public class MemberService {
     // 공통 메서드
     public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
-                () -> new NoSuchElementException("존재하지 않는 유저입니다."));
+                () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
     public Member findMemberById(long userId){
         return memberRepository.findById(userId).orElseThrow(
-                () -> new NoSuchElementException("존재하지 않는 유저입니다."));
+                () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }
