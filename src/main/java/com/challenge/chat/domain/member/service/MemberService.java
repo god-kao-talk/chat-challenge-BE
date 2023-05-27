@@ -8,6 +8,7 @@ import com.challenge.chat.domain.member.repository.MemberRepository;
 
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.MemberErrorCode;
+import com.challenge.chat.security.jwt.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+
 
     public List<MemberDto> getMemberList(){
         log.info("Service 멤버 리스트 조회");
