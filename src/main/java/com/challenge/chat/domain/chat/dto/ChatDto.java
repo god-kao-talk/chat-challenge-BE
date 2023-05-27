@@ -28,7 +28,6 @@ public class ChatDto {
 		this.sender = chat.getMember().getNickname();
 		this.userId = chat.getMember().getEmail();
 		this.roomId = chat.getRoom().getRoomId();
-		this.date = chat.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		this.message = chat.getMessage();
 	}
 }

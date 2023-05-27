@@ -56,35 +56,25 @@ public class ChatService {
 	}
 
 	// 채팅방 입장
-	public List<ChatDto> enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
+	public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
 		log.info("Service 채팅방 입장");
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
 		Member member = memberService.findMemberByEmail(chatDto.getUserId());
 		// 중간 테이블에 save
 		// 중간 테이블에 이미 연결되어 있다면 새로 생성 안함
-		MemberChatRoom memberChatRoom =
-			memberChatRoomRepository.findByMemberAndRoom(member, chatRoom).orElse(
-				new MemberChatRoom(chatRoom, member)
-			);
+		Optional<MemberChatRoom> memberChatRoom = memberChatRoomRepository.findByMemberAndRoom(member, chatRoom);
 
-		memberChatRoomRepository.save(memberChatRoom);
-
+		if (memberChatRoom.isEmpty()){
+			memberChatRoomRepository.save(new MemberChatRoom(chatRoom, member));
+		}
 
 		//반환 결과를 socket session 에 사용자의 id로 저장
 		Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getUserId());
 		headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
 		headerAccessor.getSessionAttributes().put("nickName", chatDto.getSender());
 
-		Long roomId = chatRoomRepository.findByRoomId(chatDto.getRoomId()).get().getId();
-		List<Chat> chatList = chatRepository.findAllByRoomIdOrderByCreatedAtAsc(roomId);
-		List<ChatDto> newChatDtoList = new ArrayList<>();
-		for (Chat chat : chatList){
-			newChatDtoList.add(new ChatDto(chat));
-		}
 		chatDto.setMessage(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
-		newChatDtoList.add(chatDto);
-
-		return newChatDtoList;
+		return chatDto;
 	}
 
 	// 채팅방 나가기
