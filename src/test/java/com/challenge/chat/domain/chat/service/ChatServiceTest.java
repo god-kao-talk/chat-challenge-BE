@@ -89,7 +89,7 @@ class ChatServiceTest {
 	}
 
 	@Test
-	@DisplayName("채팅방 입장 성공2")
+	@DisplayName("채팅방 입장 성공: 이미 채팅방이 존재")
 	void enterChatRoom() {
 		//given
 		Long memberId = 1L;
@@ -116,7 +116,7 @@ class ChatServiceTest {
 	}
 
 	@Test
-	@DisplayName("채팅방 입장 성공2")
+	@DisplayName("채팅방 입장 성공: 채팅방 새로 생성")
 	void enterChatRoom2() {
 		//given
 		ChatDto chatDto = setChatDto();
@@ -141,7 +141,7 @@ class ChatServiceTest {
 		assertThat(chatDto.getMessage()).isEqualTo(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
 	}
 	@Test
-	@DisplayName("채팅방 입장 실패1")
+	@DisplayName("채팅방 입장 실패: chatService 호출 실패")
 	void enterChatRoomFail1() {
 		//given
 		ChatDto chatDto = setChatDto();
@@ -159,7 +159,7 @@ class ChatServiceTest {
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 	@Test
-	@DisplayName("채팅방 입장 실패2")
+	@DisplayName("채팅방 입장 실패: memberService 호출 실패")
 	void enterChatRoomFail2() {
 		//given
 		ChatDto chatDto = setChatDto();
@@ -232,7 +232,7 @@ class ChatServiceTest {
 	}
 
 	@Test
-	@DisplayName("채팅방 메세지 조회 실패1")
+	@DisplayName("채팅방 메세지 조회 실패: 채팅방 조회 실패")
 	void viewChatFail1() {
 		//given
 		Member member = setMember();
@@ -246,7 +246,7 @@ class ChatServiceTest {
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 	@Test
-	@DisplayName("채팅방 메세지 조회 실패2")
+	@DisplayName("채팅방 메세지 조회 실패: memberService 호출 실패")
 	void viewChatFail2() {
 		//given
 		Member member = setMember();
@@ -281,7 +281,7 @@ class ChatServiceTest {
 	}
 
 	@Test
-	@DisplayName("채팅 저장하기 실패1")
+	@DisplayName("채팅 저장하기 실패: 채팅방 조회 실패")
 	void sendChatRoomFail1() {
 		//given
 		ChatDto chatDto = setChatDto();
@@ -294,7 +294,7 @@ class ChatServiceTest {
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 	@Test
-	@DisplayName("채팅 저장하기 실패2")
+	@DisplayName("채팅 저장하기 실패: memberService 호출 실패")
 	void sendChatRoomFail2() {
 		//given
 		ChatDto chatDto = setChatDto();
@@ -328,7 +328,7 @@ class ChatServiceTest {
 	}
 
 	@Test
-	@DisplayName("roomId로 채팅방 가져오기 실패")
+	@DisplayName("roomId로 채팅방 가져오기 실패: chatService 호출 실패")
 	void getRoomByRoomIdFail() {
 		//given
 		String roomId = "userId";
