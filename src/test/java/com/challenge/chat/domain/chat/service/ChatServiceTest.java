@@ -33,7 +33,7 @@ import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
-import com.challenge.chat.global.dto.ResponseDto;
+import com.challenge.chat.exception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
@@ -54,9 +54,9 @@ class ChatServiceTest {
 	void showRoomList() {
 		//given
 		List<ChatRoom> chatRooms = new ArrayList<>();
-		ChatRoom room1 = new ChatRoom("roomName1");
-		ChatRoom room2 = new ChatRoom("roomName2");
-		ChatRoom room3 = new ChatRoom("roomName3");
+		ChatRoom room1 = ChatRoom.of("room UUID1", "room name1");
+		ChatRoom room2 = ChatRoom.of("room UUID2", "room name2");
+		ChatRoom room3 = ChatRoom.of("room UUID3", "room name3");
 		chatRooms.add(room1);
 		chatRooms.add(room2);
 		chatRooms.add(room3);
@@ -71,21 +71,20 @@ class ChatServiceTest {
 			assertThat(chatRoomDtoList.get(i).getRoomId()).isEqualTo(chatRooms.get(i).getRoomId());
 			assertThat(chatRoomDtoList.get(i).getRoomName()).isEqualTo(chatRooms.get(i).getRoomName());
 		}
-
 	}
 
 	@Test
 	@DisplayName("채팅방 생성 및 저장 성공")
 	void createChatRoom() {
 		//given
-		ChatRoomDto chatRoomDto = new ChatRoomDto(new ChatRoom("roomName"));
+		ChatRoomDto chatRoomDto = new ChatRoomDto(1L, "room UUID1", "room name1");
 
 		//when
-		ResponseDto<String> result = chatService.createChatRoom(chatRoomDto);
+		String result = chatService.createChatRoom(chatRoomDto);
 
 		//then
-		assertThat(result.getMessage()).isEqualTo("create ChatRoom success");
-		assertThat(result.getData()).isNotBlank();
+		assertThat(result).isEqualTo("Successfully created chat room");
+		// assertThat(result.getData()).isNotBlank();
 	}
 
 	@Test
@@ -95,7 +94,7 @@ class ChatServiceTest {
 		Long memberId = 1L;
 		ChatDto chatDto = setChatDto();
 		Member member = setMember(memberId);
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 
 		//given Accessor 만들기
 		Map<String, Object> attributes = new HashMap<>();
@@ -120,7 +119,7 @@ class ChatServiceTest {
 	void enterChatRoom2() {
 		//given
 		ChatDto chatDto = setChatDto();
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 		Member member = setMember();
 
 		//given Accessor 만들기
@@ -156,14 +155,14 @@ class ChatServiceTest {
 
 		//when, then
 		assertThatThrownBy(() -> chatService.enterChatRoom(chatDto, accessor))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(RestApiException.class);
 	}
 	@Test
 	@DisplayName("채팅방 입장 실패: memberService 호출 실패")
 	void enterChatRoomFail2() {
 		//given
 		ChatDto chatDto = setChatDto();
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 
 		//given Accessor 만들기
 		Map<String, Object> attributes = new HashMap<>();
@@ -197,7 +196,7 @@ class ChatServiceTest {
 		accessor.getSessionAttributes().put("userId", userId);
 
 		//when
-		ChatDto resultChatDto = chatService.disconnectChatRoom(accessor);
+		ChatDto resultChatDto = chatService.leaveChatRoom(accessor);
 
 		//then
 		assertThat(resultChatDto.getRoomId()).isEqualTo(roomId);
@@ -211,7 +210,7 @@ class ChatServiceTest {
 	void viewChat() {
 		//given
 		Member member = setMember();
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 		List<Chat> chatList = new ArrayList<>();
 		List<ChatDto> chatDtoList = new ArrayList<>();
 
@@ -236,21 +235,21 @@ class ChatServiceTest {
 	void viewChatFail1() {
 		//given
 		Member member = setMember();
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 
 		//given @Mock Stubbing
 		given(chatRoomRepository.findByRoomId(chatRoom.getRoomId())).willReturn(Optional.empty());
 
 		//when, then
 		assertThatThrownBy(() -> chatService.viewChat(chatRoom.getRoomId(), member.getEmail()))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(RestApiException.class);
 	}
 	@Test
 	@DisplayName("채팅방 메세지 조회 실패: memberService 호출 실패")
 	void viewChatFail2() {
 		//given
 		Member member = setMember();
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 
 		//given @Mock Stubbing
 		given(chatRoomRepository.findByRoomId(chatRoom.getRoomId())).willReturn(Optional.of(chatRoom));
@@ -266,7 +265,7 @@ class ChatServiceTest {
 		//given
 		Member member = setMember();
 		ChatDto chatDto = setChatDto();
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 		Chat chat = new Chat(chatDto, chatRoom, member, MessageType.TALK);
 
 		//given @Mock Stubbing
@@ -291,14 +290,14 @@ class ChatServiceTest {
 
 		//when, then
 		assertThatThrownBy(() -> chatService.sendChatRoom(chatDto))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(RestApiException.class);
 	}
 	@Test
 	@DisplayName("채팅 저장하기 실패: memberService 호출 실패")
 	void sendChatRoomFail2() {
 		//given
 		ChatDto chatDto = setChatDto();
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 
 		//given @Mock Stubbing
 		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
@@ -314,7 +313,7 @@ class ChatServiceTest {
 	@DisplayName("roomId로 채팅방 가져오기 성공")
 	void getRoomByRoomId() {
 		//given
-		ChatRoom chatRoom = new ChatRoom("roomName");
+		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 
 		//given @Mock Stubbing
 		given(chatRoomRepository.findByRoomId(any())).willReturn(Optional.of(chatRoom));
@@ -338,7 +337,7 @@ class ChatServiceTest {
 
 		//then, when
 		assertThatThrownBy(() -> chatService.getRoomByRoomId(roomId))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(RestApiException.class);
 	}
 
 	private Member setMember() {
