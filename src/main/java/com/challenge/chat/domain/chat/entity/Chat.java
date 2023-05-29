@@ -29,7 +29,7 @@ public class Chat extends TimeStamped {
 	@Enumerated(EnumType.STRING)
 	private MessageType type;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
 
