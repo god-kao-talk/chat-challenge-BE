@@ -33,7 +33,6 @@ public class ChatService {
 
 	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final ChatRoomRepository chatRoomRepository;
-	private final MemberRepository memberRepository;
 	private final ChatRepository chatRepository;
 	private final MemberService memberService;
 
@@ -69,9 +68,9 @@ public class ChatService {
 			memberChatRoomRepository.save(new MemberChatRoom(chatRoom, member));
 		}
 		//반환 결과를 socket session 에 사용자의 id로 저장
-		// Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getUserId());
-		// headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
-		// headerAccessor.getSessionAttributes().put("nickName", chatDto.getSender());
+		Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getUserId());
+		headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
+		headerAccessor.getSessionAttributes().put("nickName", chatDto.getSender());
 		chatDto.setMessage(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
 		return chatDto;
 	}
