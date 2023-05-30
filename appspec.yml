@@ -5,7 +5,7 @@ files:
   - source:  /
     destination: /home/ubuntu/spring-github-action
     overwrite: yes
-
+file_exists_behavior: OVERWRITE
 permissions:
   - object: /
     owner: ubuntu
