@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum MemberErrorCode implements ErrorCode {
 
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다"),
+	DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 email 입니다")
 	;
 
 	private final HttpStatus httpStatus;

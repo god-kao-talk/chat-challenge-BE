@@ -8,7 +8,6 @@ import com.challenge.chat.domain.member.repository.MemberRepository;
 
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.MemberErrorCode;
-import com.challenge.chat.security.jwt.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,47 +29,32 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
 
-
-    public List<MemberDto> getMemberList(){
+    @Transactional(readOnly = true)
+    public List<MemberDto> getMemberList() {
         log.info("Service 멤버 리스트 조회");
 
         return memberRepository.findAll()
                 .stream()
-                .map(MemberDto::new)
+                .map(MemberDto::from)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public MemberDto getMemberByEmail(String email) {
         log.info("Service 멤버 단일 조회");
-        Member member = findMemberByEmail(email);
-        return new MemberDto(member);
+        return MemberDto.from(findMemberByEmail(email));
     }
 
-    public MemberDto getMemberByUserId(long userId){
+    @Transactional(readOnly = true)
+    public MemberDto getMemberByUserId(long userId) {
         log.info("Service 멤버 userId로 검색");
-        Member member = findMemberById(userId);
-        return new MemberDto(member);
+        return MemberDto.from(findMemberById(userId));
     }
 
-    // 공통 메서드
-    public Member findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(
-                () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
-    }
-
-    public Member findMemberById(long userId){
-        return memberRepository.findById(userId).orElseThrow(
-                () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
-    }
-
-    public void signup(SignupDto signupDto) throws Exception {
+    public void signup(SignupDto signupDto) {
 
         if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
-            throw new Exception("이미 존재하는 이메일입니다.");
-        }
-
-        if (memberRepository.findByNickname(signupDto.getNickname()).isPresent()) {
-            throw new Exception("이미 존재하는 닉네임입니다.");
+            throw new RestApiException(MemberErrorCode.DUPLICATED_EMAIL);
         }
 
         Member member = Member.builder()
@@ -82,5 +65,15 @@ public class MemberService {
             .build();
 
         memberRepository.save(member);
+    }
+
+    public Member findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(
+            () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public Member findMemberById(long userId) {
+        return memberRepository.findById(userId).orElseThrow(
+            () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

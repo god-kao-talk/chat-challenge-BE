@@ -62,9 +62,9 @@ class MemberControllerTest {
 	void getMemberListJSON() throws Exception {
 		//given
 		List<MemberDto> memberDtoList = new ArrayList<>();
-		MemberDto memberDto1 = new MemberDto(setMember(1L, "email1"));
-		MemberDto memberDto2 = new MemberDto(setMember(2L, "email2"));
-		MemberDto memberDto3 = new MemberDto(setMember(3L, "email3"));
+		MemberDto memberDto1 = MemberDto.from(setMember(1L, "email1"));
+		MemberDto memberDto2 = MemberDto.from(setMember(2L, "email2"));
+		MemberDto memberDto3 = MemberDto.from(setMember(3L, "email3"));
 		memberDtoList.add(memberDto1);
 		memberDtoList.add(memberDto2);
 		memberDtoList.add(memberDto3);
@@ -109,7 +109,7 @@ class MemberControllerTest {
 	void getMemberByEmailJSON() throws Exception {
 		//given
 		String user = "email";
-		MemberDto memberDto = new MemberDto(setMember(1L, user));
+		MemberDto memberDto = MemberDto.from(setMember(1L, user));
 		given(memberService.getMemberByEmail(user)).willReturn(memberDto);
 
 		//when, then
@@ -147,7 +147,7 @@ class MemberControllerTest {
 	void getMemberByUserIdJSON() throws Exception {
 		//given
 		long userId = 1L;
-		MemberDto memberDto = new MemberDto(setMember(1L, "email"));
+		MemberDto memberDto = MemberDto.from(setMember(1L, "email"));
 		given(memberService.getMemberByUserId(userId)).willReturn(memberDto);
 
 		//when, then
