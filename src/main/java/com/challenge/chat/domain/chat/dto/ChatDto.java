@@ -2,12 +2,10 @@ package com.challenge.chat.domain.chat.dto;
 
 import com.challenge.chat.domain.chat.entity.Chat;
 import com.challenge.chat.domain.chat.entity.MessageType;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -20,9 +18,10 @@ public class ChatDto {
 	private String sender;
 	private String userId;
 	private String roomId;
-	private String date;
 	private String message;
+	private String date = formatDate();
 
+	// TODO: 사용하지 않는 생성자 삭제여부
 	public ChatDto(MessageType type, String sender, String userId, String roomId, String message) {
 		this.type = type;
 		this.sender = sender;
@@ -33,11 +32,18 @@ public class ChatDto {
 
 	public static ChatDto from(Chat chat) {
 		return new ChatDto(
-			chat.getType(),
-			chat.getMember().getNickname(),
-			chat.getMember().getEmail(),
-			chat.getRoom().getRoomId(),
-			chat.getMessage()
+				chat.getType(),
+				chat.getSender(),
+				chat.getUserId(),
+				chat.getRoomId(),
+				chat.getMessage(),
+				chat.getDate()
 		);
+	}
+
+	private String formatDate(){
+		Date date = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return format.format(date);
 	}
 }

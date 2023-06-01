@@ -7,11 +7,10 @@ import com.challenge.chat.domain.chat.entity.Chat;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
-import com.challenge.chat.domain.chat.repository.ChatRepository;
-import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
-import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.mongo.ChatRepository;
+import com.challenge.chat.domain.chat.repository.mysql.ChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.mysql.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.entity.Member;
-import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.ChatErrorCode;
@@ -21,8 +20,10 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,6 +73,7 @@ public class ChatService {
 		headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
 		headerAccessor.getSessionAttributes().put("nickName", chatDto.getSender());
 		chatDto.setMessage(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
+
 		return chatDto;
 	}
 
@@ -100,10 +102,14 @@ public class ChatService {
 
 		ChatRoom chatRoom = getRoomByRoomId(roomId);
 		Member member = memberService.findMemberByEmail(email);
-		List<ChatDto> chatDtoList = chatRepository.findAllByRoomIdOrderByCreatedAtAsc(chatRoom.getId())
-			.stream()
-			.map(ChatDto::from)
-			.collect(Collectors.toList());
+
+		List<ChatDto> chatDtoList = chatRepository
+				.findByRoomId(chatRoom.getRoomId())
+				.stream()
+				.sorted(Comparator.comparing(Chat::getDate))
+				.map(ChatDto::from) // Using the from() method as a method reference
+				.toList();
+
 		return new EnterUserDto(member.getNickname(), member.getEmail(), chatRoom.getRoomId(), chatDtoList);
 	}
 
@@ -111,22 +117,19 @@ public class ChatService {
 	public void sendChatRoom(ChatDto chatDto) {
 		log.info("Service 채팅 SEND");
 
-		ChatRoom room = getRoomByRoomId(chatDto.getRoomId());
-		Member member = memberService.findMemberByEmail(chatDto.getUserId());
-		MessageType type = MessageType.TALK;
+		isRoomExist(chatDto.getRoomId());
 
-		Date date = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dateformat = format.format(date);
-		chatDto.setDate(dateformat);
-
-		Chat chat = new Chat(chatDto, room, member, type);
+		Chat chat = new Chat(chatDto, MessageType.TALK);
 		chatRepository.save(chat);
 	}
 
 	public ChatRoom getRoomByRoomId(String roomId) {
 		return chatRoomRepository.findByRoomId(roomId).orElseThrow(
-			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND)
-		);
+			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
+	}
+
+	public void isRoomExist(String roomId) {
+		chatRoomRepository.findByRoomId(roomId).orElseThrow(
+				() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 }
