@@ -13,10 +13,19 @@ public class MemberDto {
     private String imageUrl;
     private String nickname;
 
-    public MemberDto(Member member){
-        this.id = member.getId();
-        this.email = member.getEmail();
-        this.imageUrl = member.getImageUrl();
-        this.nickname = member.getNickname();
+    private MemberDto(Long id, String email, String imageUrl, String nickname) {
+        this.id = id;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.nickname = nickname;
+    }
+
+    public static MemberDto from(Member member) {
+        return new MemberDto(
+            member.getId(),
+            member.getEmail(),
+            member.getImageUrl(),
+            member.getNickname()
+        );
     }
 }
