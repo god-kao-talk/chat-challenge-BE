@@ -19,6 +19,7 @@ public class ChatDto {
 	private String userId;
 	private String roomId;
 	private String message;
+	@Builder.Default
 	private String date = formatDate();
 
 	// TODO: 사용하지 않는 생성자 삭제여부
@@ -41,7 +42,7 @@ public class ChatDto {
 		);
 	}
 
-	private String formatDate(){
+	public static String formatDate(){
 		Date date = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return format.format(date);

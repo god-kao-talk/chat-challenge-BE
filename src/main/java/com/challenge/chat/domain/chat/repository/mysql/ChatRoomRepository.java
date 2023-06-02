@@ -1,10 +1,9 @@
 package com.challenge.chat.domain.chat.repository.mysql;
 
-import java.util.Optional;
-
+import com.challenge.chat.domain.chat.entity.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.challenge.chat.domain.chat.entity.ChatRoom;
+import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
