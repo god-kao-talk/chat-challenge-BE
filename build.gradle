@@ -39,7 +39,8 @@ dependencies {
     //mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-
+    // MongoDB
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
 tasks.named('test') {

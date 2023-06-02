@@ -1,24 +1,5 @@
 package com.challenge.chat.domain.chat.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-
 import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.EnterUserDto;
@@ -26,14 +7,28 @@ import com.challenge.chat.domain.chat.entity.Chat;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
-import com.challenge.chat.domain.chat.repository.ChatRepository;
-import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
-import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.mongo.ChatRepository;
+import com.challenge.chat.domain.chat.repository.mysql.ChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.mysql.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.exception.RestApiException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
@@ -139,6 +134,7 @@ class ChatServiceTest {
 		assertThat(chatDto).isEqualTo(resultChatDto);
 		assertThat(chatDto.getMessage()).isEqualTo(chatDto.getSender() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
 	}
+
 	@Test
 	@DisplayName("채팅방 입장 실패: chatService 호출 실패")
 	void enterChatRoomFail1() {
@@ -157,6 +153,7 @@ class ChatServiceTest {
 		assertThatThrownBy(() -> chatService.enterChatRoom(chatDto, accessor))
 			.isInstanceOf(RestApiException.class);
 	}
+
 	@Test
 	@DisplayName("채팅방 입장 실패: memberService 호출 실패")
 	void enterChatRoomFail2() {
@@ -191,7 +188,7 @@ class ChatServiceTest {
 		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
 		accessor.setSessionAttributes(attributes);
 		Objects.requireNonNull(
-			accessor.getSessionAttributes()).put("roomId", roomId);
+				accessor.getSessionAttributes()).put("roomId", roomId);
 		accessor.getSessionAttributes().put("nickName", nickName);
 		accessor.getSessionAttributes().put("userId", userId);
 
@@ -217,7 +214,7 @@ class ChatServiceTest {
 		//given @Mock Stubbing
 		given(chatRoomRepository.findByRoomId(chatRoom.getRoomId())).willReturn(Optional.of(chatRoom));
 		given(memberService.findMemberByEmail(member.getEmail())).willReturn(member);
-		given(chatRepository.findAllByRoomIdOrderByCreatedAtAsc(chatRoom.getId())).willReturn(chatList);
+		given(chatRepository.findByRoomId(chatRoom.getRoomId())).willReturn(chatList);
 
 
 		//when
@@ -244,6 +241,7 @@ class ChatServiceTest {
 		assertThatThrownBy(() -> chatService.viewChat(chatRoom.getRoomId(), member.getEmail()))
 			.isInstanceOf(RestApiException.class);
 	}
+
 	@Test
 	@DisplayName("채팅방 메세지 조회 실패: memberService 호출 실패")
 	void viewChatFail2() {
@@ -259,6 +257,7 @@ class ChatServiceTest {
 		assertThatThrownBy(() -> chatService.viewChat(chatRoom.getRoomId(), member.getEmail()))
 			.isInstanceOf(NoSuchElementException.class);
 	}
+
 	@Test
 	@DisplayName("채팅 저장하기 성공")
 	void sendChatRoom() {
@@ -266,17 +265,20 @@ class ChatServiceTest {
 		Member member = setMember();
 		ChatDto chatDto = setChatDto();
 		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
-		Chat chat = new Chat(chatDto, chatRoom, member, MessageType.TALK);
 
 		//given @Mock Stubbing
 		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
 		given(memberService.findMemberByEmail(chatDto.getUserId())).willReturn(member);
 		given(chatRepository.save(any())).willReturn(null);
 
-		//when, then
+		//when
 		chatService.sendChatRoom(chatDto);
-		// verify =
-		verify(chatRepository, times(1)).save(refEq(chat));
+
+		//then
+		// chatRepository.save() 메서드가 호출될 때 전달된 Chat 객체를 캡쳐
+		ArgumentCaptor<Chat> chatCaptor = ArgumentCaptor.forClass(Chat.class);
+		// chatRepository.save() 메서드가 주어진 인자로 한번 호출 되었는지 확인
+		verify(chatRepository, times(1)).save(chatCaptor.capture());
 	}
 
 	@Test
@@ -290,8 +292,9 @@ class ChatServiceTest {
 
 		//when, then
 		assertThatThrownBy(() -> chatService.sendChatRoom(chatDto))
-			.isInstanceOf(RestApiException.class);
+				.isInstanceOf(RestApiException.class);
 	}
+
 	@Test
 	@DisplayName("채팅 저장하기 실패: memberService 호출 실패")
 	void sendChatRoomFail2() {
@@ -347,6 +350,7 @@ class ChatServiceTest {
 			null, MemberRole.USER, SocialType.GOOGLE,
 			"socialId", "refreshToken", roomList);
 	}
+
 	private Member setMember(Long id) {
 		List<MemberChatRoom> roomList = new ArrayList<>();
 		return new Member(id, "email", "password", "nickname",
@@ -355,6 +359,6 @@ class ChatServiceTest {
 	}
 
 	private ChatDto setChatDto() {
-		return new ChatDto(MessageType.ENTER, "sender", "userId", "roomId", "date", "message");
+		return new ChatDto(MessageType.ENTER, "sender", "userId", "roomId", "message", "date");
 	}
 }

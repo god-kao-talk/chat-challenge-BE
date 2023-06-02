@@ -1,4 +1,4 @@
-package com.challenge.chat.domain.chat.repository;
+package com.challenge.chat.domain.chat.repository.mysql;
 
 import java.util.Optional;
 
