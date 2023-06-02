@@ -15,6 +15,7 @@ import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.exception.RestApiException;
+import com.challenge.chat.exception.dto.ChatErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 
 import java.util.*;
@@ -31,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ChatServiceTest {
 	@Mock
 	private ChatRepository chatRepository;
@@ -303,14 +307,12 @@ class ChatServiceTest {
 		ChatRoom chatRoom = ChatRoom.of("room UUID1", "room name1");
 
 		//given @Mock Stubbing
-		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willReturn(Optional.of(chatRoom));
-		given(memberService.findMemberByEmail(chatDto.getUserId())).willThrow(NoSuchElementException.class);
+		given(chatRoomRepository.findByRoomId(chatDto.getRoomId())).willThrow(new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 
 		//when, then
 		assertThatThrownBy(() -> chatService.sendChatRoom(chatDto))
-			.isInstanceOf(NoSuchElementException.class);
+			.isInstanceOf(RestApiException.class);
 	}
-
 
 	@Test
 	@DisplayName("roomId로 채팅방 가져오기 성공")

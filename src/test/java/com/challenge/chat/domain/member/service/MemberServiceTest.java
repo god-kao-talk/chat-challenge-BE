@@ -1,27 +1,26 @@
 package com.challenge.chat.domain.member.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.exceptions.misusing.PotentialStubbingProblem;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.dto.MemberDto;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.exception.RestApiException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
