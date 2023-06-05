@@ -19,10 +19,11 @@ cp $ROOT_PATH/build/libs/chat-0.0.1-SNAPSHOT.jar $JAR
 # nohup java -jar -$PROFILES_ACTIVE $JAR > $APP_LOG 2> $ERROR_LOG &
 
 echo "[$NOW] JIB 도커 빌드" >> $START_LOG
+cd $ROOT_PATH
 .\gradlew jibDockerBuild
 
 echo "[$NOW] > $CONTAINER 실행" >> $START_LOG
-docker run -d -p 8080:8080 --name $CONTAINER $CONTAINER:$TAG
+docker run -d -p 8080:8080 --name $CONTAINER $CONTAINER:$TAG > $APP_LOG 2> $ERROR_LOG
 
 SERVICE_PID=$(pgrep -f $JAR)
 echo "[$NOW] > 서비스 PID: $SERVICE_PID" >> $START_LOG
