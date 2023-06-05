@@ -2,7 +2,8 @@
 
 ROOT_PATH="/home/ubuntu/spring-github-action"
 JAR="$ROOT_PATH/application-plain.jar"
-CONTAINER="chat-challenge"
+CONTAINER="com.challenge.chat.ChatApplication"
+IMAGE="chat-challenge"
 TAG="latest"
 
 APP_LOG="$ROOT_PATH/application.log"
@@ -20,10 +21,10 @@ cp $ROOT_PATH/build/libs/chat-0.0.1-SNAPSHOT.jar $JAR
 
 echo "[$NOW] JIB 도커 빌드" >> $START_LOG
 cd $ROOT_PATH
-.\gradlew jibDockerBuild
+./gradlew jibDockerBuild
 
-echo "[$NOW] > $CONTAINER 실행" >> $START_LOG
-docker run -d -p 8080:8080 --name $CONTAINER $CONTAINER:$TAG
+echo "[$NOW] > $IMAGE 실행" >> $START_LOG
+docker run -d -p 8080:8080 --name $IMAGE $IMAGE:$TAG
 
-SERVICE_PID=$(pgrep -f $JAR)
+SERVICE_PID=$(pgrep -f $CONTAINER
 echo "[$NOW] > 서비스 PID: $SERVICE_PID" >> $START_LOG
