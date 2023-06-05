@@ -23,7 +23,7 @@ cd $ROOT_PATH
 .\gradlew jibDockerBuild
 
 echo "[$NOW] > $CONTAINER 실행" >> $START_LOG
-docker run -d -p 8080:8080 --name $CONTAINER $CONTAINER:$TAG > $APP_LOG 2> $ERROR_LOG
+docker run -d -p 8080:8080 --name $CONTAINER $CONTAINER:$TAG
 
 SERVICE_PID=$(pgrep -f $JAR)
 echo "[$NOW] > 서비스 PID: $SERVICE_PID" >> $START_LOG
