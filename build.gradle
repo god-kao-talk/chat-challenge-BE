@@ -5,9 +5,6 @@ plugins {
     id 'com.google.cloud.tools.jib' version '3.2.0'
 }
 
-def dockerUsername = System.getenv('DOCKER_USERNAME')
-def dockerPassword = System.getenv('DOCKER_PASSWORD')
-
 group = 'com.challenge'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
@@ -25,18 +22,10 @@ repositories {
 jib {
     from {
         image = 'openjdk:17.0.1-jdk-slim'
-        auth {
-            username = dockerUsername
-            password = dockerPassword
-        }
     }
     to {
-        image = 'kimgun95/chat-challenge'
+        image = 'chat-challenge'
         tags = ['0.2']
-        auth {
-            username = dockerUsername
-            password = dockerPassword
-        }
     }
     container {
         mainClass = 'com.challenge.chat.ChatApplication'
