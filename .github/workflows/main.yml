@@ -11,8 +11,8 @@ env:
   BUCKET_NAME: chatchallengebucket
   CODE_DEPLOY_APP_NAME: codeDeploy-test
   DEPLOYMENT_GROUP_NAME: codeDeploy-group
-  DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+#  DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+#  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
 
 permissions: write-all
 
@@ -34,10 +34,10 @@ jobs:
           echo ${{secrets.JASYPT}} | base64 --decode >> ./src/main/resources/application-common.yml
           echo ${{secrets.JASYPT}} | base64 --decode >> ./src/test/resources/application-common.yml
           
-      - name: Docker 계정 환경변수로 등록하기
-        run: |
-          export $DOCKER_USERNAME
-          export $DOCKER_PASSWORD
+#      - name: Docker 계정 환경변수로 등록하기
+#        run: |
+#          export $DOCKER_USERNAME
+#          export $DOCKER_PASSWORD
           
       - name: gradlew에 실행 권한 부여
         run: chmod +x ./gradlew
