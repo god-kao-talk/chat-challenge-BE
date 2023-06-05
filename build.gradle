@@ -2,7 +2,11 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.7'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.google.cloud.tools.jib' version '3.2.0'
 }
+
+def dockerUsername = System.getenv('DOCKER_USERNAME')
+def dockerPassword = System.getenv('DOCKER_PASSWORD')
 
 group = 'com.challenge'
 version = '0.0.1-SNAPSHOT'
@@ -16,6 +20,33 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+
+jib {
+    from {
+        image = 'openjdk:17.0.1-jdk-slim'
+        auth {
+            username = dockerUsername
+            password = dockerPassword
+        }
+    }
+    to {
+        image = 'kimgun95/chat-challenge'
+        tags = ['0.2']
+        auth {
+            username = dockerUsername
+            password = dockerPassword
+        }
+    }
+    container {
+        mainClass = 'com.challenge.chat.ChatApplication'
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        jvmFlags = ['-Dspring.profiles.active=dev']
+        format = 'OCI'
+        volumes = ['/var/temp']
+//        entrypoint = ['java', '-cp', '/app/resources:/app/classes:/app/libs/*'
+//        , 'com.challenge.chat.ChatApplication']
+    }
 }
 
 dependencies {
