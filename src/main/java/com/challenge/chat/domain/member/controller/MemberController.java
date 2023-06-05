@@ -42,7 +42,7 @@ public class MemberController {
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<MemberDto> getMemberByUserId(@PathVariable long userId) {
+    public ResponseEntity<MemberDto> getMemberByUserId(@PathVariable String userId) {
         log.info("Controller 멤버 userId로 검색");
         return ResponseEntity.status(HttpStatus.OK)
             .body(memberService.getMemberByUserId(userId));

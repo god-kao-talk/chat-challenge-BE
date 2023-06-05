@@ -37,8 +37,7 @@ public class ChatDto {
 				chat.getSender(),
 				chat.getUserId(),
 				chat.getRoomId(),
-				chat.getMessage(),
-				chat.getDate()
+				chat.getMessage()
 		);
 	}
 

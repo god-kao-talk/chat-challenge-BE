@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberDto {
 
-    private Long id;
+    private String id;
     private String email;
     private String imageUrl;
     private String nickname;
 
-    private MemberDto(Long id, String email, String imageUrl, String nickname) {
+    private MemberDto(String id, String email, String imageUrl, String nickname) {
         this.id = id;
         this.email = email;
         this.imageUrl = imageUrl;

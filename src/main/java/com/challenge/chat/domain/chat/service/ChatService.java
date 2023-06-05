@@ -7,9 +7,9 @@ import com.challenge.chat.domain.chat.entity.Chat;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
-import com.challenge.chat.domain.chat.repository.mongo.ChatRepository;
-import com.challenge.chat.domain.chat.repository.mysql.ChatRoomRepository;
-import com.challenge.chat.domain.chat.repository.mysql.MemberChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.ChatRepository;
+import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.exception.RestApiException;
@@ -64,7 +64,7 @@ public class ChatService {
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
 		Member member = memberService.findMemberByEmail(chatDto.getUserId());
 		// 중간 테이블 생성
-		Optional<MemberChatRoom> memberChatRoom = memberChatRoomRepository.findByMemberAndRoom(member, chatRoom);
+		Optional<MemberChatRoom> memberChatRoom = memberChatRoomRepository.findByMemberIdAndRoomId(member.getEmail(), chatRoom.getRoomId());
 		if (memberChatRoom.isEmpty()) {
 			memberChatRoomRepository.save(new MemberChatRoom(chatRoom, member));
 		}
@@ -106,7 +106,7 @@ public class ChatService {
 		List<ChatDto> chatDtoList = chatRepository
 				.findByRoomId(chatRoom.getRoomId())
 				.stream()
-				.sorted(Comparator.comparing(Chat::getDate))
+				.sorted(Comparator.comparing(Chat::getCreatedAt))
 				.map(ChatDto::from) // Using the from() method as a method reference
 				.toList();
 

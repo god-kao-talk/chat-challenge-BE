@@ -10,7 +10,6 @@ spring:
         hbm2ddl:
           auto: update
     open-in-view: false
-
 jwt:
   secretKey: ENC(uvRR3r/GGDxBWH5fuINwi8uQVmhDV9lkuDtiDmEJeKnEMNYLlIZ/lfPYSrpn/LLPUtJflpTdSDxXGd6qRIfWrWmvtdS88f8JI3B1yQQ0VQRsywHyg/wB7w==)
 
