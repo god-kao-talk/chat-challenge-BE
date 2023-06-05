@@ -36,9 +36,9 @@ class MemberServiceTest {
 	void getMemberList() {
 		//given
 		List<Member> memberList = new ArrayList<>();
-		Member member1 = setMember(1L, "email1@test.com");
-		Member member2 = setMember(2L, "email2@test.com");
-		Member member3 = setMember(3L, "email3@test.com");
+		Member member1 = setMember("objectId1", "email1@test.com");
+		Member member2 = setMember("objectId2", "email2@test.com");
+		Member member3 = setMember("objectId3", "email3@test.com");
 		memberList.add(member1);
 		memberList.add(member2);
 		memberList.add(member3);
@@ -61,7 +61,7 @@ class MemberServiceTest {
 	void getMemberByEmail() {
 		//given
 		String email = "test1234@test.com";
-		Member member = setMember(1L, email);
+		Member member = setMember("objectId1", email);
 		given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
 
 		//when
@@ -90,9 +90,9 @@ class MemberServiceTest {
 	@DisplayName("id로 정보 조회 성공")
 	void getMemberByUserId() {
 		//given
-		long id = 1L;
+		String id = "objectId1";
 		String email = "test1234@test.com";
-		Member member = setMember(1L, email);
+		Member member = setMember(id, email);
 		given(memberRepository.findById(id)).willReturn(Optional.of(member));
 
 		//when
@@ -117,7 +117,7 @@ class MemberServiceTest {
 			.isInstanceOf(RestApiException.class);
 	}
 
-	private Member setMember(Long id, String email) {
+	private Member setMember(String id, String email) {
 		return new Member(id, email, "password", "nickName"
 			, "image", MemberRole.USER, SocialType.GOOGLE, null
 			, "refreshToken", null);

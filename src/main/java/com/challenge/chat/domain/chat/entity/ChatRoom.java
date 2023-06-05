@@ -1,37 +1,27 @@
 package com.challenge.chat.domain.chat.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.challenge.chat.global.entity.TimeStamped;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+import java.time.Instant;
+import java.util.Date;
+
+@Document(collection = "chatroom")
 @Getter
 @NoArgsConstructor
-public class ChatRoom extends TimeStamped {
+public class ChatRoom {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ROOM_ID")
-	private Long id;
+	private String id;
 
-	@Column(name = "ROOM_UUID")
 	private String roomId;
-
-	@Column(nullable = false)
 	private String roomName;
 
-	@OneToMany(mappedBy = "room", orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<MemberChatRoom> memberList = new ArrayList<>();
+
+	@CreatedDate
+	private Instant createdAt;
 
 	private ChatRoom(String roomId, String roomName) {
 		this.roomId = roomId;

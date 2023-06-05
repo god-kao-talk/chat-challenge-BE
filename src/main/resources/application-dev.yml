@@ -2,12 +2,8 @@ spring:
   config:
     activate:
       on-profile: dev
-  datasource:
-    url: ENC(czihp9Turnh3T8SihZ2FyvoPE9ZFhrUjGZKV7e/DTqBIVOeN9w0UthrnVWfTKWS/B3ZvbRRDzDFCFJf02wg9NuWC9v4mjPUhIozbs4KlyAOSevVLYsz3PF3mZe9oJvFgxkipehdGQF8Hm01zNWTd0A==)
-    username: ENC(NtuvZQCkv8WSkzoBv7CoiQ==)
-    password: ENC(FW0F58KfaI/pVjnKCHgd2urr848cdss4)
-    driver-class-name: ENC(Jr0OQfMUL92AZUp2tg0sucokFdBsxYkrX7YNAvIUVO59xLBT672k7A==)
 
   data:
     mongodb:
       uri: ENC(51jeryR5B+N1EuAyH58DjDhs271T71dq18ySle4M4NuB1PA29MatU1ZO/7EtyLLMq5wMcPOVrfnUSAHmOvwXmcuwKFQs5tZRuvB8Vj1Z3gKqT6NNV4HMrBrcNTtx5PXWQurAXIlw/5M=)
+      auto-index-creation=true:

@@ -1,7 +1,8 @@
-package com.challenge.chat.domain.chat.repository.mongo;
+package com.challenge.chat.domain.chat.repository;
 
 import com.challenge.chat.domain.chat.entity.Chat;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

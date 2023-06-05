@@ -1,20 +1,19 @@
 package com.challenge.chat.domain.chat.dto;
 
-import java.util.UUID;
-
 import com.challenge.chat.domain.chat.entity.ChatRoom;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomDto {
-	private Long id;
+	private String id;
 	private String roomId;
 	private String roomName;
 

@@ -46,7 +46,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberDto getMemberByUserId(long userId) {
+    public MemberDto getMemberByUserId(String userId) {
         log.info("Service 멤버 userId로 검색");
         return MemberDto.from(findMemberById(userId));
     }
@@ -72,7 +72,7 @@ public class MemberService {
             () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
-    public Member findMemberById(long userId) {
+    public Member findMemberById(String userId) {
         return memberRepository.findById(userId).orElseThrow(
             () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
