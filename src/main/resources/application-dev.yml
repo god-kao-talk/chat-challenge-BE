@@ -2,6 +2,9 @@ spring:
   config:
     activate:
       on-profile: dev
+  datasource:
+    hikari:
+      connection-timeout: 60000
 
   data:
     mongodb:
