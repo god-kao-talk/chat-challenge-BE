@@ -1,5 +1,6 @@
 package com.challenge.chat.domain.chat.controller;
 
+import com.challenge.chat.domain.chat.constant.KafkaConstants;
 import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.EnterUserDto;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,11 +24,13 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@CrossOrigin
 @RequiredArgsConstructor
 public class ChatController {
 
 	private final ChatService chatService;
 	private final SimpMessagingTemplate msgOperation;
+	private final KafkaTemplate<String, ChatDto> kafkaTemplate;
 
 	// 채팅방 조회
 	@GetMapping("/room")
@@ -57,18 +61,22 @@ public class ChatController {
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		log.info("Controller enterChatRoom, 채팅방 입장");
 		msgOperation.convertAndSend(
-			"/topic/chat/room/" + chatDto.getRoomId(),
-			chatService.enterChatRoom(chatDto, headerAccessor));
+				"/topic/chat/room/" + chatDto.getRoomId(),
+				chatService.enterChatRoom(chatDto, headerAccessor));
+		kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, chatDto).get();
+
 	}
 
 	// 채팅방 채팅 보내기
-	@MessageMapping("/chat/send")
-	public void sendChatRoom(ChatDto chatDto) throws Exception {
+//	@MessageMapping("/chat/send")
+	@PostMapping("/chat/send")
+	public void sendChatRoom(@RequestBody ChatDto chatDto) throws Exception {
 		log.info("Controller sendChatRoom, 채팅 보내기 {}", chatDto);
 		chatService.sendChatRoom(chatDto);
 		msgOperation.convertAndSend(
-			"/topic/chat/room/" + chatDto.getRoomId(),
-			chatDto);
+				"/topic/chat/room/" + chatDto.getRoomId(),
+				chatDto);
+		kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, chatDto).get();
 	}
 
 	// 채팅방 나가기
