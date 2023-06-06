@@ -117,7 +117,7 @@ public class ChatService {
 	public void sendChatRoom(ChatDto chatDto) {
 		log.info("Service 채팅 SEND");
 
-		isRoomExist(chatDto.getRoomId());
+//		isRoomExist(chatDto.getRoomId());
 
 		Chat chat = new Chat(chatDto, MessageType.TALK);
 		chatRepository.save(chat);
