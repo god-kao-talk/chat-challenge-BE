@@ -16,7 +16,12 @@ import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.ChatErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,26 +41,32 @@ public class ChatService {
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRepository chatRepository;
 	private final MemberService memberService;
+	private final MongoTemplate mongoTemplate;
 
-	// 채팅방 조회
+	public void makeChatRoom(final ChatRoomDto chatRoomDto, final User user) {
+		log.info("Service : 채팅방 생성");
+
+		ChatRoom chatRoom = ChatRoomDto.toEntity(chatRoomDto);
+
+		// TODO : 비동기적으로 chatRoom 과 memberchatRoom을 저장하기
+		chatRoomRepository.save(chatRoom);
+		memberChatRoomRepository.save(new MemberChatRoom(chatRoom.getRoomId(), user.getUsername()));
+	}
+
 	@Transactional(readOnly = true)
-	public List<ChatRoomDto> showRoomList() {
-		log.info("Service 채팅방 조회");
+	public List<ChatRoomDto> getChatRoomList(final User user) {
+		log.info("Service : 채팅방 리스트 조회");
 
-		// TODO : 내가 구독한 채팅방만 표출되게 변경하기
-		return chatRoomRepository.findAll()
+		// TODO : 채팅방 리스트를 가져오는 동작이 2번의 쿼리를 동기적으로 실행해서 오히려 느려질 수 있는 지점이 될 수 있음
+		List<String> roomIds = findChatRoomId(user.getUsername());
+
+		Query query = new Query(Criteria.where("roomId").in(roomIds));
+		return mongoTemplate.find(query, ChatRoom.class)
 			.stream()
 			.map(ChatRoomDto::from)
 			.collect(Collectors.toList());
 	}
 
-	// 채팅방 생성
-	public String createChatRoom(ChatRoomDto chatRoomDto) {
-		log.info("Service 채팅방 생성");
-
-		chatRoomRepository.save(ChatRoomDto.toEntity(chatRoomDto));
-		return "Successfully created chat room";
-	}
 
 	// 채팅방 입장
 	public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
@@ -64,9 +75,9 @@ public class ChatService {
 		ChatRoom chatRoom = getRoomByRoomId(chatDto.getRoomId());
 		Member member = memberService.findMemberByEmail(chatDto.getUserId());
 		// 중간 테이블 생성
-		Optional<MemberChatRoom> memberChatRoom = memberChatRoomRepository.findByMemberIdAndRoomId(member.getEmail(), chatRoom.getRoomId());
+		Optional<MemberChatRoom> memberChatRoom = memberChatRoomRepository.findByMemberEmailAndRoomId(member.getEmail(), chatRoom.getRoomId());
 		if (memberChatRoom.isEmpty()) {
-			memberChatRoomRepository.save(new MemberChatRoom(chatRoom, member));
+			memberChatRoomRepository.save(new MemberChatRoom(chatRoom.getRoomId(), member.getEmail()));
 		}
 		//반환 결과를 socket session 에 사용자의 id로 저장
 		Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("userId", chatDto.getUserId());
@@ -131,5 +142,14 @@ public class ChatService {
 	public void isRoomExist(String roomId) {
 		chatRoomRepository.findByRoomId(roomId).orElseThrow(
 				() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
+	}
+
+	public List<String> findChatRoomId(String email) {
+		List<MemberChatRoom> memberChatRoomList = memberChatRoomRepository.findByMemberEmail(email).orElse(null);
+		if (memberChatRoomList == null) {
+			return null;
+		}
+		return memberChatRoomList.stream()
+			.map(MemberChatRoom::getRoomId).toList();
 	}
 }

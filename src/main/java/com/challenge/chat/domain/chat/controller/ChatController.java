@@ -4,6 +4,7 @@ import com.challenge.chat.domain.chat.constant.KafkaConstants;
 import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.EnterUserDto;
+import com.challenge.chat.domain.chat.dto.request.ChatRoomRequest;
 import com.challenge.chat.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,21 +33,27 @@ public class ChatController {
 	private final SimpMessagingTemplate msgOperation;
 	private final KafkaTemplate<String, ChatDto> kafkaTemplate;
 
-	// 채팅방 조회
-	@GetMapping("/room")
-	public ResponseEntity<List<ChatRoomDto>> showRoomList() {
-		log.info("Controller showRoomList, 채팅방 조회 호출");
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.showRoomList());
+	@PostMapping("/chat")
+	public ResponseEntity<Void> createChatRoom(
+		@RequestBody final ChatRoomRequest request,
+		@AuthenticationPrincipal final User user) {
+
+		log.info("Controller : 채팅방 생성, User의 email은 {} 입니다", user.getUsername());
+		chatService.makeChatRoom(ChatRoomDto.from(request), user);
+
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
-	// 채팅방 생성
-	@PostMapping("/chat")
-	public ResponseEntity<String> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal User user) {
-		log.info("Controller createChatRoom, 채팅방 생성 User의 email 입니다. {}", user.getUsername());
+	@GetMapping("/chat/room")
+	public ResponseEntity<List<ChatRoomDto>> showChatRoomList(
+		@AuthenticationPrincipal final User user) {
+
+		log.info("Controller : 채팅방 조회, User의 email은 {} 입니다", user.getUsername());
+
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.createChatRoom(chatRoomDto));
+			.body(chatService.getChatRoomList(user));
 	}
+
 
 	// 채팅방 채팅 내역 조회
 	@GetMapping("/chat/{roomId}")
