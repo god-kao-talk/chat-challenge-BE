@@ -1,6 +1,7 @@
 package com.challenge.chat.domain.chat.dto;
 
-import com.challenge.chat.domain.chat.dto.request.ChatRoomRequest;
+import com.challenge.chat.domain.chat.dto.request.ChatRoomAddRequest;
+import com.challenge.chat.domain.chat.dto.request.ChatRoomCreateRequest;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,20 +15,19 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomDto {
-	private String id;
 	private String roomId;
 	private String roomName;
 
-	private ChatRoomDto(String roomName) {
-		this.roomName = roomName;
+	public static ChatRoomDto from(ChatRoomCreateRequest chatRoomCreateRequest) {
+		return new ChatRoomDto(null, chatRoomCreateRequest.getRoomName());
 	}
 
-	public static ChatRoomDto from(ChatRoomRequest request) {
-		return new ChatRoomDto(request.getRoomName());
+	public static ChatRoomDto from(ChatRoomAddRequest chatRoomAddRequest) {
+		return new ChatRoomDto(chatRoomAddRequest.getRoomId(), null);
 	}
 
 	public static ChatRoomDto from(ChatRoom chatRoom) {
-		return new ChatRoomDto(chatRoom.getId(), chatRoom.getRoomId(), chatRoom.getRoomName());
+		return new ChatRoomDto(chatRoom.getRoomId(), chatRoom.getRoomName());
 	}
 
 	public static ChatRoom toEntity(ChatRoomDto dto) {

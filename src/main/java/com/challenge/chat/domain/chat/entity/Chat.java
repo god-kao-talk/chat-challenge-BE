@@ -1,6 +1,5 @@
 package com.challenge.chat.domain.chat.entity;
 
-import com.challenge.chat.domain.chat.dto.ChatDto;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Getter
 @Document(collection = "chat")
@@ -30,12 +28,15 @@ public class Chat {
 	@CreatedDate
 	private Instant createdAt;
 
-	public Chat(ChatDto chatDto, MessageType messageType) {
-		this.type = messageType;
-		this.sender = chatDto.getSender();
-		this.userId = chatDto.getUserId();
-		this.roomId = chatDto.getRoomId();
-		this.message = chatDto.getMessage();
-//		this.createdAt = chatDto.getDate();
+	private Chat(MessageType type, String sender, String userId, String roomId, String message) {
+		this.type = type;
+		this.sender = sender;
+		this.userId = userId;
+		this.roomId = roomId;
+		this.message = message;
+	}
+
+	public static Chat of(MessageType type, String sender, String userId, String roomId, String message) {
+		return new Chat(type, sender, userId, roomId, message);
 	}
 }

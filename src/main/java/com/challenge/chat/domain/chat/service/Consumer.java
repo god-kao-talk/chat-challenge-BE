@@ -17,14 +17,14 @@ public class Consumer {
      * Message를 작성할 때 경로 잘 보고 import
      */
     @Autowired
-    SimpMessagingTemplate template;
+    SimpMessagingTemplate msgOperation;
 
     @KafkaListener(
             topics = KafkaConstants.KAFKA_TOPIC,
             groupId = KafkaConstants.GROUP_ID
     )
-    public void consume(ChatDto ChatDto) {
-        log.info("난 컨슈머야 message={}", ChatDto);
-        template.convertAndSend("/topic/chat/room", ChatDto);
+    public void consume(ChatDto chatDto) {
+        log.info("난 컨슈머야 message={}", chatDto);
+        msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
     }
 }

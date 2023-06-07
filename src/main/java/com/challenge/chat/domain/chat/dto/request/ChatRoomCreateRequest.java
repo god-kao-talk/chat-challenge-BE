@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ChatRoomRequest {
+public class ChatRoomCreateRequest {
 	private String roomName;
 }
