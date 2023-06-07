@@ -7,7 +7,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Document(collection = "chatroom")
 @Getter
@@ -18,7 +17,6 @@ public class ChatRoom {
 
 	private String roomId;
 	private String roomName;
-
 
 	@CreatedDate
 	private Instant createdAt;

@@ -1,6 +1,5 @@
 package com.challenge.chat.domain.chat.entity;
 
-import com.challenge.chat.domain.member.entity.Member;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +13,10 @@ public class MemberChatRoom {
 	private String id;
 
 	private String roomId;
-	private String memberId;
+	private String memberEmail;
 
-	public MemberChatRoom(ChatRoom room, Member member) {
-		this.roomId = room.getRoomId();
-		this.memberId = member.getEmail();
+	public MemberChatRoom(String roomId, String email) {
+		this.roomId = roomId;
+		this.memberEmail = email;
 	}
 }
