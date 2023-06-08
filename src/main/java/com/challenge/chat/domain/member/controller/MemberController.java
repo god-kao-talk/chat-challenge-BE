@@ -1,5 +1,7 @@
 package com.challenge.chat.domain.member.controller;
 
+import com.challenge.chat.domain.chat.dto.ChatDto;
+import com.challenge.chat.domain.member.dto.FriendDto;
 import com.challenge.chat.domain.member.dto.MemberDto;
 import com.challenge.chat.domain.member.dto.SignupDto;
 import com.challenge.chat.domain.member.service.MemberService;
@@ -52,5 +54,17 @@ public class MemberController {
     public ResponseEntity<String> signup(@RequestBody @Valid SignupDto signupDto) {
         memberService.signup(signupDto);
         return ResponseEntity.status(HttpStatus.OK).body("회원가입 성공");
+    }
+
+    @PostMapping("/users/friend")
+    public ResponseEntity<String> addFriend(@AuthenticationPrincipal User user, @RequestBody @Valid FriendDto friendDto) {
+        memberService.addFriend(user,friendDto);
+        return ResponseEntity.status(HttpStatus.OK).body("친구추가 성공");
+    }
+
+
+    @GetMapping("/users/friend")
+    public ResponseEntity<List<FriendDto>> getFreindList(@AuthenticationPrincipal User user) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.searchFriendList(user.getUsername()));
     }
 }
