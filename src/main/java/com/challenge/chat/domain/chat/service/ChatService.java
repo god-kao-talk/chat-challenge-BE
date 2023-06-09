@@ -92,11 +92,11 @@ public class ChatService {
 		// socket session에 사용자의 정보 저장
 		try {
 			Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("email", chatDto.getEmail());
+			headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
+			headerAccessor.getSessionAttributes().put("nickname", chatDto.getNickname());
 		} catch (Exception e) {
 			throw new RestApiException(ChatErrorCode.SOCKET_CONNECTION_ERROR);
 		}
-		headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
-		headerAccessor.getSessionAttributes().put("nickname", chatDto.getNickname());
 
 		chatDto.setMessage(chatDto.getNickname() + "님 입장!! ο(=•ω＜=)ρ⌒☆");
 
