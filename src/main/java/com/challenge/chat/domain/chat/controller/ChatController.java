@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class ChatController {
 
 	private final ChatService chatService;
 	private final Producer producer;
+	private final SimpMessagingTemplate msgOperation;
 
 	@PostMapping("/chat")
 	public ResponseEntity<ChatRoomDto> createChatRoom(
@@ -78,10 +80,12 @@ public class ChatController {
 		SimpMessageHeaderAccessor headerAccessor) {
 
 		log.info("Controller : 채팅방 입장");
+		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
+		// producer.send(
+		// 	KafkaConstants.KAFKA_TOPIC, newchatDto
+		// 	);
 
-		producer.send(
-			KafkaConstants.KAFKA_TOPIC,
-			chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor));
+		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatDto);
 	}
 
 	@MessageMapping("/chat/send")
@@ -90,11 +94,13 @@ public class ChatController {
 
 		log.info("Controller : 채팅 보내기 - {}", chatDto.getMessage());
 
+		// producer.send(
+		// 	KafkaConstants.KAFKA_TOPIC,
+		// 	chatDto
+		// );
+
+		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
 		chatService.sendChatRoom(chatDto);
-		producer.send(
-			KafkaConstants.KAFKA_TOPIC,
-			chatDto
-		);
 	}
 
 	// @EventListener
