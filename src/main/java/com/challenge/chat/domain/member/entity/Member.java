@@ -1,6 +1,5 @@
 package com.challenge.chat.domain.member.entity;
 
-import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 import jakarta.persistence.*;
@@ -10,8 +9,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
 
 @Document(collection = "member")
 @Getter

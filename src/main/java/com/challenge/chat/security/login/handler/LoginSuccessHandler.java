@@ -32,11 +32,11 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken); // 응답 헤더에 AccessToken, RefreshToken 실어서 응답
 
-		memberRepository.findByEmail(email)
-			.ifPresent(user -> {
-				user.updateRefreshToken(refreshToken);
-				memberRepository.save(user);
-			});
+		// memberRepository.findByEmail(email)
+		// 	.ifPresent(user -> {
+		// 		user.updateRefreshToken(refreshToken);
+		// 		memberRepository.save(user);
+		// 	});
 		log.info("로그인에 성공하였습니다. 이메일 : {}", email);
 		log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
 		log.info("로그인에 성공하였습니다. RefreshToken : {}", refreshToken);
