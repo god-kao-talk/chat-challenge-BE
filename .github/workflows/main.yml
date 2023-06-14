@@ -67,7 +67,7 @@ jobs:
         run: docker push $DOCKER_USERNAME/$DOCKER_IMAGE
 
       - name: AWS 접속 및 Docker 실행
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
