@@ -1,12 +1,13 @@
 package com.challenge.chat.domain.chat.entity;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+
+import javax.persistence.Id;
 
 @Document(collection = "chatroom")
 @Getter
