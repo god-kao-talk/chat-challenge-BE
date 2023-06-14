@@ -3,7 +3,7 @@ name: Build and Deploy Spring Boot to AWS EC2
 # main 브랜치에 푸쉬 했을때
 on:
   push:
-    branches: [ dev ]
+    branches: [ cassandra ]
 
 # 해당 코드에서 사용될 변수 설정
 env:
@@ -11,8 +11,10 @@ env:
   BUCKET_NAME: chatchallengebucket
   CODE_DEPLOY_APP_NAME: codeDeploy-test
   DEPLOYMENT_GROUP_NAME: codeDeploy-group
-#  DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-#  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  DOCKER_IMAGE: chat
+  DOCKER_CONTAINER: chatservice
 
 permissions: write-all
 
@@ -23,10 +25,10 @@ jobs:
       - name: main 브랜치로 이동
         uses: actions/checkout@v3
 
-      - name: JDK 17 설치
+      - name: JDK 11 setup
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'temurin'
 
       - name: Jasypt 키 주입
@@ -34,21 +36,11 @@ jobs:
           echo ${{secrets.JASYPT}} | base64 --decode >> ./src/main/resources/application-common.yml
           echo ${{secrets.JASYPT}} | base64 --decode >> ./src/test/resources/application-common.yml
           
-#      - name: Docker 계정 환경변수로 등록하기
-#        run: |
-#          export $DOCKER_USERNAME
-#          export $DOCKER_PASSWORD
-          
       - name: gradlew에 실행 권한 부여
         run: chmod +x ./gradlew
         
       - name: 프로젝트 빌드
         run: ./gradlew clean build
-        
-      # 프로젝트 압축
-      - name: Make zip file
-        run: zip -r ./chatchallenge.zip .
-        shell: bash
 
       - name: 테스트 결과를 PR에 코멘트로 등록합니다
         uses: EnricoMi/publish-unit-test-result-action@v1
@@ -61,19 +53,35 @@ jobs:
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-        
-      # AWS 권한 확인
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+
+      - name: Docker Login
+        uses: docker/login-action@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          
-          # 압축한 프로젝트를 S3로 전송
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./chatchallenge.zip s3://chatchallengebucket/chatchallenge.zip 
-        
-      # Send application to deployment group
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=chatchallenge.zip
+          username: $DOCKER_USERNAME
+          password: $DOCKER_PASSWORD
+
+      - name: Docker Image Build
+        run: docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE .
+
+      - name: Docker Push
+        run: docker push $DOCKER_USERNAME/$DOCKER_IMAGE
+
+      - name: AWS 접속 및 Docker 실행
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+
+          script: |
+            sudo docker kill $DOCKER_CONTAINER
+            sudo docker rm -f $DOCKER_CONTAINER
+            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKER_IMAGE
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKER_IMAGE
+            
+            sudo docker run -i -t \
+            -p ${{ secrets.PORT }} \
+            --name chat \
+            --add-host host.docker.internal:host-gateway
+            -d ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKER_IMAGE
+
