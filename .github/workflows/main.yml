@@ -84,4 +84,3 @@ jobs:
             --name chat \
             --add-host host.docker.internal:host-gateway
             -d ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKER_IMAGE
-
