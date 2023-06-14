@@ -11,8 +11,8 @@ env:
   BUCKET_NAME: chatchallengebucket
   CODE_DEPLOY_APP_NAME: codeDeploy-test
   DEPLOYMENT_GROUP_NAME: codeDeploy-group
-  DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_IMAGE: chat
   DOCKER_CONTAINER: chatservice
 
@@ -33,8 +33,8 @@ jobs:
 
       - name: Jasypt 키 주입
         run: |
-          echo ${{secrets.JASYPT}} | base64 --decode >> ./src/main/resources/application-common.yml
-          echo ${{secrets.JASYPT}} | base64 --decode >> ./src/test/resources/application-common.yml
+          echo ${{ secrets.JASYPT }} | base64 --decode >> ./src/main/resources/application-common.yml
+          echo ${{ secrets.JASYPT }} | base64 --decode >> ./src/test/resources/application-common.yml
           
       - name: gradlew에 실행 권한 부여
         run: chmod +x ./gradlew
@@ -57,8 +57,8 @@ jobs:
       - name: Docker Login
         uses: docker/login-action@v2
         with:
-          username: $DOCKER_USERNAME
-          password: $DOCKER_PASSWORD
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Image Build
         run: docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE .
