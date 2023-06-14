@@ -1,8 +1,7 @@
 package com.challenge.chat.domain.member.dto;
 
-import com.challenge.chat.domain.member.entity.Member;
+import javax.validation.constraints.NotBlank;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

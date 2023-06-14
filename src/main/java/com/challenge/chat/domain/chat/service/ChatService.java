@@ -83,7 +83,7 @@ public class ChatService {
 			.stream()
 			.sorted(Comparator.comparing(Chat::getCreatedAt))
 			.map(ChatDto::from)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public ChatDto makeEnterMessageAndSetSessionAttribute(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
@@ -103,6 +103,7 @@ public class ChatService {
 		return chatDto;
 	}
 
+	@Transactional
 	public void sendChatRoom(ChatDto chatDto) {
 		log.info("Service : 채팅 보내기 - {}", chatDto.getMessage());
 
@@ -142,6 +143,7 @@ public class ChatService {
 			return null;
 		}
 		return memberChatRoomList.stream()
-			.map(MemberChatRoom::getRoomId).toList();
+			.map(MemberChatRoom::getRoomId)
+			.collect(Collectors.toList());
 	}
 }

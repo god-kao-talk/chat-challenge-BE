@@ -3,6 +3,9 @@ package com.challenge.chat.security.jwt.service;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +15,6 @@ import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.MemberErrorCode;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
