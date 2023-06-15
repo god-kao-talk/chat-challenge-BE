@@ -50,10 +50,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Image Build
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
+        run: docker build -t ${{ secrets.DOCKER_IMAGE }} .
 
       - name: Docker Push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+        run: docker push ${{ secrets.DOCKER_IMAGE }}
 
       - name: AWS 접속 및 Docker 실행
         uses: appleboy/ssh-action@v0.1.10
@@ -65,7 +65,7 @@ jobs:
           script: |
             docker kill ${{ secrets.DOCKER_CONTAINER }}
             docker rm -f ${{ secrets.DOCKER_CONTAINER }}
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            docker rmi ${{ secrets.DOCKER_IMAGE }}
+            docker pull ${{ secrets.DOCKER_IMAGE }}
             
-            docker run -d -p ${{ secrets.PORT }} --name chat --add-host host.docker.internal:host-gateway -e JASYPT_PASSWORD=${{ secrets.DOCKER_RUN_ENV_JASYPT }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            docker run -d -p ${{ secrets.PORT }} --name chat --add-host host.docker.internal:host-gateway -e JASYPT_PASSWORD=${{ secrets.DOCKER_RUN_ENV_JASYPT }} ${{ secrets.DOCKER_IMAGE }}
