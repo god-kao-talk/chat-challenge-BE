@@ -68,10 +68,4 @@ jobs:
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
             
-            docker run -i -t \
-            -p ${{ secrets.PORT }} \
-            --name chat \
-            --add-host host.docker.internal:host-gateway \
-            -e JASYPT_PASSWORD=${{ secrets.DOCKER_RUN_ENV_JASYPT }} \ 
-            -d \
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            docker run -d -p ${{ secrets.PORT }} --name chat --add-host host.docker.internal:host-gateway -e JASYPT_PASSWORD=${{ secrets.DOCKER_RUN_ENV_JASYPT }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
