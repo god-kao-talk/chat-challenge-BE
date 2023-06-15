@@ -41,7 +41,7 @@ public class ChatController {
 		log.info("Controller : 채팅방 생성, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.makeChatRoom(ChatRoomDto.from(request), user.getUsername()));
+			.body(chatService.makeChatRoom(request.getRoomName(), user.getUsername()));
 	}
 
 	@PostMapping("/chat/room")
@@ -52,7 +52,7 @@ public class ChatController {
 		log.info("Controller : 채팅방 추가, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.registerChatRoom(ChatRoomDto.from(request), user.getUsername()));
+			.body(chatService.registerChatRoom(request.getRoomId(), user.getUsername()));
 	}
 
 	@GetMapping("/chat/room")

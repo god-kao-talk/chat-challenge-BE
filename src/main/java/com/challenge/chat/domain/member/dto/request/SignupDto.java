@@ -1,4 +1,4 @@
-package com.challenge.chat.domain.member.dto;
+package com.challenge.chat.domain.member.dto.request;
 
 import javax.validation.constraints.NotBlank;
 

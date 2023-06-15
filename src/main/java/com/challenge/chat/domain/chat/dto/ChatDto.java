@@ -1,11 +1,10 @@
 package com.challenge.chat.domain.chat.dto;
 
 import com.challenge.chat.domain.chat.entity.Chat;
-import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,36 +18,16 @@ public class ChatDto {
 	private String email;
 	private String roomId;
 	private String message;
-	private Instant createdAt;
+	private LocalDateTime createdAt;
 
 	public static ChatDto from(Chat chat) {
 		return new ChatDto(
 			chat.getType(),
-			chat.getSender(),
-			chat.getUserId(),
-			chat.getRoomId(),
+			chat.getMember().getNickname(),
+			chat.getMember().getEmail(),
+			chat.getRoom().getRoomId(),
 			chat.getMessage(),
 			chat.getCreatedAt()
-		);
-	}
-
-	public static Chat toEntity(ChatDto chatDto) {
-		return Chat.of(
-			chatDto.getType(),
-			chatDto.getNickname(),
-			chatDto.getEmail(),
-			chatDto.getRoomId(),
-			chatDto.getMessage()
-		);
-	}
-
-	public static ChatES toElasticEntity(ChatDto chatDto) {
-		return ChatES.of(
-			chatDto.getType(),
-			chatDto.getNickname(),
-			chatDto.getEmail(),
-			chatDto.getRoomId(),
-			chatDto.getMessage()
 		);
 	}
 }

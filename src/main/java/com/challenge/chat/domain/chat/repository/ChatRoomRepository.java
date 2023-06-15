@@ -1,11 +1,12 @@
 package com.challenge.chat.domain.chat.repository;
 
-import com.challenge.chat.domain.chat.entity.ChatRoom;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
 import java.util.Optional;
-public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
+
+import com.challenge.chat.domain.chat.entity.ChatRoom;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
 	Optional<ChatRoom> findByRoomId(String roomId);
-
 }
