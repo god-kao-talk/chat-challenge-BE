@@ -21,11 +21,11 @@ repositories {
 
 jib {
     from {
-        image = 'openjdk:17.0.1-jdk-slim'
+        image = 'openjdk:11.0.11-jre-slim'
     }
     to {
         image = 'chat-challenge'
-        tags = ['0.4']
+        tags = ['0.5']
     }
     container {
         mainClass = 'com.challenge.chat.ChatApplication'
@@ -72,6 +72,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-core'
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Elasticsearch
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 }
 
 tasks.named('test') {
