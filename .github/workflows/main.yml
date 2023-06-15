@@ -72,4 +72,5 @@ jobs:
             -p ${{ secrets.PORT }} \
             --name chat \
             --add-host host.docker.internal:host-gateway \
+            -e ${{ DOCKER_RUN_ENV_JASYPT }} \ 
             -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
