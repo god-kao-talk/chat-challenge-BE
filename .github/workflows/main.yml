@@ -73,4 +73,5 @@ jobs:
             --name chat \
             --add-host host.docker.internal:host-gateway \
             -e JASYPT_PASSWORD=${{ secrets.DOCKER_RUN_ENV_JASYPT }} \ 
-            -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            -d \
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
