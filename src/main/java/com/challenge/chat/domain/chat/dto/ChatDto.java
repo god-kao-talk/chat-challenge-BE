@@ -1,6 +1,7 @@
 package com.challenge.chat.domain.chat.dto;
 
 import com.challenge.chat.domain.chat.entity.Chat;
+import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import lombok.*;
 
@@ -33,6 +34,16 @@ public class ChatDto {
 
 	public static Chat toEntity(ChatDto chatDto) {
 		return Chat.of(
+			chatDto.getType(),
+			chatDto.getNickname(),
+			chatDto.getEmail(),
+			chatDto.getRoomId(),
+			chatDto.getMessage()
+		);
+	}
+
+	public static ChatES toElasticEntity(ChatDto chatDto) {
+		return ChatES.of(
 			chatDto.getType(),
 			chatDto.getNickname(),
 			chatDto.getEmail(),
