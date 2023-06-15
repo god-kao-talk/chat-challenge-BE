@@ -2,7 +2,7 @@ package com.challenge.chat.domain.member.service;
 
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.dto.MemberDto;
-import com.challenge.chat.domain.member.dto.SignupDto;
+import com.challenge.chat.domain.member.dto.request.SignupDto;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.entity.MemberFriend;
 import com.challenge.chat.domain.member.repository.MemberFriendRepository;
@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,11 +57,14 @@ public class MemberService {
     //     return MemberDto.from(findMemberById(userId));
     // }
     //
-    public void addFriend(final String memberEmail, final MemberDto memberDto) {
+    public void addFriend(final String memberEmail, final String friendEmail) {
         log.info("Service: 친구 추가");
 
-        if (memberFriendRepository.findByMemberEmailAndFriendEmail(memberEmail, memberDto.getEmail()).isEmpty()) {
-            memberFriendRepository.save(new MemberFriend(memberEmail, memberDto.getEmail()));
+        Member member = findMemberByEmail(memberEmail);
+        Member friend = findMemberByEmail(friendEmail);
+
+        if (memberFriendRepository.findByMemberAndFriend(member, friend).isEmpty()) {
+            memberFriendRepository.save(MemberFriend.of(member, friend));
         } else {
             throw new RestApiException(MemberErrorCode.DUPLICATED_MEMBER);
         }
@@ -73,18 +74,17 @@ public class MemberService {
     public List<MemberDto> searchFriendList(final String memberEmail) {
         log.info("Service: 친구 리스트 조회");
 
-        List<String> friendEmails = findFriendEmailList(memberEmail);
+        Member member = findMemberByEmail(memberEmail);
 
-        Query query = new Query(Criteria.where("email").in(friendEmails));
-        return mongoTemplate.find(query, Member.class)
+        return member.getFriendList()
             .stream()
-            .map(MemberDto::from)
+            .map(a -> MemberDto.from(a.getFriend()))
             .collect(Collectors.toList());
     }
 
     public void signup(final SignupDto signupDto) {
 
-        if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
+        if (findMemberByEmail(signupDto.getEmail()) != null) {
             throw new RestApiException(MemberErrorCode.DUPLICATED_EMAIL);
         }
 
@@ -98,23 +98,8 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public List<String> findFriendEmailList(final String email) {
-        List<MemberFriend> friendList = memberFriendRepository.findByMemberEmail(email).orElse(null);
-        if (friendList == null) {
-            return null;
-        }
-        return friendList.stream()
-            .map(MemberFriend::getFriendEmail)
-            .collect(Collectors.toList());
-    }
-
     public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
-            () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
-    }
-
-    public Member findMemberById(String userId) {
-        return memberRepository.findById(userId).orElseThrow(
             () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

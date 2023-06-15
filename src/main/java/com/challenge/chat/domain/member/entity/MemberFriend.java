@@ -1,25 +1,39 @@
 package com.challenge.chat.domain.member.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "memberfriend")
+@Entity
 @Getter
 @NoArgsConstructor
-
 public class MemberFriend {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String memberEmail;
-    private String friendEmail;
+    @ManyToOne
+    @JoinColumn(name = "MEMBER_ID")
+    private Member member;
 
-    public MemberFriend(String memberEmail, String friendEmail) {
-        this.memberEmail = memberEmail;
-        this.friendEmail = friendEmail;
+    @ManyToOne
+    @JoinColumn(name = "FRIEND_ID")
+    private Member friend;
+
+    private MemberFriend(Member member, Member friend) {
+        this.member = member;
+        this.friend = friend;
+        // member.getFriendList().add(this);
+    }
+
+    public static MemberFriend of(Member member, Member friend) {
+        return new MemberFriend(member, friend);
     }
 }

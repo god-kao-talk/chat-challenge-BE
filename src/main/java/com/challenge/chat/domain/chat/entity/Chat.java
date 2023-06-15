@@ -2,42 +2,48 @@ package com.challenge.chat.domain.chat.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
-
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.challenge.chat.domain.member.entity.Member;
+import com.challenge.chat.global.TimeStamped;
 
 @Getter
-@Document(collection = "chat")
+@Entity
 @NoArgsConstructor
-public class Chat {
+public class Chat extends TimeStamped {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
+	@Enumerated(EnumType.STRING)
 	private MessageType type;
 
-	private String sender;
+	@ManyToOne
+	@JoinColumn(name = "MEMBER_ID")
+	private Member member;
 
-	private String userId;
-
-	private String roomId;
+	@ManyToOne
+	@JoinColumn(name = "ROOM_ID")
+	private ChatRoom room;
 
 	private String message;
 
-	@CreatedDate
-	private Instant createdAt;
-
-	private Chat(MessageType type, String sender, String userId, String roomId, String message) {
+	private Chat(MessageType type, Member member, ChatRoom chatRoom, String message) {
 		this.type = type;
-		this.sender = sender;
-		this.userId = userId;
-		this.roomId = roomId;
+		this.member = member;
+		this.room = chatRoom;
 		this.message = message;
 	}
 
-	public static Chat of(MessageType type, String sender, String userId, String roomId, String message) {
-		return new Chat(type, sender, userId, roomId, message);
+	public static Chat of(MessageType type, Member member, ChatRoom chatRoom, String message) {
+		return new Chat(type, member, chatRoom, message);
 	}
 }
