@@ -4,7 +4,6 @@ import com.challenge.chat.domain.member.dto.MemberDto;
 import com.challenge.chat.domain.member.dto.SignupDto;
 import com.challenge.chat.domain.member.service.MemberService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import javax.validation.Valid;
 
 @RestController
 @Slf4j

@@ -16,6 +16,7 @@ jwt:
 logging:
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.springframework.data.elasticsearch.client.WIRE: TRACE
 
 cloud:
   aws:

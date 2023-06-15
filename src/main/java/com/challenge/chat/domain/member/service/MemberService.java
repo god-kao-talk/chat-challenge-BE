@@ -104,7 +104,8 @@ public class MemberService {
             return null;
         }
         return friendList.stream()
-            .map(MemberFriend::getFriendEmail).toList();
+            .map(MemberFriend::getFriendEmail)
+            .collect(Collectors.toList());
     }
 
     public Member findMemberByEmail(String email) {

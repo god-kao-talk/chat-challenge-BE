@@ -2,17 +2,29 @@ package com.challenge.chat.domain.chat.service;
 
 import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
+import com.challenge.chat.domain.chat.dto.response.ChatSearchResponse;
 import com.challenge.chat.domain.chat.entity.Chat;
+import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
 import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.ChatErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,7 +45,9 @@ public class ChatService {
 	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRepository chatRepository;
+	private final ChatSearchRepository chatSearchRepository;
 	private final MongoTemplate mongoTemplate;
+	private final ElasticsearchOperations elasticsearchOperations;
 
 	@Transactional
 	public ChatRoomDto makeChatRoom(final ChatRoomDto chatRoomDto, final String memberEmail) {
@@ -83,7 +97,7 @@ public class ChatService {
 			.stream()
 			.sorted(Comparator.comparing(Chat::getCreatedAt))
 			.map(ChatDto::from)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public ChatDto makeEnterMessageAndSetSessionAttribute(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
@@ -103,10 +117,34 @@ public class ChatService {
 		return chatDto;
 	}
 
+	@Transactional
 	public void sendChatRoom(ChatDto chatDto) {
 		log.info("Service : 채팅 보내기 - {}", chatDto.getMessage());
 
+		// MongoDB 저장
 		chatRepository.save(ChatDto.toEntity(chatDto));
+		// ElasticSearch 저장
+		chatSearchRepository.save(ChatDto.toElasticEntity(chatDto));
+	}
+
+	public List<ChatSearchResponse> findChatList(final String roomId, final String message, final Pageable pageable) {
+		log.info("Service: 채팅 검색하기 - message: {}, roomId: {}", message, roomId);
+
+		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+			.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
+			.must(QueryBuilders.matchQuery("roomId", roomId));
+
+		NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+			.withQuery(queryBuilder)
+			.withPageable(pageable)
+			.build();
+
+		SearchHits<ChatES> searchHits = elasticsearchOperations.search(searchQuery, ChatES.class);
+
+		return searchHits.stream()
+			.map(SearchHit::getContent)
+			.map(ChatSearchResponse::from)
+			.collect(Collectors.toList());
 	}
 
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {
@@ -142,6 +180,7 @@ public class ChatService {
 			return null;
 		}
 		return memberChatRoomList.stream()
-			.map(MemberChatRoom::getRoomId).toList();
+			.map(MemberChatRoom::getRoomId)
+			.collect(Collectors.toList());
 	}
 }

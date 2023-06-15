@@ -8,5 +8,24 @@ spring:
 
   data:
     mongodb:
-      uri: ENC(BoHKYlDnL9o0Vv/sb6Kn1KI0+eclffeWXvh3dB0v/NHhEAh46KydF4UBP/vU1Y2CuzaLkzMBz6ktjcFhzs3GC5Sv4LJhj/jMvqCdoAEgHWvC0XgAqqdeUmNqS7V5MEniGVEtp2enEoM=)
+      uri: ENC(2u0JlOLPDK4xLFjqT7eN/ZmrWw8DOL9izKVLasjABBjkg2Q2B+Ep2PYD4iJEGYhgTXPF3ZXIiRuk8mIBL4QXbz+4Pvj6L4KGYgCF3n7X1yv1DvELF+S6AmrStMIOPyNz10sdoVZE2zY=)
       auto-index-creation: true
+
+  application:
+    name: monitoring
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+
+  metrics:
+    tags:
+      application: ${spring.application.name}

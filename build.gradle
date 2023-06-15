@@ -1,13 +1,13 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.7'
+    id 'org.springframework.boot' version '2.7.12'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'com.google.cloud.tools.jib' version '3.2.0'
 }
 
 group = 'com.challenge'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '11'
 
 configurations {
     compileOnly {
@@ -21,11 +21,11 @@ repositories {
 
 jib {
     from {
-        image = 'openjdk:17.0.1-jdk-slim'
+        image = 'openjdk:11.0.11-jre-slim'
     }
     to {
         image = 'chat-challenge'
-        tags = ['0.4']
+        tags = ['0.5']
     }
     container {
         mainClass = 'com.challenge.chat.ChatApplication'
@@ -67,6 +67,14 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.apache.kafka:kafka-clients'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    //Prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-core'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Elasticsearch
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 }
 
 tasks.named('test') {
