@@ -5,17 +5,6 @@ on:
   push:
     branches: [ cassandra ]
 
-# 해당 코드에서 사용될 변수 설정
-env:
-  PROJECT_NAME: chatchallenge
-  BUCKET_NAME: chatchallengebucket
-  CODE_DEPLOY_APP_NAME: codeDeploy-test
-  DEPLOYMENT_GROUP_NAME: codeDeploy-group
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_IMAGE: chat
-  DOCKER_CONTAINER: chatservice
-
 permissions: write-all
 
 jobs:
@@ -61,10 +50,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Image Build
-        run: docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
 
       - name: Docker Push
-        run: docker push $DOCKER_USERNAME/$DOCKER_IMAGE
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
 
       - name: AWS 접속 및 Docker 실행
         uses: appleboy/ssh-action@v0.1.10
@@ -74,13 +63,13 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            sudo docker kill $DOCKER_CONTAINER
-            sudo docker rm -f $DOCKER_CONTAINER
-            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKER_IMAGE
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKER_IMAGE
+            docker kill ${{ secrets.DOCKER_CONTAINER }}
+            docker rm -f ${{ secrets.DOCKER_CONTAINER }}
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
             
-            sudo docker run -i -t \
+            docker run -i -t \
             -p ${{ secrets.PORT }} \
             --name chat \
-            --add-host host.docker.internal:host-gateway
-            -d ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKER_IMAGE
+            --add-host host.docker.internal:host-gateway \
+            -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
