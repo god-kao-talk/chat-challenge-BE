@@ -1,21 +1,21 @@
 package com.challenge.chat.domain.member.entity;
 
-import javax.persistence.Id;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "memberfriend")
+import org.springframework.data.cassandra.core.cql.Ordering;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
+import org.springframework.data.cassandra.core.mapping.Table;
+
+@Table(value = "member_friend")
 @Getter
 @NoArgsConstructor
-
 public class MemberFriend {
 
-    @Id
-    private String id;
-
+    @PrimaryKeyColumn(value = "email", type = PrimaryKeyType.PARTITIONED, ordinal = 0)
     private String memberEmail;
+    @PrimaryKeyColumn(name = "friend_email", type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING, ordinal = 1)
     private String friendEmail;
 
     public MemberFriend(String memberEmail, String friendEmail) {
