@@ -4,7 +4,7 @@ import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.request.ChatRoomAddRequest;
 import com.challenge.chat.domain.chat.dto.request.ChatRoomCreateRequest;
-import com.challenge.chat.domain.chat.dto.response.ChatSearchResponse;
+// import com.challenge.chat.domain.chat.dto.response.ChatSearchResponse;
 import com.challenge.chat.domain.chat.service.ChatService;
 import com.challenge.chat.domain.chat.service.Producer;
 
