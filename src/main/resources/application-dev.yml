@@ -7,9 +7,16 @@ spring:
       connection-timeout: 60000
 
   data:
-    mongodb:
-      uri: ENC(2u0JlOLPDK4xLFjqT7eN/ZmrWw8DOL9izKVLasjABBjkg2Q2B+Ep2PYD4iJEGYhgTXPF3ZXIiRuk8mIBL4QXbz+4Pvj6L4KGYgCF3n7X1yv1DvELF+S6AmrStMIOPyNz10sdoVZE2zY=)
-      auto-index-creation: true
+    cassandra:
+      contact-points:
+        - host.docker.internal:9042
+        - host.docker.internal:9043
+        - host.docker.internal:9044
+      keyspace-name: thiscode
+      schema-action: create_if_not_exists
+      #      username: cassandra
+      #      password: cassandra
+      local-datacenter: datacenter1
 
   application:
     name: monitoring
