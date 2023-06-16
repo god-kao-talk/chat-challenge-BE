@@ -11,10 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomDto {
-	private String roomId;
+	private String roomCode;
 	private String roomName;
 
 	public static ChatRoomDto from(ChatRoom chatRoom) {
-		return new ChatRoomDto(chatRoom.getRoomId(), chatRoom.getRoomName());
+		return new ChatRoomDto(chatRoom.getRoomCode(), chatRoom.getRoomName());
 	}
 }

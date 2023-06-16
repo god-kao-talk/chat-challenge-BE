@@ -22,9 +22,9 @@ public class ChatSearchResponse {
 	public static ChatSearchResponse from(ChatES chatES) {
 		return new ChatSearchResponse(
 			chatES.getType(),
-			chatES.getSender(),
-			chatES.getUserId(),
-			chatES.getRoomId(),
+			chatES.getNickname(),
+			chatES.getEmail(),
+			chatES.getRoomCode(),
 			chatES.getMessage(),
 			chatES.getCreatedAt()
 		);

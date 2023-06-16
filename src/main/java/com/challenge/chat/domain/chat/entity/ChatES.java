@@ -29,38 +29,38 @@ public class ChatES {
 
 	private MessageType type;
 
-	private String sender;
+	private String nickname;
 
-	private String userId;
+	private String email;
 
-	private String roomId;
+	private String roomCode;
 
 	private String message;
 
 	@Field(type = FieldType.Date, format = {DateFormat.date_hour_minute_second_millis, DateFormat.epoch_millis})
 	private Instant createdAt;
 
-	private ChatES(MessageType type, String sender, String userId, String roomId, String message) {
+	private ChatES(MessageType type, String nickname, String email, String roomCode, String message) {
 		this.type = type;
-		this.sender = sender;
-		this.userId = userId;
-		this.roomId = roomId;
+		this.nickname = nickname;
+		this.email = email;
+		this.roomCode = roomCode;
 		this.message = message;
 		this.createdAt = Instant.now();
 	}
 
-	public static ChatES of(MessageType type, String sender, String userId, String roomId, String message) {
-		return new ChatES(type, sender, userId, roomId, message);
+	public static ChatES of(MessageType type, String nickname, String email, String roomCode, String message) {
+		return new ChatES(type, nickname, email, roomCode, message);
 	}
 
 	@Builder
-	public ChatES(String id, MessageType type, String sender, String userId, String roomId, String message,
+	public ChatES(String id, MessageType type, String nickname, String email, String roomCode, String message,
 		Instant createdAt) {
 		this.id = id;
 		this.type = type;
-		this.sender = sender;
-		this.userId = userId;
-		this.roomId = roomId;
+		this.nickname = nickname;
+		this.email = email;
+		this.roomCode = roomCode;
 		this.message = message;
 		this.createdAt = createdAt;
 	}

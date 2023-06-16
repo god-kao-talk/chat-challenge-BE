@@ -14,7 +14,6 @@ import com.challenge.chat.exception.dto.MemberErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,42 +31,17 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberFriendRepository memberFriendRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MongoTemplate mongoTemplate;
 
-
-    // @Transactional(readOnly = true)
-    // public List<MemberDto> getMemberList() {
-    //     log.info("Service 멤버 리스트 조회");
-    //
-    //     return memberRepository.findAll()
-    //             .stream()
-    //             .map(MemberDto::from)
-    //             .collect(Collectors.toList());
-    // }
-
-    // @Transactional(readOnly = true)
-    // public MemberDto getMemberByEmail(String email) {
-    //     log.info("Service 멤버 단일 조회");
-    //     return MemberDto.from(findMemberByEmail(email));
-    // }
-
-    // @Transactional(readOnly = true)
-    // public MemberDto getMemberByUserId(String userId) {
-    //     log.info("Service 멤버 userId로 검색");
-    //     return MemberDto.from(findMemberById(userId));
-    // }
-    //
     public void addFriend(final String memberEmail, final String friendEmail) {
         log.info("Service: 친구 추가");
 
         Member member = findMemberByEmail(memberEmail);
         Member friend = findMemberByEmail(friendEmail);
 
-        if (memberFriendRepository.findByMemberAndFriend(member, friend).isEmpty()) {
-            memberFriendRepository.save(MemberFriend.of(member, friend));
-        } else {
-            throw new RestApiException(MemberErrorCode.DUPLICATED_MEMBER);
+        if (memberFriendRepository.findByMemberAndFriend(member, friend).isPresent()) {
+            throw new RestApiException(MemberErrorCode.ADDED_FRIEND);
         }
+        memberFriendRepository.save(MemberFriend.of(member, friend));
     }
 
     @Transactional(readOnly = true)
@@ -84,7 +58,7 @@ public class MemberService {
 
     public void signup(final SignupDto signupDto) {
 
-        if (findMemberByEmail(signupDto.getEmail()) != null) {
+        if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
             throw new RestApiException(MemberErrorCode.DUPLICATED_EMAIL);
         }
 

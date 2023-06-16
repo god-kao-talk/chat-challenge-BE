@@ -5,12 +5,17 @@ spring:
   datasource:
     hikari:
       connection-timeout: 60000
-
-  data:
-    mongodb:
-      uri: ENC(2u0JlOLPDK4xLFjqT7eN/ZmrWw8DOL9izKVLasjABBjkg2Q2B+Ep2PYD4iJEGYhgTXPF3ZXIiRuk8mIBL4QXbz+4Pvj6L4KGYgCF3n7X1yv1DvELF+S6AmrStMIOPyNz10sdoVZE2zY=)
-      auto-index-creation: true
-
+    url: ENC(AtbAmjmXqguvVjtmxT14rzHAGZXtPCNJJ/VUUG7ajPBIGeY/tCv9Dht1wHSnTu4xRD1qFg0jI2J3+4Kky0ZeXYY7CmzGw8RI9/VJuDR4vReoyTkWgVtqEVbd0v2EJNiQRbK+XW1vy3hdZ3wluhgFU7SZZCsAjwM+u2v5S76msntjxsDpjHU7qdrShxqjX3H67+0X59IZjqjr6HPMRjFYhQ==)
+    username: ENC(nZEFzHuwF4wasrpbc2TcJQ==)
+    password: ENC(mJyIfhz6z46U9Q4Exy4LQamYMyEBiJiG)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        hbm2ddl:
+          auto: update
   application:
     name: monitoring
 
