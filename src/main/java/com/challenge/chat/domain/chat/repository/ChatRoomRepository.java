@@ -1,13 +1,11 @@
 package com.challenge.chat.domain.chat.repository;
 
 import com.challenge.chat.domain.chat.entity.ChatRoom;
-import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface ChatRoomRepository extends CassandraRepository<ChatRoom, String> {
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
-	Optional<ChatRoom> findByRoomId(String roomId);
-	List<ChatRoom> findByRoomIdIn(List<String> roomIds);
+	Optional<ChatRoom> findByRoomCode(String roomCode);
 }

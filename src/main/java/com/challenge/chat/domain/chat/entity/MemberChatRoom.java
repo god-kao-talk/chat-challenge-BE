@@ -1,30 +1,42 @@
 package com.challenge.chat.domain.chat.entity;
 
-import java.util.UUID;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-import org.springframework.data.cassandra.core.cql.Ordering;
-import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
-import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
-import org.springframework.data.cassandra.core.mapping.Table;
+import com.challenge.chat.domain.member.entity.Member;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-@Table(value = "member_chat_room")
+@Entity
 @Getter
 @NoArgsConstructor
 public class MemberChatRoom {
-	@PrimaryKeyColumn(value = "member_email", type = PrimaryKeyType.PARTITIONED, ordinal = 0)
-	private String memberEmail;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	@PrimaryKeyColumn(name = "room_id", type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING, ordinal = 1)
-	private String roomId;
+	@ManyToOne
+	@JoinColumn(name = "ROOM_ID")
+	private ChatRoom room;
 
-	public MemberChatRoom(String roomId, String email) {
-		this.roomId = roomId;
-		this.memberEmail = email;
+	@ManyToOne
+	@JoinColumn(name = "MEMBER_ID")
+	private Member member;
+
+	private MemberChatRoom(ChatRoom room, Member member) {
+		this.room = room;
+		this.member = member;
+		// room.getMemberList().add(this);
+		// member.getRoomList().add(this);
+	}
+
+	public static MemberChatRoom of(ChatRoom room, Member member) {
+		return new MemberChatRoom(room, member);
 	}
 }

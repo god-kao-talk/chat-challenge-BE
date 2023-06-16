@@ -2,42 +2,41 @@ package com.challenge.chat.domain.chat.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.cassandra.core.cql.Ordering;
-import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
-import org.springframework.data.cassandra.core.mapping.Column;
-import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
-import org.springframework.data.cassandra.core.mapping.Table;
 
-import java.time.Instant;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
-@Table(value = "chat_room")
+@Entity
 @Getter
 @NoArgsConstructor
-public class ChatRoom {
-	@PrimaryKeyColumn(value = "room_id", type = PrimaryKeyType.PARTITIONED, ordinal = 0)
-	private String roomId;
+public class ChatRoom extends TimeStamped {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ROOM_ID")
+	private Long id;
 
-	@PrimaryKeyColumn(name = "create_at", type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING, ordinal = 1)
-	private Instant createdAt;
+	private String roomCode;
 
-	@Column
+	@Column(nullable = false)
 	private String roomName;
 
-	@Column
-	private Set<String> memberEmailList;
+	@OneToMany(mappedBy = "room", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<MemberChatRoom> memberList;
 
-	private ChatRoom(String roomId, String roomName) {
-		this.createdAt = Instant.now();
-		this.roomId = roomId;
+	private ChatRoom(String roomName) {
+		this.roomCode = UUID.randomUUID().toString();
 		this.roomName = roomName;
 	}
 
-	public static ChatRoom of(String roomId, String roomName) {
-		return new ChatRoom(roomId, roomName);
+	public static ChatRoom of(String roomName) {
+		return new ChatRoom(roomName);
 	}
 }

@@ -1,4 +1,4 @@
-package com.challenge.chat.domain.member.dto;
+package com.challenge.chat.domain.member.dto.request;
 
 import javax.validation.constraints.NotBlank;
 
@@ -16,5 +16,4 @@ public class SignupDto {
 
 	@NotBlank(message = "Nickname은 필수 값입니다.")
 	private String nickname;
-
 }

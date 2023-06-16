@@ -17,7 +17,7 @@ public class ChatDto {
 	private MessageType type;
 	private String nickname;
 	private String email;
-	private String roomId;
+	private String roomCode;
 	private String message;
 	private Instant createdAt;
 
@@ -37,18 +37,8 @@ public class ChatDto {
 			chatDto.getType(),
 			chatDto.getNickname(),
 			chatDto.getEmail(),
-			chatDto.getRoomId(),
+			chatDto.getRoomCode(),
 			chatDto.getMessage()
 		);
 	}
-
-	// public static ChatES toElasticEntity(ChatDto chatDto) {
-	// 	return ChatES.of(
-	// 		chatDto.getType(),
-	// 		chatDto.getNickname(),
-	// 		chatDto.getEmail(),
-	// 		chatDto.getRoomId(),
-	// 		chatDto.getMessage()
-	// 	);
-	// }
 }

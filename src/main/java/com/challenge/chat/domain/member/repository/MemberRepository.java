@@ -2,16 +2,13 @@ package com.challenge.chat.domain.member.repository;
 
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
-import org.springframework.data.cassandra.repository.CassandraRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface MemberRepository extends CassandraRepository<Member, String> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findByEmail(String email);
-
-	Optional<Member> findByNickname(String nickname);
 
 	Optional<Member> findByRefreshToken(String refreshToken);
 
@@ -22,5 +19,4 @@ public interface MemberRepository extends CassandraRepository<Member, String> {
 	 * 따라서 추가 정보를 입력받아 회원 가입을 진행할 때 소셜 타입, 식별자로 해당 회원을 찾기 위한 메소드
 	 */
 	Optional<Member> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
-
 }

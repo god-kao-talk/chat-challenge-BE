@@ -1,7 +1,8 @@
 package com.challenge.chat.domain.member.controller;
 
 import com.challenge.chat.domain.member.dto.MemberDto;
-import com.challenge.chat.domain.member.dto.SignupDto;
+import com.challenge.chat.domain.member.dto.request.MemberAddRequest;
+import com.challenge.chat.domain.member.dto.request.SignupDto;
 import com.challenge.chat.domain.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,27 +28,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    // @GetMapping("/users")
-    // public ResponseEntity<List<MemberDto>> getMemberList() {
-    //     log.info("Controller 멤버 리스트 조회");
-    //     return ResponseEntity.status(HttpStatus.OK)
-    //         .body(memberService.getMemberList());
-    // }
-
-    // @GetMapping("/users/myinfo")
-    // public ResponseEntity<MemberDto> getMemberByEmail(@AuthenticationPrincipal User user) {
-    //     log.info("Controller 멤버 단일 조회");
-    //     return ResponseEntity.status(HttpStatus.OK)
-    //         .body(memberService.getMemberByEmail(user.getUsername()));
-    // }
-
-    // @GetMapping("/users/{userId}")
-    // public ResponseEntity<MemberDto> getMemberByUserId(@PathVariable String userId) {
-    //     log.info("Controller 멤버 userId로 검색");
-    //     return ResponseEntity.status(HttpStatus.OK)
-    //         .body(memberService.getMemberByUserId(userId));
-    // }
-
     @PostMapping("/users/signup")
     public ResponseEntity<String> signup(@RequestBody @Valid final SignupDto signupDto) {
         memberService.signup(signupDto);
@@ -57,11 +37,10 @@ public class MemberController {
     @PostMapping("/users/friend")
     public ResponseEntity<String> addFriend(
         @AuthenticationPrincipal final User user,
-        @RequestBody @Valid final MemberDto memberDto) {
-        memberService.addFriend(user.getUsername(), memberDto);
+        @RequestBody @Valid final MemberAddRequest memberAddRequest) {
+        memberService.addFriend(user.getUsername(), memberAddRequest.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body("친구추가 성공");
     }
-
 
     @GetMapping("/users/friend")
     public ResponseEntity<List<MemberDto>> getFriendList(@AuthenticationPrincipal final User user) {
