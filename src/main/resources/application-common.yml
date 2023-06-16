@@ -15,16 +15,4 @@ jwt:
 
 logging:
   level:
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     org.springframework.data.elasticsearch.client.WIRE: TRACE
-
-cloud:
-  aws:
-    s3:
-      bucket: chatchallengebucket
-    stack.auto: false
-    region.static: ENC(0bq5sPO9vq8ID5qNhZiAJw1Kllk8pwUn)
-    credentials:
-      accessKey: ENC(DlgOorwSMoUWRgJVRCLT5bMjNYRFF63S3ZSnOEghuU0=)
-      secretKey: ENC(CMos8FOe37EVh8yf5UYKcSH7zuDzlNCd8gt69yogP8SrBogWqOg0/+vNbJW14Rsw4iyeZxpsjoA=)
-
