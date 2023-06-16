@@ -87,7 +87,7 @@ public class ChatController {
 		// 	KafkaConstants.KAFKA_TOPIC, newchatDto
 		// 	);
 
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), newchatDto);
 	}
 
 	@MessageMapping("/chat/send")
@@ -100,9 +100,8 @@ public class ChatController {
 		// 	KafkaConstants.KAFKA_TOPIC,
 		// 	chatDto
 		// );
-
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
 		chatService.sendChatRoom(chatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
 	}
 
 	@GetMapping("/chat/{room-id}/{message}")
