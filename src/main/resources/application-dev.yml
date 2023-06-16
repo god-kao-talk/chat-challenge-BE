@@ -5,6 +5,17 @@ spring:
   datasource:
     hikari:
       connection-timeout: 60000
+    url: ENC(AtbAmjmXqguvVjtmxT14rzHAGZXtPCNJJ/VUUG7ajPBIGeY/tCv9Dht1wHSnTu4xRD1qFg0jI2J3+4Kky0ZeXYY7CmzGw8RI9/VJuDR4vReoyTkWgVtqEVbd0v2EJNiQRbK+XW1vy3hdZ3wluhgFU7SZZCsAjwM+u2v5S76msntjxsDpjHU7qdrShxqjX3H67+0X59IZjqjr6HPMRjFYhQ==)
+    username: ENC(nZEFzHuwF4wasrpbc2TcJQ==)
+    password: ENC(mJyIfhz6z46U9Q4Exy4LQamYMyEBiJiG)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        hbm2ddl:
+          auto: update
 
   data:
     cassandra:
