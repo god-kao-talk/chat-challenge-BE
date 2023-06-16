@@ -10,31 +10,33 @@ import com.challenge.chat.domain.member.repository.MemberRepository;
 
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.MemberErrorCode;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.querybuilder.BindMarker;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
+
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberFriendRepository memberFriendRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MongoTemplate mongoTemplate;
+    private final CassandraTemplate cassandraTemplate;
 
 
     // @Transactional(readOnly = true)
@@ -69,14 +71,17 @@ public class MemberService {
         }
     }
 
-    @Transactional(readOnly = true)
     public List<MemberDto> searchFriendList(final String memberEmail) {
         log.info("Service: 친구 리스트 조회");
 
         List<String> friendEmails = findFriendEmailList(memberEmail);
 
-        Query query = new Query(Criteria.where("email").in(friendEmails));
-        return mongoTemplate.find(query, Member.class)
+        Select selectQuery = QueryBuilder.selectFrom(CqlIdentifier.fromCql("member"))
+            .all()
+            .whereColumn(CqlIdentifier.fromCql("email"))
+            .in((BindMarker)friendEmails);
+        String cql = selectQuery.build().getQuery();
+        return cassandraTemplate.select(cql, Member.class)
             .stream()
             .map(MemberDto::from)
             .collect(Collectors.toList());
@@ -93,6 +98,7 @@ public class MemberService {
             .password(passwordEncoder.encode(signupDto.getPassword()))
             .nickname(signupDto.getNickname())
             .role(MemberRole.USER)
+            .createdAt(Instant.now())
             .build();
 
         memberRepository.save(member);

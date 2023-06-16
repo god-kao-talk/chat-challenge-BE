@@ -17,6 +17,8 @@ import com.challenge.chat.exception.dto.ChatErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.cassandra.core.CassandraTemplate;
+
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Pageable;
@@ -25,9 +27,6 @@ import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +44,9 @@ public class ChatService {
 	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRepository chatRepository;
+	private final CassandraTemplate cassandraTemplate;
+
 	private final ChatSearchRepository chatSearchRepository;
-	private final MongoTemplate mongoTemplate;
 	private final ElasticsearchOperations elasticsearchOperations;
 
 	@Transactional
@@ -79,8 +79,9 @@ public class ChatService {
 		// TODO : 채팅방 리스트를 가져오는 동작이 2번의 쿼리를 동기적으로 실행해서 오히려 느려질 수 있는 지점이 될 수 있음
 		List<String> roomIds = findChatRoomId(memberEmail);
 
-		Query query = new Query(Criteria.where("roomId").in(roomIds));
-		return mongoTemplate.find(query, ChatRoom.class)
+		log.info("Service : 채팅방 목록 가져오기 성공!");
+
+		return chatRoomRepository.findByRoomIdIn(roomIds)
 			.stream()
 			.map(ChatRoomDto::from)
 			.collect(Collectors.toList());
