@@ -55,13 +55,14 @@ dependencies {
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
     runtimeOnly 'com.h2database:h2'
 
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.apache.kafka:kafka-clients'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
     implementation 'org.webjars:stomp-websocket:2.3.3'
 
-    //mysql
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    // MongoDB
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // Spring Data Cassandra
+    implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
 
     // Kafka
     implementation 'org.springframework.kafka:spring-kafka'
