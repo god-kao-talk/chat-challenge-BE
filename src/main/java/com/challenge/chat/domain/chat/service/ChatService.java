@@ -4,13 +4,14 @@ import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.response.ChatSearchResponse;
 import com.challenge.chat.domain.chat.entity.Chat;
-import com.challenge.chat.domain.chat.entity.ChatES;
+// import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
-import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
+// import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
+// import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
 import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.ChatErrorCode;
@@ -46,8 +47,8 @@ public class ChatService {
 	private final ChatRepository chatRepository;
 	private final CassandraTemplate cassandraTemplate;
 
-	private final ChatSearchRepository chatSearchRepository;
-	private final ElasticsearchOperations elasticsearchOperations;
+	// private final ChatSearchRepository chatSearchRepository;
+	// private final ElasticsearchOperations elasticsearchOperations;
 
 	@Transactional
 	public ChatRoomDto makeChatRoom(final ChatRoomDto chatRoomDto, final String memberEmail) {
@@ -125,28 +126,28 @@ public class ChatService {
 		// MongoDB 저장
 		chatRepository.save(ChatDto.toEntity(chatDto));
 		// ElasticSearch 저장
-		chatSearchRepository.save(ChatDto.toElasticEntity(chatDto));
+		// chatSearchRepository.save(ChatDto.toElasticEntity(chatDto));
 	}
 
-	public List<ChatSearchResponse> findChatList(final String roomId, final String message, final Pageable pageable) {
-		log.info("Service: 채팅 검색하기 - message: {}, roomId: {}", message, roomId);
-
-		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-			.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
-			.must(QueryBuilders.matchQuery("roomId", roomId));
-
-		NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-			.withQuery(queryBuilder)
-			.withPageable(pageable)
-			.build();
-
-		SearchHits<ChatES> searchHits = elasticsearchOperations.search(searchQuery, ChatES.class);
-
-		return searchHits.stream()
-			.map(SearchHit::getContent)
-			.map(ChatSearchResponse::from)
-			.collect(Collectors.toList());
-	}
+	// public List<ChatSearchResponse> findChatList(final String roomId, final String message, final Pageable pageable) {
+	// 	log.info("Service: 채팅 검색하기 - message: {}, roomId: {}", message, roomId);
+	//
+	// 	QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+	// 		.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
+	// 		.must(QueryBuilders.matchQuery("roomId", roomId));
+	//
+	// 	NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+	// 		.withQuery(queryBuilder)
+	// 		.withPageable(pageable)
+	// 		.build();
+	//
+	// 	SearchHits<ChatES> searchHits = elasticsearchOperations.search(searchQuery, ChatES.class);
+	//
+	// 	return searchHits.stream()
+	// 		.map(SearchHit::getContent)
+	// 		.map(ChatSearchResponse::from)
+	// 		.collect(Collectors.toList());
+	// }
 
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {
 		log.info("Service 채팅방 나가기");
