@@ -2,9 +2,9 @@
   "properties" : {
     "id" : {"type" : "keyword"},
     "type" : {"type" : "text"},
-    "sender" : {"type" : "text"},
-    "userId" : {"type" : "text"},
-    "roomId" : {"type" : "text"},
+    "nickname" : {"type" : "text"},
+    "email" : {"type" : "text"},
+    "roomCode" : {"type" : "text"},
     "message" : {"type" : "text", "analyzer" : "korean"},
     "createdAt" : {
       "type" : "date",
