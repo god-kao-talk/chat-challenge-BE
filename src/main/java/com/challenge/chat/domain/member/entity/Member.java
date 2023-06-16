@@ -5,7 +5,6 @@ import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
 
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ import javax.persistence.OneToMany;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@Slf4j
 public class Member {
 
 	@Id
@@ -50,11 +48,10 @@ public class Member {
 	@OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<MemberChatRoom> roomList;
 
-	@OneToMany(mappedBy = "friend", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<MemberFriend> friendList;
 
 	public void updateRefreshToken(String updateRefreshToken) {
-		log.info("리프레시 토큰 DB에 저장 완료");
 		this.refreshToken = updateRefreshToken;
 	}
 }

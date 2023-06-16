@@ -16,7 +16,7 @@ public class ChatDto {
 	private MessageType type;
 	private String nickname;
 	private String email;
-	private String roomId;
+	private String roomCode;
 	private String message;
 	private LocalDateTime createdAt;
 
@@ -25,7 +25,7 @@ public class ChatDto {
 			chat.getType(),
 			chat.getMember().getNickname(),
 			chat.getMember().getEmail(),
-			chat.getRoom().getRoomId(),
+			chat.getRoom().getRoomCode(),
 			chat.getMessage(),
 			chat.getCreatedAt()
 		);

@@ -52,7 +52,7 @@ public class ChatController {
 		log.info("Controller : 채팅방 추가, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.registerChatRoom(request.getRoomId(), user.getUsername()));
+			.body(chatService.registerChatRoom(request.getRoomCode(), user.getUsername()));
 	}
 
 	@GetMapping("/chat/room")
@@ -65,15 +65,15 @@ public class ChatController {
 			.body(chatService.searchChatRoomList(user.getUsername()));
 	}
 
-	@GetMapping("/chat/{room-id}")
+	@GetMapping("/chat/{room-code}")
 	public ResponseEntity<List<ChatDto>> showChatList(
-		@PathVariable("room-id") final String roomId,
+		@PathVariable("room-code") final String roomCode,
 		@AuthenticationPrincipal final User user) {
 
 		log.info("Controller : 채팅 내역 조회, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.searchChatList(roomId, user.getUsername()));
+			.body(chatService.searchChatList(roomCode, user.getUsername()));
 	}
 
 	@MessageMapping("/chat/enter")
@@ -82,12 +82,12 @@ public class ChatController {
 		SimpMessageHeaderAccessor headerAccessor) {
 
 		log.info("Controller : 채팅방 입장");
-		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
+		ChatDto newChatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
 		// producer.send(
 		// 	KafkaConstants.KAFKA_TOPIC, newchatDto
 		// 	);
 
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newChatDto);
 	}
 
 	@MessageMapping("/chat/send")
@@ -101,20 +101,20 @@ public class ChatController {
 		// 	chatDto
 		// );
 
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 		chatService.sendChatRoom(chatDto);
 	}
 
-	@GetMapping("/chat/{room-id}/{message}")
+	@GetMapping("/chat/{room-code}/{message}")
 	public ResponseEntity<List<ChatSearchResponse>> searchChatList(
-		@PathVariable("room-id") final String roomId,
+		@PathVariable("room-code") final String roomCode,
 		@PathVariable("message") final String message,
 		final Pageable pageable) {
 
 		log.info("Controller : 채팅 메시지 검색");
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.findChatList(roomId, message, pageable));
+			.body(chatService.findChatList(roomCode, message, pageable));
 	}
 
 	// @EventListener

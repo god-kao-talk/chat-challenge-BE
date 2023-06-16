@@ -25,8 +25,7 @@ public class ChatRoom extends TimeStamped {
 	@Column(name = "ROOM_ID")
 	private Long id;
 
-	@Column(name = "ROOM_UUID")
-	private String roomId;
+	private String roomCode;
 
 	@Column(nullable = false)
 	private String roomName;
@@ -34,9 +33,8 @@ public class ChatRoom extends TimeStamped {
 	@OneToMany(mappedBy = "room", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<MemberChatRoom> memberList;
 
-
 	private ChatRoom(String roomName) {
-		this.roomId = UUID.randomUUID().toString();
+		this.roomCode = UUID.randomUUID().toString();
 		this.roomName = roomName;
 	}
 

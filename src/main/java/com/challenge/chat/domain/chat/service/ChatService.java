@@ -27,7 +27,6 @@ import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +46,6 @@ public class ChatService {
 	private final ChatRepository chatRepository;
 	private final ChatSearchRepository chatSearchRepository;
 	private final MemberService memberService;
-	private final MongoTemplate mongoTemplate;
 	private final ElasticsearchOperations elasticsearchOperations;
 
 	@Transactional
@@ -65,10 +63,10 @@ public class ChatService {
 	}
 
 	@Transactional
-	public ChatRoomDto registerChatRoom(final String roomId, final String memberEmail) {
+	public ChatRoomDto registerChatRoom(final String roomCode, final String memberEmail) {
 		log.info("Service : 채팅방 추가");
 
-		ChatRoom chatRoom = findChatRoom(roomId);
+		ChatRoom chatRoom = findChatRoom(roomCode);
 		Member member = memberService.findMemberByEmail(memberEmail);
 		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
 
@@ -89,10 +87,10 @@ public class ChatService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChatDto> searchChatList(final String roomId, final String memberEmail) {
+	public List<ChatDto> searchChatList(final String roomCode, final String memberEmail) {
 		log.info("Service : 채팅방 메세지 조회");
 
-		ChatRoom chatRoom = findChatRoom(roomId);
+		ChatRoom chatRoom = findChatRoom(roomCode);
 
 		return chatRepository
 			.findByRoom(chatRoom)
@@ -108,7 +106,7 @@ public class ChatService {
 		// socket session에 사용자의 정보 저장
 		try {
 			Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("email", chatDto.getEmail());
-			headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
+			headerAccessor.getSessionAttributes().put("roomCode", chatDto.getRoomCode());
 			headerAccessor.getSessionAttributes().put("nickname", chatDto.getNickname());
 		} catch (Exception e) {
 			throw new RestApiException(ChatErrorCode.SOCKET_CONNECTION_ERROR);
@@ -124,7 +122,7 @@ public class ChatService {
 		log.info("Service : 채팅 보내기 - {}", chatDto.getMessage());
 
 		Member member = memberService.findMemberByEmail(chatDto.getEmail());
-		ChatRoom room = findChatRoom(chatDto.getRoomId());
+		ChatRoom room = findChatRoom(chatDto.getRoomCode());
 
 		// MySQL 저장
 		chatRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
@@ -133,17 +131,17 @@ public class ChatService {
 			chatDto.getType(),
 			chatDto.getNickname(),
 			chatDto.getEmail(),
-			chatDto.getRoomId(),
+			chatDto.getRoomCode(),
 			chatDto.getMessage()
 		));
 	}
 
-	public List<ChatSearchResponse> findChatList(final String roomId, final String message, final Pageable pageable) {
-		log.info("Service: 채팅 검색하기 - message: {}, roomId: {}", message, roomId);
+	public List<ChatSearchResponse> findChatList(final String roomCode, final String message, final Pageable pageable) {
+		log.info("Service: 채팅 검색하기 - message: {}, roomCode: {}", message, roomCode);
 
 		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
 			.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
-			.must(QueryBuilders.matchQuery("roomId", roomId));
+			.must(QueryBuilders.matchQuery("roomCode", roomCode));
 
 		NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
 			.withQuery(queryBuilder)
@@ -161,21 +159,21 @@ public class ChatService {
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {
 		log.info("Service 채팅방 나가기");
 
-		String roomId = (String)headerAccessor.getSessionAttributes().get("roomId");
+		String roomCode = (String)headerAccessor.getSessionAttributes().get("roomCode");
 		String nickName = (String)headerAccessor.getSessionAttributes().get("nickName");
 		String userId = (String)headerAccessor.getSessionAttributes().get("userId");
 
 		return ChatDto.builder()
 			.type(MessageType.LEAVE)
-			.roomId(roomId)
+			.roomCode(roomCode)
 			.nickname(nickName)
 			.email(userId)
 			.message(nickName + "님 퇴장!! ヽ(*。>Д<)o゜")
 			.build();
 	}
 
-	public ChatRoom findChatRoom(String roomId) {
-		return chatRoomRepository.findByRoomId(roomId).orElseThrow(
+	public ChatRoom findChatRoom(String roomCode) {
+		return chatRoomRepository.findByRoomCode(roomCode).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 
