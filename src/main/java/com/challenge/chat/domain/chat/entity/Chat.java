@@ -2,20 +2,14 @@ package com.challenge.chat.domain.chat.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 
 @Table(value = "chat")
 @Getter
