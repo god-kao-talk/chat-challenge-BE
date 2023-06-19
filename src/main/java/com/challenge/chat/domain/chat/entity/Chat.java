@@ -29,20 +29,20 @@ public class Chat {
 	private MessageType type;
 
 	@Column
-	private String sender;
+	private String nickname;
 
-	@Column(value = "user_id")
-	private String userId;
+	@Column
+	private String email;
 
 	@Column
 	private String message;
 
-	private Chat(MessageType type, String sender, String userId, String roomId, String message) {
+	private Chat(MessageType type, String nickname, String email, String roomId, String message) {
 		this.chatId = UUID.randomUUID();
 		this.createdAt = Instant.now();
 		this.type = type;
-		this.sender = sender;
-		this.userId = userId;
+		this.nickname = nickname;
+		this.email = email;
 		this.roomId = roomId;
 		this.message = message;
 	}
