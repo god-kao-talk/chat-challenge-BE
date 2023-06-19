@@ -20,9 +20,7 @@ spring:
   data:
     cassandra:
       contact-points:
-        - host.docker.internal:9042
-        - host.docker.internal:9043
-        - host.docker.internal:9044
+        - 34.22.77.22:9042
       keyspace-name: thiscode
       schema-action: create_if_not_exists
       #      username: cassandra
