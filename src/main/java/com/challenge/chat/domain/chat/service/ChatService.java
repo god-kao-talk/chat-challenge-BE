@@ -2,7 +2,7 @@ package com.challenge.chat.domain.chat.service;
 
 import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
-import com.challenge.chat.domain.chat.dto.response.ChatSearchResponse;
+// import com.challenge.chat.domain.chat.dto.response.ChatSearchResponse;
 import com.challenge.chat.domain.chat.entity.Chat;
 // import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
