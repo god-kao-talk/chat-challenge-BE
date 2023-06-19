@@ -24,8 +24,8 @@ public class ChatDto {
 	public static ChatDto from(Chat chat) {
 		return new ChatDto(
 			chat.getType(),
-			chat.getSender(),
-			chat.getUserId(),
+			chat.getNickname(),
+			chat.getEmail(),
 			chat.getRoomId(),
 			chat.getMessage(),
 			chat.getCreatedAt()
