@@ -121,6 +121,6 @@ public class ChatController {
 	// 	StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 	// 	log.info("Controller webSocketDisconnectListener, 채팅방 나가기");
 	// 	ChatDto chatDto = chatService.leaveChatRoom(headerAccessor);
-	// 	msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomId(), chatDto);
+	// 	msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	// }
 }

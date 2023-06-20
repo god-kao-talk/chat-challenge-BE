@@ -81,13 +81,13 @@ public class ChatService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChatDto> searchChatList(final String roomId, final String memberEmail) {
+	public List<ChatDto> searchChatList(final String roomCode, final String memberEmail) {
 		log.info("Service : 채팅방 메세지 조회");
 
-		ChatRoom chatRoom = findChatRoom(roomId);
+		ChatRoom chatRoom = findChatRoom(roomCode);
 
 		return chatRepository
-			.findByRoomId(roomId)
+			.findByRoomCode(roomCode)
 			.stream()
 			.sorted(Comparator.comparing(Chat::getCreatedAt))
 			.map(ChatDto::from)
@@ -128,12 +128,12 @@ public class ChatService {
 		// ));
 	}
 
-	// public List<ChatSearchResponse> findChatList(final String roomId, final String message, final Pageable pageable) {
-	// 	log.info("Service: 채팅 검색하기 - message: {}, roomId: {}", message, roomId);
+	// public List<ChatSearchResponse> findChatList(final String roomCode, final String message, final Pageable pageable) {
+	// 	log.info("Service: 채팅 검색하기 - message: {}, roomCode: {}", message, roomCode);
 	//
 	// 	QueryBuilder queryBuilder = QueryBuilders.boolQuery()
 	// 		.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
-	// 		.must(QueryBuilders.matchQuery("roomId", roomId));
+	// 		.must(QueryBuilders.matchQuery("roomCode", roomCode));
 	//
 	// 	NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
 	// 		.withQuery(queryBuilder)
