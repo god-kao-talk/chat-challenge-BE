@@ -103,17 +103,17 @@ public class ChatController {
 		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	}
 
-	@GetMapping("/chat/{room-code}/{message}")
-	public ResponseEntity<List<ChatSearchResponse>> searchChatList(
-		@PathVariable("room-code") final String roomCode,
-		@PathVariable("message") final String message,
-		final Pageable pageable) {
-
-		log.info("Controller : 채팅 메시지 검색");
-
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.findChatList(roomCode, message, pageable));
-	}
+	// @GetMapping("/chat/{room-code}/{message}")
+	// public ResponseEntity<List<ChatSearchResponse>> searchChatList(
+	// 	@PathVariable("room-code") final String roomCode,
+	// 	@PathVariable("message") final String message,
+	// 	final Pageable pageable) {
+	//
+	// 	log.info("Controller : 채팅 메시지 검색");
+	//
+	// 	return ResponseEntity.status(HttpStatus.OK)
+	// 		.body(chatService.findChatList(roomCode, message, pageable));
+	// }
 
 	// @EventListener
 	// public void webSocketDisconnectListener(SessionDisconnectEvent event) {

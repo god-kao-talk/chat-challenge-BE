@@ -2,7 +2,7 @@ package com.challenge.chat.domain.chat.dto.response;
 
 import java.time.Instant;
 
-import com.challenge.chat.domain.chat.entity.ChatES;
+// import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.MessageType;
 
 import lombok.AllArgsConstructor;
@@ -19,14 +19,14 @@ public class ChatSearchResponse {
 	private String message;
 	private Instant createdAt;
 
-	public static ChatSearchResponse from(ChatES chatES) {
-		return new ChatSearchResponse(
-			chatES.getType(),
-			chatES.getNickname(),
-			chatES.getEmail(),
-			chatES.getRoomCode(),
-			chatES.getMessage(),
-			chatES.getCreatedAt()
-		);
-	}
+	// public static ChatSearchResponse from(ChatES chatES) {
+	// 	return new ChatSearchResponse(
+	// 		chatES.getType(),
+	// 		chatES.getNickname(),
+	// 		chatES.getEmail(),
+	// 		chatES.getRoomCode(),
+	// 		chatES.getMessage(),
+	// 		chatES.getCreatedAt()
+	// 	);
+	// }
 }

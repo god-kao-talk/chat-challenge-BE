@@ -2,11 +2,11 @@ package com.challenge.chat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.elasticsearch.config.EnableElasticsearchAuditing;
+// import org.springframework.data.elasticsearch.config.EnableElasticsearchAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
-@EnableElasticsearchAuditing
+// @EnableElasticsearchAuditing
 @SpringBootApplication
 public class ChatApplication {
 
