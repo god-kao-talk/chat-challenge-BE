@@ -12,8 +12,8 @@ spring:
   jpa:
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
+        show_sql: false
+        format_sql: false
         hbm2ddl:
           auto: update
   application:
