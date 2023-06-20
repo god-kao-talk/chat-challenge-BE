@@ -26,7 +26,7 @@ public class ChatDto {
 			chat.getType(),
 			chat.getNickname(),
 			chat.getEmail(),
-			chat.getRoomId(),
+			chat.getRoomCode(),
 			chat.getMessage(),
 			chat.getCreatedAt()
 		);

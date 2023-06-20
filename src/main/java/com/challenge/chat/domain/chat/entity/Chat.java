@@ -16,8 +16,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Chat {
 
-	@PrimaryKeyColumn(value = "room_id", type = PrimaryKeyType.PARTITIONED, ordinal = 0)
-	private String roomId;
+	@PrimaryKeyColumn(value = "room_code", type = PrimaryKeyType.PARTITIONED, ordinal = 0)
+	private String roomCode;
 
 	@PrimaryKeyColumn(name = "create_at", type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING, ordinal = 1)
 	private Instant createdAt;
@@ -37,17 +37,17 @@ public class Chat {
 	@Column
 	private String message;
 
-	private Chat(MessageType type, String nickname, String email, String roomId, String message) {
+	private Chat(MessageType type, String nickname, String email, String roomCode, String message) {
 		this.chatId = UUID.randomUUID();
 		this.createdAt = Instant.now();
 		this.type = type;
 		this.nickname = nickname;
 		this.email = email;
-		this.roomId = roomId;
+		this.roomCode = roomCode;
 		this.message = message;
 	}
 
-	public static Chat of(MessageType type, String sender, String userId, String roomId, String message) {
-		return new Chat(type, sender, userId, roomId, message);
+	public static Chat of(MessageType type, String sender, String userId, String roomCode, String message) {
+		return new Chat(type, sender, userId, roomCode, message);
 	}
 }

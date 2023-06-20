@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ChatRepository extends CassandraRepository<Chat, Long> {
 
-    List<Chat> findByRoomId(String roomId);
+    List<Chat> findByRoomCode(String roomCode);
 }
