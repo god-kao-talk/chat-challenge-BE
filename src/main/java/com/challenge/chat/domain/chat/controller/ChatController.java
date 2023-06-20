@@ -37,7 +37,7 @@ public class ChatController {
 		@RequestBody final ChatRoomCreateRequest request,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 생성, User의 email은 {} 입니다", user.getUsername());
+		// log.info("Controller : 채팅방 생성, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.makeChatRoom(request.getRoomName(), user.getUsername()));
@@ -48,7 +48,7 @@ public class ChatController {
 		@RequestBody final ChatRoomAddRequest request,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 추가, User의 email은 {} 입니다", user.getUsername());
+		// log.info("Controller : 채팅방 추가, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.registerChatRoom(request.getRoomCode(), user.getUsername()));
@@ -58,7 +58,7 @@ public class ChatController {
 	public ResponseEntity<List<ChatRoomDto>> showChatRoomList(
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 조회, User의 email은 {} 입니다", user.getUsername());
+		// log.info("Controller : 채팅방 조회, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.searchChatRoomList(user.getUsername()));
@@ -69,7 +69,7 @@ public class ChatController {
 		@PathVariable("room-code") final String roomCode,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅 내역 조회, User의 email은 {} 입니다", user.getUsername());
+		// log.info("Controller : 채팅 내역 조회, User의 email은 {} 입니다", user.getUsername());
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.searchChatList(roomCode, user.getUsername()));
@@ -80,7 +80,7 @@ public class ChatController {
 		@RequestBody ChatDto chatDto,
 		SimpMessageHeaderAccessor headerAccessor) {
 
-		log.info("Controller : 채팅방 입장");
+		// log.info("Controller : 채팅방 입장");
 		ChatDto newChatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
 		// producer.send(
 		// 	KafkaConstants.KAFKA_TOPIC, newchatDto
@@ -93,7 +93,7 @@ public class ChatController {
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
-		log.info("Controller : 채팅 보내기 - {}", chatDto.getMessage());
+		// log.info("Controller : 채팅 보내기 - {}", chatDto.getMessage());
 
 		// producer.send(
 		// 	KafkaConstants.KAFKA_TOPIC,
