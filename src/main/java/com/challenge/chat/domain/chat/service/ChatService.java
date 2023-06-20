@@ -50,7 +50,6 @@ public class ChatService {
 
 	@Transactional
 	public ChatRoomDto makeChatRoom(final String roomName, final String memberEmail) {
-		log.info("Service : 채팅방 생성");
 
 		ChatRoom chatRoom = ChatRoom.of(roomName);
 		Member member = memberService.findMemberByEmail(memberEmail);
@@ -64,7 +63,6 @@ public class ChatService {
 
 	@Transactional
 	public ChatRoomDto registerChatRoom(final String roomCode, final String memberEmail) {
-		log.info("Service : 채팅방 추가");
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 		Member member = memberService.findMemberByEmail(memberEmail);
@@ -75,7 +73,6 @@ public class ChatService {
 
 	@Transactional(readOnly = true)
 	public List<ChatRoomDto> searchChatRoomList(final String memberEmail) {
-		log.info("Service : 채팅방 리스트 조회");
 
 		Member member = memberService.findMemberByEmail(memberEmail);
 		List<MemberChatRoom> memberChatRoomList = findChatRoomByMember(member);
@@ -88,7 +85,6 @@ public class ChatService {
 
 	@Transactional(readOnly = true)
 	public List<ChatDto> searchChatList(final String roomCode, final String memberEmail) {
-		log.info("Service : 채팅방 메세지 조회");
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 
@@ -101,7 +97,6 @@ public class ChatService {
 	}
 
 	public ChatDto makeEnterMessageAndSetSessionAttribute(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
-		log.info("Service : 채팅방 입장");
 
 		// socket session에 사용자의 정보 저장
 		try {
@@ -119,7 +114,6 @@ public class ChatService {
 
 	@Transactional
 	public void sendChatRoom(ChatDto chatDto) {
-		log.info("Service : 채팅 보내기 - {}", chatDto.getMessage());
 
 		Member member = memberService.findMemberByEmail(chatDto.getEmail());
 		ChatRoom room = findChatRoom(chatDto.getRoomCode());
@@ -127,17 +121,16 @@ public class ChatService {
 		// MySQL 저장
 		chatRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
 		// ElasticSearch 저장
-		chatSearchRepository.save(ChatES.of(
-			chatDto.getType(),
-			chatDto.getNickname(),
-			chatDto.getEmail(),
-			chatDto.getRoomCode(),
-			chatDto.getMessage()
-		));
+		// chatSearchRepository.save(ChatES.of(
+		// 	chatDto.getType(),
+		// 	chatDto.getNickname(),
+		// 	chatDto.getEmail(),
+		// 	chatDto.getRoomCode(),
+		// 	chatDto.getMessage()
+		// ));
 	}
 
 	public List<ChatSearchResponse> findChatList(final String roomCode, final String message, final Pageable pageable) {
-		log.info("Service: 채팅 검색하기 - message: {}, roomCode: {}", message, roomCode);
 
 		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
 			.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
@@ -157,7 +150,6 @@ public class ChatService {
 	}
 
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {
-		log.info("Service 채팅방 나가기");
 
 		String roomCode = (String)headerAccessor.getSessionAttributes().get("roomCode");
 		String nickName = (String)headerAccessor.getSessionAttributes().get("nickName");
