@@ -60,9 +60,9 @@ public class ChatService {
 	public List<ChatRoomDto> searchChatRoomList(final String memberEmail) {
 
 		// TODO : 채팅방 리스트를 가져오는 동작이 2번의 쿼리를 동기적으로 실행해서 오히려 느려질 수 있는 지점이 될 수 있음
-		List<String> roomIds = findChatRoomId(memberEmail);
+		List<String> roomCodes = findChatRoomId(memberEmail);
 
-		Query query = new Query(Criteria.where("roomId").in(roomIds));
+		Query query = new Query(Criteria.where("roomCode").in(roomCodes));
 		return mongoTemplate.find(query, ChatRoom.class)
 			.stream()
 			.map(ChatRoomDto::from)
@@ -70,15 +70,17 @@ public class ChatService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChatDto> searchChatList(final String roomId, final String memberEmail) {
-
-		MemberChatRoom memberChatRoom = findMemberChatRoom(roomId, memberEmail);
-
-		return chatRepository
-			.findByRoomCode(roomId)
+	public List<ChatDto> searchChatList(final String roomCode, final String memberEmail) {
+		log.info("채팅방의 채팅 목록을 검색합니다. {}", roomCode);
+		MemberChatRoom memberChatRoom = findMemberChatRoom(roomCode, memberEmail);
+		List<Chat> chatList = chatRepository.findByRoomCode(roomCode).orElse(null);
+		if (chatList == null) {
+			return null;
+		}
+		return chatList
 			.stream()
-			.sorted(Comparator.comparing(Chat::getCreatedAt))
 			.map(ChatDto::from)
+			.sorted(Comparator.comparing(ChatDto::getCreatedAt))
 			.toList();
 	}
 

@@ -27,7 +27,7 @@ public class ChatDto {
 			chat.getEmail(),
 			chat.getRoomCode(),
 			chat.getMessage(),
-			chat.getCreatedAt()
+			Instant.ofEpochMilli(chat.getCreatedAt())
 		);
 	}
 
