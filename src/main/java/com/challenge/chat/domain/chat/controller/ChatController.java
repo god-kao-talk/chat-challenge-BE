@@ -10,6 +10,8 @@ import com.challenge.chat.domain.chat.service.Producer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,6 +32,10 @@ public class ChatController {
 	private final ChatService chatService;
 	private final Producer producer;
 	private final SimpMessagingTemplate msgOperation;
+
+	private final RabbitTemplate rabbitTemplate;
+
+	private final static String CHAT_EXCHANGE_NAME = "chat.exchange";
 
 	@PostMapping("/chat")
 	public ResponseEntity<ChatRoomDto> createChatRoom(
@@ -66,21 +72,22 @@ public class ChatController {
 			.body(chatService.searchChatList(roomCode, user.getUsername()));
 	}
 
-	@MessageMapping("/chat/enter")
+	@MessageMapping("chat.enter")
 	public void enterChatRoom(
 		@RequestBody ChatDto chatDto,
 		SimpMessageHeaderAccessor headerAccessor) {
 
-		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
+		ChatDto newChatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
 		producer.send(
 			KafkaConstants.KAFKA_TOPIC,
-			newchatDto
+			newChatDto
 		);
 
 		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newchatDto);
+		rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + newChatDto.getRoomCode(), newChatDto);
 	}
 
-	@MessageMapping("/chat/send")
+	@MessageMapping("chat.send")
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
@@ -88,6 +95,7 @@ public class ChatController {
 			KafkaConstants.KAFKA_TOPIC,
 			chatDto
 		);
+		rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatDto.getRoomCode(), chatDto);
 		// chatService.sendChatRoom(chatDto);
 		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	}
