@@ -1,6 +1,7 @@
 package com.challenge.chat.domain.chat.entity;
 
-import jakarta.persistence.Id;
+import javax.persistence.Id;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;

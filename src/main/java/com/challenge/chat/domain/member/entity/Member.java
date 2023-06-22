@@ -2,12 +2,11 @@ package com.challenge.chat.domain.member.entity;
 
 import com.challenge.chat.domain.member.constant.MemberRole;
 import com.challenge.chat.domain.member.constant.SocialType;
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
+import javax.persistence.Id;
 
 @Document(collection = "member")
 @Getter
