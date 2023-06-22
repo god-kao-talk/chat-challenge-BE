@@ -105,7 +105,7 @@ public class ChatController {
 		);
 		rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatDto.getRoomCode(), chatDto);
 		// chatService.sendChatRoom(chatDto);
-		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
+		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	}
 
 	// @EventListener
