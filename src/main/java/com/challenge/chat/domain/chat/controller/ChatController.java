@@ -5,6 +5,7 @@ import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.request.ChatRoomAddRequest;
 import com.challenge.chat.domain.chat.dto.request.ChatRoomCreateRequest;
+import com.challenge.chat.domain.chat.entity.Chat;
 import com.challenge.chat.domain.chat.service.ChatService;
 import com.challenge.chat.domain.chat.service.Producer;
 
@@ -19,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -72,10 +74,10 @@ public class ChatController {
 		SimpMessageHeaderAccessor headerAccessor) {
 
 		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
-		producer.send(
-			KafkaConstants.KAFKA_TOPIC,
-			newchatDto
-		);
+		// producer.send(
+		// 	KafkaConstants.KAFKA_TOPIC,
+		// 	newchatDto
+		// );
 
 		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newchatDto);
 	}
@@ -84,9 +86,15 @@ public class ChatController {
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
+		Chat chat = ChatDto.toEntity(chatDto);
+		chat.setCreatedAt();
+
+		chatDto.setCreatedAt(Instant.ofEpochMilli(chat.getCreatedAt()));
+		log.info("현재 시간은 {}", Instant.ofEpochMilli(chat.getCreatedAt()));
+
 		producer.send(
 			KafkaConstants.KAFKA_TOPIC,
-			chatDto
+			chat
 		);
 		// chatService.sendChatRoom(chatDto);
 		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);

@@ -70,15 +70,17 @@ public class ChatService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChatDto> searchChatList(final String roomId, final String memberEmail) {
-
-		MemberChatRoom memberChatRoom = findMemberChatRoom(roomId, memberEmail);
-
-		return chatRepository
-			.findByRoomCode(roomId)
+	public List<ChatDto> searchChatList(final String roomCode, final String memberEmail) {
+		log.info("채팅방의 채팅 목록을 검색합니다. {}", roomCode);
+		MemberChatRoom memberChatRoom = findMemberChatRoom(roomCode, memberEmail);
+		List<Chat> chatList = chatRepository.findByRoomCode(roomCode).orElse(null);
+		if (chatList == null) {
+			return null;
+		}
+		return chatList
 			.stream()
-			.sorted(Comparator.comparing(Chat::getCreatedAt))
 			.map(ChatDto::from)
+			.sorted(Comparator.comparing(ChatDto::getCreatedAt))
 			.toList();
 	}
 
