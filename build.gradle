@@ -25,7 +25,7 @@ jib {
     }
     to {
         image = 'chat-challenge'
-        tags = ['0.6']
+        tags = ['0.7']
     }
     container {
         mainClass = 'com.challenge.chat.ChatApplication'

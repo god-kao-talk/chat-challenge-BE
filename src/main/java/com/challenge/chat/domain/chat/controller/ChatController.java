@@ -77,7 +77,7 @@ public class ChatController {
 			newchatDto
 		);
 
-		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newchatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newchatDto);
 	}
 
 	@MessageMapping("/chat/send")
@@ -89,7 +89,7 @@ public class ChatController {
 			chatDto
 		);
 		// chatService.sendChatRoom(chatDto);
-		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	}
 
 	// @EventListener
