@@ -5,7 +5,8 @@ spring:
   data:
     cassandra:
       contact-points:
-        - 34.64.79.69:9042
+        - 34.22.64.101:9042
+        - 34.64.74.118:9042
       keyspace-name: thiscode
       schema-action: create_if_not_exists
 #      username: cassandra
