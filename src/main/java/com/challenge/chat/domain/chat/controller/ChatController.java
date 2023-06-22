@@ -72,26 +72,24 @@ public class ChatController {
 		SimpMessageHeaderAccessor headerAccessor) {
 
 		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
-		// producer.send(
-		// 	KafkaConstants.KAFKA_TOPIC, newchatDto
-		// 	);
+		producer.send(
+			KafkaConstants.KAFKA_TOPIC,
+			newchatDto
+		);
 
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatDto);
+		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newchatDto);
 	}
 
 	@MessageMapping("/chat/send")
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
-		log.info("Controller : 채팅 보내기 - {}", chatDto.getMessage());
-
-		// producer.send(
-		// 	KafkaConstants.KAFKA_TOPIC,
-		// 	chatDto
-		// );
-
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
-		chatService.sendChatRoom(chatDto);
+		producer.send(
+			KafkaConstants.KAFKA_TOPIC,
+			chatDto
+		);
+		// chatService.sendChatRoom(chatDto);
+		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	}
 
 	// @EventListener
