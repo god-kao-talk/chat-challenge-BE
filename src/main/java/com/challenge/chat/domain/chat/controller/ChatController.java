@@ -79,7 +79,7 @@ public class ChatController {
 		@RequestBody ChatDto chatDto,
 		SimpMessageHeaderAccessor headerAccessor) {
 
-		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
+		ChatDto newChatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
 		// producer.send(
 		// 	KafkaConstants.KAFKA_TOPIC,
 		// 	newchatDto
