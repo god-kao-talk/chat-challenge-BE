@@ -11,6 +11,12 @@ spring:
       uri: mongodb+srv://admin:chat1122@thiscode.cpaiaoh.mongodb.net/thiscode?retryWrites=true&w=majority
       auto-index-creation: true
 
+  rabbitmq:
+    host: rabbitMQ
+    port: 5672
+    username: guest
+    password: guest
+
   application:
     name: monitoring
 
