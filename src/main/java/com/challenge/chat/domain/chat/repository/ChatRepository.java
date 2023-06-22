@@ -9,5 +9,5 @@ import java.util.List;
 public interface ChatRepository extends MongoRepository<Chat, String> {
     // Spring Data MongoDB -> https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/
 
-    List<Chat> findByRoomId(String roomId);
+    List<Chat> findByRoomCode(String roomCode);
 }

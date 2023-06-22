@@ -5,7 +5,6 @@ import com.challenge.chat.domain.member.constant.SocialType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -33,9 +32,6 @@ public class Member {
 	private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
 	private String refreshToken; // 리프레시 토큰
-
-	@CreatedDate
-	private Instant createdAt;
 
 	public void updateRefreshToken(String updateRefreshToken) {
 		log.info("리프레시 토큰 DB에 저장 완료");

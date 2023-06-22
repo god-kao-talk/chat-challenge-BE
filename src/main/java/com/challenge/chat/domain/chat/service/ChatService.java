@@ -37,30 +37,27 @@ public class ChatService {
 
 	@Transactional
 	public ChatRoomDto makeChatRoom(final ChatRoomDto chatRoomDto, final String memberEmail) {
-		log.info("Service : 채팅방 생성");
 
 		ChatRoom chatRoom = ChatRoomDto.toEntity(chatRoomDto);
 
 		// TODO : 비동기적으로 chatRoom 과 memberChatRoom을 저장하기
 		chatRoomRepository.save(chatRoom);
-		memberChatRoomRepository.save(new MemberChatRoom(chatRoom.getRoomId(), memberEmail));
+		memberChatRoomRepository.save(new MemberChatRoom(chatRoom.getRoomCode(), memberEmail));
 
 		return ChatRoomDto.from(chatRoom);
 	}
 
 	@Transactional
 	public ChatRoomDto registerChatRoom(final ChatRoomDto chatRoomDto, final String memberEmail) {
-		log.info("Service : 채팅방 추가");
 
-		ChatRoom chatRoom = findChatRoom(chatRoomDto.getRoomId());
-		memberChatRoomRepository.save(new MemberChatRoom(chatRoomDto.getRoomId(), memberEmail));
+		ChatRoom chatRoom = findChatRoom(chatRoomDto.getRoomCode());
+		memberChatRoomRepository.save(new MemberChatRoom(chatRoomDto.getRoomCode(), memberEmail));
 
 		return ChatRoomDto.from(chatRoom);
 	}
 
 	@Transactional(readOnly = true)
 	public List<ChatRoomDto> searchChatRoomList(final String memberEmail) {
-		log.info("Service : 채팅방 리스트 조회");
 
 		// TODO : 채팅방 리스트를 가져오는 동작이 2번의 쿼리를 동기적으로 실행해서 오히려 느려질 수 있는 지점이 될 수 있음
 		List<String> roomIds = findChatRoomId(memberEmail);
@@ -74,12 +71,11 @@ public class ChatService {
 
 	@Transactional(readOnly = true)
 	public List<ChatDto> searchChatList(final String roomId, final String memberEmail) {
-		log.info("Service : 채팅방 메세지 조회");
 
 		MemberChatRoom memberChatRoom = findMemberChatRoom(roomId, memberEmail);
 
 		return chatRepository
-			.findByRoomId(roomId)
+			.findByRoomCode(roomId)
 			.stream()
 			.sorted(Comparator.comparing(Chat::getCreatedAt))
 			.map(ChatDto::from)
@@ -87,12 +83,11 @@ public class ChatService {
 	}
 
 	public ChatDto makeEnterMessageAndSetSessionAttribute(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
-		log.info("Service : 채팅방 입장");
 
 		// socket session에 사용자의 정보 저장
 		try {
 			Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("email", chatDto.getEmail());
-			headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
+			headerAccessor.getSessionAttributes().put("roomCode", chatDto.getRoomCode());
 			headerAccessor.getSessionAttributes().put("nickname", chatDto.getNickname());
 		} catch (Exception e) {
 			throw new RestApiException(ChatErrorCode.SOCKET_CONNECTION_ERROR);
@@ -104,21 +99,19 @@ public class ChatService {
 	}
 
 	public void sendChatRoom(ChatDto chatDto) {
-		log.info("Service : 채팅 보내기 - {}", chatDto.getMessage());
 
 		chatRepository.save(ChatDto.toEntity(chatDto));
 	}
 
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {
-		log.info("Service 채팅방 나가기");
 
-		String roomId = (String)headerAccessor.getSessionAttributes().get("roomId");
+		String roomCode = (String)headerAccessor.getSessionAttributes().get("roomCode");
 		String nickName = (String)headerAccessor.getSessionAttributes().get("nickName");
 		String userId = (String)headerAccessor.getSessionAttributes().get("userId");
 
 		return ChatDto.builder()
 			.type(MessageType.LEAVE)
-			.roomId(roomId)
+			.roomCode(roomCode)
 			.nickname(nickName)
 			.email(userId)
 			.message(nickName + "님 퇴장!! ヽ(*。>Д<)o゜")
@@ -126,22 +119,22 @@ public class ChatService {
 	}
 
 	public ChatRoom findChatRoom(String roomId) {
-		return chatRoomRepository.findByRoomId(roomId).orElseThrow(
+		return chatRoomRepository.findByRoomCode(roomId).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 
 	public MemberChatRoom findMemberChatRoom(final String roomId, final String memberEmail) {
-		return memberChatRoomRepository.findByMemberEmailAndRoomId(memberEmail, roomId).orElseThrow(
+		return memberChatRoomRepository.findByEmailAndRoomCode(memberEmail, roomId).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND)
 		);
 	}
 
 	public List<String> findChatRoomId(final String email) {
-		List<MemberChatRoom> memberChatRoomList = memberChatRoomRepository.findByMemberEmail(email).orElse(null);
+		List<MemberChatRoom> memberChatRoomList = memberChatRoomRepository.findByEmail(email).orElse(null);
 		if (memberChatRoomList == null) {
 			return null;
 		}
 		return memberChatRoomList.stream()
-			.map(MemberChatRoom::getRoomId).toList();
+			.map(MemberChatRoom::getRoomCode).toList();
 	}
 }

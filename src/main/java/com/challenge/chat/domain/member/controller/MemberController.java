@@ -26,27 +26,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    // @GetMapping("/users")
-    // public ResponseEntity<List<MemberDto>> getMemberList() {
-    //     log.info("Controller 멤버 리스트 조회");
-    //     return ResponseEntity.status(HttpStatus.OK)
-    //         .body(memberService.getMemberList());
-    // }
-
-    // @GetMapping("/users/myinfo")
-    // public ResponseEntity<MemberDto> getMemberByEmail(@AuthenticationPrincipal User user) {
-    //     log.info("Controller 멤버 단일 조회");
-    //     return ResponseEntity.status(HttpStatus.OK)
-    //         .body(memberService.getMemberByEmail(user.getUsername()));
-    // }
-
-    // @GetMapping("/users/{userId}")
-    // public ResponseEntity<MemberDto> getMemberByUserId(@PathVariable String userId) {
-    //     log.info("Controller 멤버 userId로 검색");
-    //     return ResponseEntity.status(HttpStatus.OK)
-    //         .body(memberService.getMemberByUserId(userId));
-    // }
-
     @PostMapping("/users/signup")
     public ResponseEntity<String> signup(@RequestBody @Valid final SignupDto signupDto) {
         memberService.signup(signupDto);

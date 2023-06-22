@@ -12,11 +12,11 @@ public class MemberChatRoom {
 	@Id
 	private String id;
 
-	private String roomId;
-	private String memberEmail;
+	private String roomCode;
+	private String email;
 
-	public MemberChatRoom(String roomId, String email) {
-		this.roomId = roomId;
-		this.memberEmail = email;
+	public MemberChatRoom(String roomCode, String email) {
+		this.roomCode = roomCode;
+		this.email = email;
 	}
 }
