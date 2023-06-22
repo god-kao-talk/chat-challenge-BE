@@ -19,12 +19,11 @@ public class Consumer {
     @Autowired
     SimpMessagingTemplate msgOperation;
 
-    // @KafkaListener(
-    //         topics = KafkaConstants.KAFKA_TOPIC,
-    //         groupId = KafkaConstants.GROUP_ID
-    // )
-    // public void consume(ChatDto chatDto) {
-    //     log.info("난 컨슈머야 message={}", chatDto);
-    //     msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
-    // }
+    @KafkaListener(
+            topics = KafkaConstants.KAFKA_TOPIC,
+            groupId = KafkaConstants.GROUP_ID
+    )
+    public void consume(ChatDto chatDto) {
+        msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
+    }
 }

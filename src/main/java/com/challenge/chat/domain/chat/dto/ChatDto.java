@@ -16,16 +16,16 @@ public class ChatDto {
 	private MessageType type;
 	private String nickname;
 	private String email;
-	private String roomId;
+	private String roomCode;
 	private String message;
 	private Instant createdAt;
 
 	public static ChatDto from(Chat chat) {
 		return new ChatDto(
 			chat.getType(),
-			chat.getSender(),
-			chat.getUserId(),
-			chat.getRoomId(),
+			chat.getNickname(),
+			chat.getEmail(),
+			chat.getRoomCode(),
 			chat.getMessage(),
 			chat.getCreatedAt()
 		);
@@ -36,7 +36,7 @@ public class ChatDto {
 			chatDto.getType(),
 			chatDto.getNickname(),
 			chatDto.getEmail(),
-			chatDto.getRoomId(),
+			chatDto.getRoomCode(),
 			chatDto.getMessage()
 		);
 	}

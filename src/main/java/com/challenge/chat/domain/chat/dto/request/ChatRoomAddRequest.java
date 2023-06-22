@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class ChatRoomAddRequest {
-	private String roomId;
+	private String roomCode;
 }

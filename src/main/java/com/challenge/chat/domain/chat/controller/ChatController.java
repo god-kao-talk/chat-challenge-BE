@@ -36,8 +36,6 @@ public class ChatController {
 		@RequestBody final ChatRoomCreateRequest request,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 생성, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.makeChatRoom(ChatRoomDto.from(request), user.getUsername()));
 	}
@@ -47,8 +45,6 @@ public class ChatController {
 		@RequestBody final ChatRoomAddRequest request,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 추가, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.registerChatRoom(ChatRoomDto.from(request), user.getUsername()));
 	}
@@ -57,21 +53,17 @@ public class ChatController {
 	public ResponseEntity<List<ChatRoomDto>> showChatRoomList(
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 조회, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.searchChatRoomList(user.getUsername()));
 	}
 
-	@GetMapping("/chat/{room-id}")
+	@GetMapping("/chat/{room-code}")
 	public ResponseEntity<List<ChatDto>> showChatList(
-		@PathVariable("room-id") final String roomId,
+		@PathVariable("room-code") final String roomCode,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅 내역 조회, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.searchChatList(roomId, user.getUsername()));
+			.body(chatService.searchChatList(roomCode, user.getUsername()));
 	}
 
 	@MessageMapping("/chat/enter")
@@ -79,28 +71,25 @@ public class ChatController {
 		@RequestBody ChatDto chatDto,
 		SimpMessageHeaderAccessor headerAccessor) {
 
-		log.info("Controller : 채팅방 입장");
 		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
-		// producer.send(
-		// 	KafkaConstants.KAFKA_TOPIC, newchatDto
-		// 	);
+		producer.send(
+			KafkaConstants.KAFKA_TOPIC,
+			newchatDto
+		);
 
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatDto);
+		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newchatDto);
 	}
 
 	@MessageMapping("/chat/send")
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
-		log.info("Controller : 채팅 보내기 - {}", chatDto.getMessage());
-
-		// producer.send(
-		// 	KafkaConstants.KAFKA_TOPIC,
-		// 	chatDto
-		// );
-
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
-		chatService.sendChatRoom(chatDto);
+		producer.send(
+			KafkaConstants.KAFKA_TOPIC,
+			chatDto
+		);
+		// chatService.sendChatRoom(chatDto);
+		// msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	}
 
 	// @EventListener

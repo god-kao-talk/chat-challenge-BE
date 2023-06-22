@@ -60,7 +60,6 @@ public class MemberService {
     // }
     //
     public void addFriend(final String memberEmail, final MemberDto memberDto) {
-        log.info("Service: 친구 추가");
 
         if (memberFriendRepository.findByMemberEmailAndFriendEmail(memberEmail, memberDto.getEmail()).isEmpty()) {
             memberFriendRepository.save(new MemberFriend(memberEmail, memberDto.getEmail()));
@@ -71,7 +70,6 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<MemberDto> searchFriendList(final String memberEmail) {
-        log.info("Service: 친구 리스트 조회");
 
         List<String> friendEmails = findFriendEmailList(memberEmail);
 

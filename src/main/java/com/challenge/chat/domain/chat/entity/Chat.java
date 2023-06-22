@@ -1,12 +1,13 @@
 package com.challenge.chat.domain.chat.entity;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+
+import javax.persistence.Id;
 
 @Getter
 @Document(collection = "chat")
@@ -17,26 +18,26 @@ public class Chat {
 
 	private MessageType type;
 
-	private String sender;
+	private String nickname;
 
-	private String userId;
+	private String email;
 
-	private String roomId;
+	private String roomCode;
 
 	private String message;
 
 	@CreatedDate
 	private Instant createdAt;
 
-	private Chat(MessageType type, String sender, String userId, String roomId, String message) {
+	private Chat(MessageType type, String nickname, String email, String roomCode, String message) {
 		this.type = type;
-		this.sender = sender;
-		this.userId = userId;
-		this.roomId = roomId;
+		this.nickname = nickname;
+		this.email = email;
+		this.roomCode = roomCode;
 		this.message = message;
 	}
 
-	public static Chat of(MessageType type, String sender, String userId, String roomId, String message) {
-		return new Chat(type, sender, userId, roomId, message);
+	public static Chat of(MessageType type, String nickname, String email, String roomCode, String message) {
+		return new Chat(type, nickname, email, roomCode, message);
 	}
 }
