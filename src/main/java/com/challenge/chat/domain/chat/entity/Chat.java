@@ -5,12 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.Instant;
-
-import javax.persistence.Id;
 
 @Getter
 @Setter
@@ -46,7 +41,7 @@ public class Chat {
 		return new Chat(type, nickname, email, roomCode, message);
 	}
 
-	public void setCreatedAt() {
-		this.createdAt = Instant.now().toEpochMilli();
+	public void setCreatedAt(Instant time) {
+		this.createdAt = time.toEpochMilli();
 	}
 }

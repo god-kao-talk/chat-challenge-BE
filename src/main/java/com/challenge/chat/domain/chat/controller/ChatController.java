@@ -22,7 +22,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -94,10 +93,7 @@ public class ChatController {
 		@RequestBody ChatDto chatDto) {
 
 		Chat chat = ChatDto.toEntity(chatDto);
-		chat.setCreatedAt();
-
-		chatDto.setCreatedAt(Instant.ofEpochMilli(chat.getCreatedAt()));
-		log.info("현재 시간은 {}", Instant.ofEpochMilli(chat.getCreatedAt()));
+		// chat.setCreatedAt(chatDto.getCreatedAt());
 
 		producer.send(
 			KafkaConstants.KAFKA_TOPIC,
