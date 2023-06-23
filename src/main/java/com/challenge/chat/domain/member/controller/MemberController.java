@@ -1,7 +1,8 @@
 package com.challenge.chat.domain.member.controller;
 
 import com.challenge.chat.domain.member.dto.MemberDto;
-import com.challenge.chat.domain.member.dto.SignupDto;
+import com.challenge.chat.domain.member.dto.request.SignupRequest;
+import com.challenge.chat.domain.member.dto.request.MemberAddRequest;
 import com.challenge.chat.domain.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,16 +29,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/users/signup")
-    public ResponseEntity<String> signup(@RequestBody @Valid final SignupDto signupDto) {
-        memberService.signup(signupDto);
+    public ResponseEntity<String> signup(@RequestBody @Valid final SignupRequest signupRequest) {
+        memberService.signup(signupRequest);
         return ResponseEntity.status(HttpStatus.OK).body("회원가입 성공");
     }
 
     @PostMapping("/users/friend")
     public ResponseEntity<String> addFriend(
         @AuthenticationPrincipal final User user,
-        @RequestBody @Valid final MemberDto memberDto) {
-        memberService.addFriend(user.getUsername(), memberDto);
+        @RequestBody @Valid final MemberAddRequest memberAddRequest) {
+        memberService.addFriend(user.getUsername(), memberAddRequest.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body("친구추가 성공");
     }
 

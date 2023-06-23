@@ -45,7 +45,7 @@ public class ChatController {
 		@AuthenticationPrincipal final User user) {
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.makeChatRoom(ChatRoomDto.from(request), user.getUsername()));
+			.body(chatService.makeChatRoom(request.getRoomName(), user.getUsername()));
 	}
 
 	@PostMapping("/chat/room")
@@ -54,7 +54,7 @@ public class ChatController {
 		@AuthenticationPrincipal final User user) {
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.registerChatRoom(ChatRoomDto.from(request), user.getUsername()));
+			.body(chatService.registerChatRoom(request.getRoomCode(), user.getUsername()));
 	}
 
 	@GetMapping("/chat/room")

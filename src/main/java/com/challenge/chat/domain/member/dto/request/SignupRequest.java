@@ -1,4 +1,4 @@
-package com.challenge.chat.domain.member.dto;
+package com.challenge.chat.domain.member.dto.request;
 
 import javax.validation.constraints.NotBlank;
 
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SignupDto {
+public class SignupRequest {
 	@NotBlank(message = "Email은 필수 값입니다.")
 	private String email;
 
@@ -16,5 +16,4 @@ public class SignupDto {
 
 	@NotBlank(message = "Nickname은 필수 값입니다.")
 	private String nickname;
-
 }
