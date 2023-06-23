@@ -93,7 +93,7 @@ public class ChatController {
 		@RequestBody ChatDto chatDto) {
 
 		Chat chat = ChatDto.toEntity(chatDto);
-		// chat.setCreatedAt(chatDto.getCreatedAt());
+		chat.setCreatedAt(chatDto.getCreatedAt());
 
 		producer.send(
 			KafkaConstants.KAFKA_TOPIC,

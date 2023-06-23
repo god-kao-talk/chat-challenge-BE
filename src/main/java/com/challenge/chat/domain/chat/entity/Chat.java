@@ -42,6 +42,10 @@ public class Chat {
 	}
 
 	public void setCreatedAt(Instant time) {
+		if (time == null) {
+			this.createdAt = Instant.now().toEpochMilli();
+			return;
+		}
 		this.createdAt = time.toEpochMilli();
 	}
 }
