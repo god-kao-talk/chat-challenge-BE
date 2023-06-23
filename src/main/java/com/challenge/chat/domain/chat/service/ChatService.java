@@ -38,11 +38,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ChatService {
 
-//	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final MemberChatRoomCustomRepository memberChatRoomCustomRepository;
-//	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRoomCustomRepository chatRoomCustomRepository;
-	//	private final ChatRepository chatRepository;
 	private final ChatCustomRepository chatCustomRepository;
 
 	private final ChatSearchRepository chatSearchRepository;
@@ -58,9 +55,7 @@ public class ChatService {
 
 		// TODO : 비동기적으로 chatRoom 과 memberChatRoom을 저장하기
 		chatRoomCustomRepository.chatRoomSave(chatRoom);
-//		chatRoomRepository.save(chatRoom);
 		memberChatRoomCustomRepository.MemberChatRoomSave(MemberChatRoom.of(chatRoom, member));
-//		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
 
 		return ChatRoomDto.from(chatRoom);
 	}
@@ -96,8 +91,6 @@ public class ChatService {
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 
-//		return chatRepository
-
 		return chatCustomRepository
 			.findByRoom(chatRoom)
 			.stream()
@@ -132,7 +125,6 @@ public class ChatService {
 
 		// MySQL 저장
 		chatCustomRepository.chatSave(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
-//		chatRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
 		// ElasticSearch 저장
 		chatSearchRepository.save(ChatES.of(
 			chatDto.getType(),
@@ -181,13 +173,11 @@ public class ChatService {
 
 	public ChatRoom findChatRoom(String roomCode) {
 		return chatRoomCustomRepository.findByRoomCode(roomCode).orElseThrow(
-//		return chatRoomRepository.findByRoomCode(roomCode).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 
 	private List<MemberChatRoom> findChatRoomByMember(Member member) {
 		return memberChatRoomCustomRepository.findByMember(member).orElseThrow(
-//		return memberChatRoomRepository.findByMember(member).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 }

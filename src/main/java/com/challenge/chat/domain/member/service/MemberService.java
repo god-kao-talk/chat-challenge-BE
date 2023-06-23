@@ -7,8 +7,6 @@ import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.entity.MemberFriend;
 import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import com.challenge.chat.domain.member.repository.MemberFriendCustomRepository;
-//import com.challenge.chat.domain.member.repository.MemberFriendRepository;
-import com.challenge.chat.domain.member.repository.MemberFriendCustomRepository;
 
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.MemberErrorCode;
@@ -31,8 +29,6 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     private final MemberCustomRepository memberCustomRepository;
-//    private final MemberRepository memberRepository;
-//    private final MemberFriendRepository memberFriendRepository;
     private final MemberFriendCustomRepository memberFriendCustomRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -46,7 +42,6 @@ public class MemberService {
             throw new RestApiException(MemberErrorCode.ADDED_FRIEND);
         }
         memberFriendCustomRepository.MemberFriendSave(MemberFriend.of(member, friend));
-//        memberFriendRepository.save(MemberFriend.of(member, friend));
     }
 
     @Transactional(readOnly = true)
@@ -76,12 +71,10 @@ public class MemberService {
             .build();
 
         memberCustomRepository.memberSave(member);
-//        memberRepository.save(member);
     }
 
     public Member findMemberByEmail(String email) {
         return memberCustomRepository.findByEmail(email).orElseThrow(
-//        return memberRepository.findByEmail(email).orElseThrow(
             () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }
