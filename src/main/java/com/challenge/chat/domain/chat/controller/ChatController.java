@@ -101,8 +101,8 @@ public class ChatController {
 		// 	chatDto
 		// );
 
-		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 		chatService.sendChatRoom(chatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
 	}
 
 	@GetMapping("/chat/{room-code}/{message}")

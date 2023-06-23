@@ -33,7 +33,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public void addFriend(final String memberEmail, final String friendEmail) {
-        log.info("Service: 친구 추가");
 
         Member member = findMemberByEmail(memberEmail);
         Member friend = findMemberByEmail(friendEmail);
@@ -46,7 +45,6 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<MemberDto> searchFriendList(final String memberEmail) {
-        log.info("Service: 친구 리스트 조회");
 
         Member member = findMemberByEmail(memberEmail);
 
