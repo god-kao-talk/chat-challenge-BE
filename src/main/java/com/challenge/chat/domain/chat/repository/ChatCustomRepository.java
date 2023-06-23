@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ChatCustomRepository {
     List<Chat> findByRoom(ChatRoom room);
-    void save(Chat chat);
+    void chatSave(Chat chat);
 }

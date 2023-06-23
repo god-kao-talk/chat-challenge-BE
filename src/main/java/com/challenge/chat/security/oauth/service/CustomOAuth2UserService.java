@@ -2,7 +2,7 @@ package com.challenge.chat.security.oauth.service;
 
 import com.challenge.chat.domain.member.constant.SocialType;
 import com.challenge.chat.domain.member.entity.Member;
-import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import com.challenge.chat.security.jwt.service.JwtService;
 import com.challenge.chat.security.oauth.dto.CustomOAuth2User;
 import com.challenge.chat.security.oauth.dto.OAuthAttributes;
@@ -24,7 +24,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-	private final MemberRepository memberRepository;
+	private final MemberCustomRepository memberCustomRepository;
+//	private final MemberRepository memberRepository;
 	private final JwtService jwtService;
 
 	private static final String NAVER = "naver";
@@ -84,7 +85,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	 * 만약 찾은 회원이 있다면, 그대로 반환하고 없다면 saveUser()를 호출하여 회원을 저장한다.
 	 */
 	private Member getUser(OAuthAttributes attributes, SocialType socialType) {
-		Member findUser = memberRepository.findBySocialTypeAndSocialId(socialType,
+		Member findUser = memberCustomRepository.findBySocialTypeAndSocialId(socialType,
+//		Member findUser = memberRepository.findBySocialTypeAndSocialId(socialType,
 			attributes.getOauth2UserInfo().getId()).orElse(null);
 
 		if(findUser == null) {
@@ -103,6 +105,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private Member saveUser(OAuthAttributes attributes, SocialType socialType) {
 		Member createdUser = attributes.toEntity(socialType, attributes.getOauth2UserInfo());
 		createdUser.updateRefreshToken(jwtService.createRefreshToken());
-		return memberRepository.save(createdUser);
+		return memberCustomRepository.createdUserSave(createdUser);
+//		return memberRepository.save(createdUser);
 	}
 }

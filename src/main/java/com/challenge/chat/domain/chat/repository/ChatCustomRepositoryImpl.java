@@ -11,12 +11,11 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
-public class ChatRepositoryImpl implements  ChatCustomRepository{
+public class ChatCustomRepositoryImpl implements  ChatCustomRepository{
     private final JPAQueryFactory queryFactory;
     private final EntityManager entityManager;
 
-    @Autowired
-    public ChatRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
+    public ChatCustomRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
         this.queryFactory = queryFactory;
         this.entityManager = entityManager;
     }
@@ -31,7 +30,8 @@ public class ChatRepositoryImpl implements  ChatCustomRepository{
     }
 
     @Override
-    public void save(Chat chat) {
+    public void chatSave(Chat chat) {
+
         entityManager.persist(chat);
     }
 }

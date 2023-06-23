@@ -5,8 +5,10 @@ import com.challenge.chat.domain.member.dto.MemberDto;
 import com.challenge.chat.domain.member.dto.request.SignupDto;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.entity.MemberFriend;
-import com.challenge.chat.domain.member.repository.MemberFriendRepository;
-import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
+import com.challenge.chat.domain.member.repository.MemberFriendCustomRepository;
+//import com.challenge.chat.domain.member.repository.MemberFriendRepository;
+import com.challenge.chat.domain.member.repository.MemberFriendCustomRepository;
 
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.MemberErrorCode;
@@ -28,8 +30,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MemberService {
 
-    private final MemberRepository memberRepository;
-    private final MemberFriendRepository memberFriendRepository;
+    private final MemberCustomRepository memberCustomRepository;
+//    private final MemberRepository memberRepository;
+//    private final MemberFriendRepository memberFriendRepository;
+    private final MemberFriendCustomRepository memberFriendCustomRepository;
     private final PasswordEncoder passwordEncoder;
 
     public void addFriend(final String memberEmail, final String friendEmail) {
@@ -38,10 +42,11 @@ public class MemberService {
         Member member = findMemberByEmail(memberEmail);
         Member friend = findMemberByEmail(friendEmail);
 
-        if (memberFriendRepository.findByMemberAndFriend(member, friend).isPresent()) {
+        if (memberFriendCustomRepository.findByMemberAndFriend(member, friend).isPresent()) {
             throw new RestApiException(MemberErrorCode.ADDED_FRIEND);
         }
-        memberFriendRepository.save(MemberFriend.of(member, friend));
+        memberFriendCustomRepository.MemberFriendSave(MemberFriend.of(member, friend));
+//        memberFriendRepository.save(MemberFriend.of(member, friend));
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +63,8 @@ public class MemberService {
 
     public void signup(final SignupDto signupDto) {
 
-        if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
+        if (memberCustomRepository.findByEmail(signupDto.getEmail()).isPresent()) {
+//            if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
             throw new RestApiException(MemberErrorCode.DUPLICATED_EMAIL);
         }
 
@@ -69,11 +75,13 @@ public class MemberService {
             .role(MemberRole.USER)
             .build();
 
-        memberRepository.save(member);
+        memberCustomRepository.memberSave(member);
+//        memberRepository.save(member);
     }
 
     public Member findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(
+        return memberCustomRepository.findByEmail(email).orElseThrow(
+//        return memberRepository.findByEmail(email).orElseThrow(
             () -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

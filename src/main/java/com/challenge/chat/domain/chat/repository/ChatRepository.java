@@ -9,5 +9,5 @@
 //
 //public interface ChatRepository extends JpaRepository<Chat, Long>, ChatCustomRepository {
 //
-////    List<Chat> findByRoom(ChatRoom room);
+//    List<Chat> findByRoom(ChatRoom room);
 //}

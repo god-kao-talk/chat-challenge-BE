@@ -38,10 +38,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ChatService {
 
-	private final MemberChatRoomRepository memberChatRoomRepository;
-	private final ChatRoomRepository chatRoomRepository;
+//	private final MemberChatRoomRepository memberChatRoomRepository;
+	private final MemberChatRoomCustomRepository memberChatRoomCustomRepository;
+//	private final ChatRoomRepository chatRoomRepository;
+	private final ChatRoomCustomRepository chatRoomCustomRepository;
+	//	private final ChatRepository chatRepository;
 	private final ChatCustomRepository chatCustomRepository;
-//	private final ChatRepository chatRepository;
+
 	private final ChatSearchRepository chatSearchRepository;
 	private final MemberService memberService;
 	private final ElasticsearchOperations elasticsearchOperations;
@@ -54,8 +57,10 @@ public class ChatService {
 		Member member = memberService.findMemberByEmail(memberEmail);
 
 		// TODO : 비동기적으로 chatRoom 과 memberChatRoom을 저장하기
-		chatRoomRepository.save(chatRoom);
-		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
+		chatRoomCustomRepository.chatRoomSave(chatRoom);
+//		chatRoomRepository.save(chatRoom);
+		memberChatRoomCustomRepository.MemberChatRoomSave(MemberChatRoom.of(chatRoom, member));
+//		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
 
 		return ChatRoomDto.from(chatRoom);
 	}
@@ -66,7 +71,8 @@ public class ChatService {
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 		Member member = memberService.findMemberByEmail(memberEmail);
-		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
+		memberChatRoomCustomRepository.MemberChatRoomSave(MemberChatRoom.of(chatRoom, member));
+//		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
 
 		return ChatRoomDto.from(chatRoom);
 	}
@@ -125,7 +131,7 @@ public class ChatService {
 		ChatRoom room = findChatRoom(chatDto.getRoomCode());
 
 		// MySQL 저장
-		chatCustomRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
+		chatCustomRepository.chatSave(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
 //		chatRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
 		// ElasticSearch 저장
 		chatSearchRepository.save(ChatES.of(
@@ -174,12 +180,14 @@ public class ChatService {
 	}
 
 	public ChatRoom findChatRoom(String roomCode) {
-		return chatRoomRepository.findByRoomCode(roomCode).orElseThrow(
+		return chatRoomCustomRepository.findByRoomCode(roomCode).orElseThrow(
+//		return chatRoomRepository.findByRoomCode(roomCode).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 
 	private List<MemberChatRoom> findChatRoomByMember(Member member) {
-		return memberChatRoomRepository.findByMember(member).orElseThrow(
+		return memberChatRoomCustomRepository.findByMember(member).orElseThrow(
+//		return memberChatRoomRepository.findByMember(member).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 }

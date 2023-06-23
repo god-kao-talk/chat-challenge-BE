@@ -1,5 +1,6 @@
 package com.challenge.chat.config;
 
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +17,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.security.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.challenge.chat.security.jwt.service.JwtService;
 import com.challenge.chat.security.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
@@ -41,7 +41,8 @@ public class SecurityConfig {
 
 	// private final LoginService loginService;
 	private final JwtService jwtService;
-	private final MemberRepository memberRepository;
+	//	private final MemberRepository memberRepository;
+	private final MemberCustomRepository memberCustomRepository;
 	private final ObjectMapper objectMapper;
 	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -116,7 +117,7 @@ public class SecurityConfig {
 	 */
 	@Bean
 	public LoginSuccessHandler loginSuccessHandler() {
-		return new LoginSuccessHandler(jwtService, memberRepository);
+		return new LoginSuccessHandler(jwtService, memberCustomRepository);
 	}
 
 	/**
@@ -145,7 +146,7 @@ public class SecurityConfig {
 	@Bean
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
 		JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService,
-			memberRepository);
+			memberCustomRepository);
 		return jwtAuthenticationFilter;
 	}
 
