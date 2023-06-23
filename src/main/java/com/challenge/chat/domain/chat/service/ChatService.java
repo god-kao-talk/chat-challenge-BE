@@ -8,10 +8,7 @@ import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
-import com.challenge.chat.domain.chat.repository.ChatRepository;
-import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
-import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
-import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.*;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.exception.RestApiException;
@@ -43,7 +40,8 @@ public class ChatService {
 
 	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final ChatRoomRepository chatRoomRepository;
-	private final ChatRepository chatRepository;
+	private final ChatCustomRepository chatCustomRepository;
+//	private final ChatRepository chatRepository;
 	private final ChatSearchRepository chatSearchRepository;
 	private final MemberService memberService;
 	private final ElasticsearchOperations elasticsearchOperations;
@@ -92,7 +90,9 @@ public class ChatService {
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 
-		return chatRepository
+//		return chatRepository
+
+		return chatCustomRepository
 			.findByRoom(chatRoom)
 			.stream()
 			.sorted(Comparator.comparing(Chat::getCreatedAt))
@@ -125,7 +125,8 @@ public class ChatService {
 		ChatRoom room = findChatRoom(chatDto.getRoomCode());
 
 		// MySQL 저장
-		chatRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
+		chatCustomRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
+//		chatRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
 		// ElasticSearch 저장
 		chatSearchRepository.save(ChatES.of(
 			chatDto.getType(),
