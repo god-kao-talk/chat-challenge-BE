@@ -3,12 +3,13 @@ package com.challenge.chat.security.login.handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
-import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import com.challenge.chat.security.jwt.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private final JwtService jwtService;
-	private final MemberRepository memberRepository;
+	private final MemberCustomRepository memberCustomRepository;
+//	private final MemberRepository memberRepository;
 
 	@Value("${jwt.access.expiration}")
 	private String accessTokenExpiration;

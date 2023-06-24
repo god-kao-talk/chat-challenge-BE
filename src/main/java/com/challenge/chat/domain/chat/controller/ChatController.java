@@ -94,6 +94,8 @@ public class ChatController {
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
+		log.info("Controller : 채팅 보내기 - {}", chatDto.getMessage());
+
 		// producer.send(
 		// 	KafkaConstants.KAFKA_TOPIC,
 		// 	chatDto

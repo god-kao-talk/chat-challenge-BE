@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -16,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.challenge.chat.domain.member.entity.Member;
-import com.challenge.chat.domain.member.repository.MemberRepository;
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import com.challenge.chat.security.jwt.service.JwtService;
 import com.challenge.chat.security.jwt.util.PasswordUtil;
 
@@ -44,7 +45,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	private static final String NO_CHECK_URL_SIGNUP = "/users/signup"; // "/login"으로 들어오는 요청은 Filter 작동 X
 
 	private final JwtService jwtService;
-	private final MemberRepository memberRepository;
+	private final MemberCustomRepository memberCustomRepository;
+//	private final MemberRepository memberRepository;
 
 	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
@@ -95,7 +97,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	 *  그 후 JwtService.sendAccessTokenAndRefreshToken()으로 응답 헤더에 보내기
 	 */
 	public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-		memberRepository.findByRefreshToken(refreshToken)
+		memberCustomRepository.findByRefreshToken(refreshToken)
+//		memberRepository.findByRefreshToken(refreshToken)
 			.ifPresent(member -> {
 				String reIssuedRefreshToken = reIssueRefreshToken(member);
 				jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(member.getEmail()),
@@ -111,7 +114,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	private String reIssueRefreshToken(Member member) {
 		String reIssuedRefreshToken = jwtService.createRefreshToken();
 		member.updateRefreshToken(reIssuedRefreshToken);
-		memberRepository.save(member);
+		memberCustomRepository.memberSave(member);
+//		memberRepository.save(member);
 		return reIssuedRefreshToken;
 	}
 
@@ -131,7 +135,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
 			.ifPresent(accessToken -> jwtService.extractEmail(accessToken)
-				.ifPresent(email -> memberRepository.findByEmail(email)
+					.ifPresent(email -> memberCustomRepository.findByEmail(email)
+//					.ifPresent(email -> memberRepository.findByEmail(email)
 					.ifPresent(this::saveAuthentication)));
 
 		filterChain.doFilter(request, response);
