@@ -107,14 +107,14 @@ public class ChatController {
 
 	@GetMapping("/chat/{room-code}/{message}")
 	public ResponseEntity<List<ChatSearchResponse>> searchChatList(
-		@PathVariable("room-code") final String roomCode,
+		@PathVariable("room-code") final Long roomId,
 		@PathVariable("message") final String message,
 		final Pageable pageable) {
 
 		log.info("Controller : 채팅 메시지 검색");
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.findChatList(roomCode, message, pageable));
+			.body(chatService.findChatList(roomId, message, pageable));
 	}
 
 	// @EventListener

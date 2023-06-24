@@ -4,10 +4,12 @@ import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.dto.ChatRoomDto;
 import com.challenge.chat.domain.chat.dto.response.ChatSearchResponse;
 import com.challenge.chat.domain.chat.entity.Chat;
-import com.challenge.chat.domain.chat.entity.ChatES;
+// import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
+import com.challenge.chat.domain.chat.repository.ChatRepository;
+// import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
 import com.challenge.chat.domain.chat.repository.*;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
@@ -16,14 +18,15 @@ import com.challenge.chat.exception.dto.ChatErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+// import org.elasticsearch.index.query.QueryBuilder;
+// import org.elasticsearch.index.query.QueryBuilders;
+// import org.springframework.data.domain.Pageable;
+// import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+// import org.springframework.data.elasticsearch.core.SearchHit;
+// import org.springframework.data.elasticsearch.core.SearchHits;
+// import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+// import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,13 +42,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ChatService {
 
+	private final ChatRepository chatRepository;
+	// private final ChatSearchRepository chatSearchRepository;
 	private final MemberChatRoomCustomRepository memberChatRoomCustomRepository;
 	private final ChatRoomCustomRepository chatRoomCustomRepository;
 	private final ChatCustomRepository chatCustomRepository;
 
-	private final ChatSearchRepository chatSearchRepository;
 	private final MemberService memberService;
-	private final ElasticsearchOperations elasticsearchOperations;
+	// private final ElasticsearchOperations elasticsearchOperations;
 
 	@Transactional
 	public ChatRoomDto makeChatRoom(final String roomName, final String memberEmail) {
@@ -129,21 +134,16 @@ public class ChatService {
 		// ));
 	}
 
-	public List<ChatSearchResponse> findChatList(final String roomCode, final String message, final Pageable pageable) {
+	@Transactional(readOnly = true)
+	public List<ChatSearchResponse> findChatList(final Long roomId, final String message, final Pageable pageable) {
 
-		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-			.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
-			.must(QueryBuilders.matchQuery("roomCode", roomCode));
-
-		NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-			.withQuery(queryBuilder)
-			.withPageable(pageable)
-			.build();
-
-		SearchHits<ChatES> searchHits = elasticsearchOperations.search(searchQuery, ChatES.class);
-
-		return searchHits.stream()
-			.map(SearchHit::getContent)
+		Optional<List<Chat>> chatList = chatRepository.findByRoomAndMessage(roomId, message);
+		if (chatList.isEmpty()) {
+			return null;
+		}
+		log.info("채팅방 검색 내용: {}", message);
+		return chatList.get()
+			.stream()
 			.map(ChatSearchResponse::from)
 			.collect(Collectors.toList());
 	}

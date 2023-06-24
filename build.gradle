@@ -75,7 +75,7 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
     // Elasticsearch
-    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+//    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
 //    ## querydsl 디펜던시 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0'
