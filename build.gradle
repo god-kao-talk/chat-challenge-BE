@@ -74,8 +74,8 @@ dependencies {
 
     //RabbitMQ
 // https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit
-    implementation 'org.springframework.boot:spring-boot-starter-amqp:2.6.4'
-    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:2.6.4'
+//    implementation 'org.springframework.boot:spring-boot-starter-amqp:2.6.4'
+//    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:2.6.4'
 }
 
 tasks.named('test') {
