@@ -13,7 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.setPathMatcher(new AntPathMatcher(".")); // url을 chat/room/3 -> chat.room.3으로 참조하기 위한 설정
+		// config.setPathMatcher(new AntPathMatcher(".")); // url을 chat/room/3 -> chat.room.3으로 참조하기 위한 설정
 		config.enableSimpleBroker("/queue", "/topic");
 		// config.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue")
 		// 	.setRelayHost("rabbitMQ")
