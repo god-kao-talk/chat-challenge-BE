@@ -20,11 +20,11 @@ spring:
         format_sql: false
         hbm2ddl:
           auto: update
-  rabbitmq:
-    host: rabbitMQ
-    port: 5672
-    username: guest
-    password: guest
+#  rabbitmq:
+#    host: rabbitMQ
+#    port: 5672
+#    username: guest
+#    password: guest
 
   application:
     name: monitoring
