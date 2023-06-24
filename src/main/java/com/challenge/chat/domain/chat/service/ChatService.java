@@ -9,9 +9,8 @@ import com.challenge.chat.domain.chat.entity.ChatRoom;
 import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
-import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
 // import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
-import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.*;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.exception.RestApiException;
@@ -27,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 // import org.springframework.data.elasticsearch.core.SearchHits;
 // import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 // import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,10 +42,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ChatService {
 
-	private final MemberChatRoomRepository memberChatRoomRepository;
-	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRepository chatRepository;
 	// private final ChatSearchRepository chatSearchRepository;
+	private final MemberChatRoomCustomRepository memberChatRoomCustomRepository;
+	private final ChatRoomCustomRepository chatRoomCustomRepository;
+	private final ChatCustomRepository chatCustomRepository;
+
 	private final MemberService memberService;
 	// private final ElasticsearchOperations elasticsearchOperations;
 
@@ -55,8 +58,8 @@ public class ChatService {
 		Member member = memberService.findMemberByEmail(memberEmail);
 
 		// TODO : 비동기적으로 chatRoom 과 memberChatRoom을 저장하기
-		chatRoomRepository.save(chatRoom);
-		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
+		chatRoomCustomRepository.chatRoomSave(chatRoom);
+		memberChatRoomCustomRepository.MemberChatRoomSave(MemberChatRoom.of(chatRoom, member));
 
 		return ChatRoomDto.from(chatRoom);
 	}
@@ -66,7 +69,8 @@ public class ChatService {
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 		Member member = memberService.findMemberByEmail(memberEmail);
-		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
+		memberChatRoomCustomRepository.MemberChatRoomSave(MemberChatRoom.of(chatRoom, member));
+//		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
 
 		return ChatRoomDto.from(chatRoom);
 	}
@@ -88,7 +92,7 @@ public class ChatService {
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 
-		return chatRepository
+		return chatCustomRepository
 			.findByRoom(chatRoom)
 			.stream()
 			.sorted(Comparator.comparing(Chat::getCreatedAt))
@@ -119,7 +123,7 @@ public class ChatService {
 		ChatRoom room = findChatRoom(chatDto.getRoomCode());
 
 		// MySQL 저장
-		chatRepository.save(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
+		chatCustomRepository.chatSave(Chat.of(chatDto.getType(), member, room, chatDto.getMessage()));
 		// ElasticSearch 저장
 		// chatSearchRepository.save(ChatES.of(
 		// 	chatDto.getType(),
@@ -130,24 +134,19 @@ public class ChatService {
 		// ));
 	}
 
-	// public List<ChatSearchResponse> findChatList(final String roomCode, final String message, final Pageable pageable) {
-	//
-	// 	QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-	// 		.must(QueryBuilders.matchQuery("message", message).analyzer("korean"))
-	// 		.must(QueryBuilders.matchQuery("roomCode", roomCode));
-	//
-	// 	NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-	// 		.withQuery(queryBuilder)
-	// 		.withPageable(pageable)
-	// 		.build();
-	//
-	// 	SearchHits<ChatES> searchHits = elasticsearchOperations.search(searchQuery, ChatES.class);
-	//
-	// 	return searchHits.stream()
-	// 		.map(SearchHit::getContent)
-	// 		.map(ChatSearchResponse::from)
-	// 		.collect(Collectors.toList());
-	// }
+	@Transactional(readOnly = true)
+	public List<ChatSearchResponse> findChatList(final Long roomId, final String message, final Pageable pageable) {
+
+		Optional<List<Chat>> chatList = chatRepository.findByRoomAndMessage(roomId, message);
+		if (chatList.isEmpty()) {
+			return null;
+		}
+		log.info("채팅방 검색 내용: {}", message);
+		return chatList.get()
+			.stream()
+			.map(ChatSearchResponse::from)
+			.collect(Collectors.toList());
+	}
 
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {
 
@@ -165,12 +164,12 @@ public class ChatService {
 	}
 
 	public ChatRoom findChatRoom(String roomCode) {
-		return chatRoomRepository.findByRoomCode(roomCode).orElseThrow(
+		return chatRoomCustomRepository.findByRoomCode(roomCode).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 
 	private List<MemberChatRoom> findChatRoomByMember(Member member) {
-		return memberChatRoomRepository.findByMember(member).orElseThrow(
+		return memberChatRoomCustomRepository.findByMember(member).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 }

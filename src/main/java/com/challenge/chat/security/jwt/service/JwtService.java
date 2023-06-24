@@ -6,12 +6,12 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.challenge.chat.domain.member.repository.MemberCustomRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.MemberErrorCode;
 
@@ -49,7 +49,8 @@ public class JwtService {
 	private static final String EMAIL_CLAIM = "email";
 	private static final String BEARER = "Bearer ";
 
-	private final MemberRepository memberRepository;
+	private final MemberCustomRepository memberCustomRepository;
+//	private final MemberRepository memberRepository;
 
 	/**
 	 * AccessToken 생성 메소드
@@ -167,7 +168,8 @@ public class JwtService {
 	 */
 	public void updateRefreshToken(String email, String refreshToken) {
 		try {
-			memberRepository.findByEmail(email)
+			memberCustomRepository.findByEmail(email)
+//			memberRepository.findByEmail(email)
 				.ifPresentOrElse(
 					user -> user.updateRefreshToken(refreshToken),
 					() -> new RestApiException(MemberErrorCode.MEMBER_NOT_FOUND)
