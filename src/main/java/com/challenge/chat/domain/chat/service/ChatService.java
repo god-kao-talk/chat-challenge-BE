@@ -9,13 +9,13 @@ import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
 import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
+import com.challenge.chat.domain.member.entity.Member;
+import com.challenge.chat.domain.member.service.MemberService;
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.ChatErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,25 +33,27 @@ public class ChatService {
 	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRepository chatRepository;
-	private final MongoTemplate mongoTemplate;
+	private final MemberService memberService;
 
 	@Transactional
-	public ChatRoomDto makeChatRoom(final ChatRoomDto chatRoomDto, final String memberEmail) {
+	public ChatRoomDto makeChatRoom(final String roomName, final String memberEmail) {
 
-		ChatRoom chatRoom = ChatRoomDto.toEntity(chatRoomDto);
+		ChatRoom chatRoom = ChatRoom.of(roomName);
+		Member member = memberService.findMemberByEmail(memberEmail);
 
 		// TODO : 비동기적으로 chatRoom 과 memberChatRoom을 저장하기
 		chatRoomRepository.save(chatRoom);
-		memberChatRoomRepository.save(new MemberChatRoom(chatRoom.getRoomCode(), memberEmail));
+		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
 
 		return ChatRoomDto.from(chatRoom);
 	}
 
 	@Transactional
-	public ChatRoomDto registerChatRoom(final ChatRoomDto chatRoomDto, final String memberEmail) {
+	public ChatRoomDto registerChatRoom(final String roomCode, final String memberEmail) {
 
-		ChatRoom chatRoom = findChatRoom(chatRoomDto.getRoomCode());
-		memberChatRoomRepository.save(new MemberChatRoom(chatRoomDto.getRoomCode(), memberEmail));
+		ChatRoom chatRoom = findChatRoom(roomCode);
+		Member member = memberService.findMemberByEmail(memberEmail);
+		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
 
 		return ChatRoomDto.from(chatRoom);
 	}
@@ -60,19 +62,18 @@ public class ChatService {
 	public List<ChatRoomDto> searchChatRoomList(final String memberEmail) {
 
 		// TODO : 채팅방 리스트를 가져오는 동작이 2번의 쿼리를 동기적으로 실행해서 오히려 느려질 수 있는 지점이 될 수 있음
-		List<String> roomCodes = findChatRoomId(memberEmail);
+		Member member = memberService.findMemberByEmail(memberEmail);
+		List<MemberChatRoom> memberChatRoomList = findChatRoomByMember(member);
 
-		Query query = new Query(Criteria.where("roomCode").in(roomCodes));
-		return mongoTemplate.find(query, ChatRoom.class)
+		return memberChatRoomList
 			.stream()
-			.map(ChatRoomDto::from)
+			.map(a -> ChatRoomDto.from(a.getRoom()))
 			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
 	public List<ChatDto> searchChatList(final String roomCode, final String memberEmail) {
-		log.info("채팅방의 채팅 목록을 검색합니다. {}", roomCode);
-		MemberChatRoom memberChatRoom = findMemberChatRoom(roomCode, memberEmail);
+		ChatRoom chatRoom = findChatRoom(roomCode);
 		List<Chat> chatList = chatRepository.findByRoomCode(roomCode).orElse(null);
 		if (chatList == null) {
 			return null;
@@ -81,9 +82,10 @@ public class ChatService {
 			.stream()
 			.map(ChatDto::from)
 			.sorted(Comparator.comparing(ChatDto::getCreatedAt))
-			.toList();
+			.collect(Collectors.toList());
 	}
 
+	@Transactional(readOnly = true)
 	public ChatDto makeEnterMessageAndSetSessionAttribute(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
 
 		// socket session에 사용자의 정보 저장
@@ -101,7 +103,6 @@ public class ChatService {
 	}
 
 	public void sendChatRoom(ChatDto chatDto) {
-
 		chatRepository.save(ChatDto.toEntity(chatDto));
 	}
 
@@ -120,23 +121,13 @@ public class ChatService {
 			.build();
 	}
 
-	public ChatRoom findChatRoom(String roomId) {
-		return chatRoomRepository.findByRoomCode(roomId).orElseThrow(
+	public ChatRoom findChatRoom(String roomCode) {
+		return chatRoomRepository.findByRoomCode(roomCode).orElseThrow(
 			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 
-	public MemberChatRoom findMemberChatRoom(final String roomId, final String memberEmail) {
-		return memberChatRoomRepository.findByEmailAndRoomCode(memberEmail, roomId).orElseThrow(
-			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND)
-		);
-	}
-
-	public List<String> findChatRoomId(final String email) {
-		List<MemberChatRoom> memberChatRoomList = memberChatRoomRepository.findByEmail(email).orElse(null);
-		if (memberChatRoomList == null) {
-			return null;
-		}
-		return memberChatRoomList.stream()
-			.map(MemberChatRoom::getRoomCode).toList();
+	private List<MemberChatRoom> findChatRoomByMember(Member member) {
+		return memberChatRoomRepository.findByMember(member).orElseThrow(
+			() -> new RestApiException(ChatErrorCode.CHATROOM_NOT_FOUND));
 	}
 }
