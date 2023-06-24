@@ -73,7 +73,7 @@ public class ChatController {
 			.body(chatService.searchChatList(roomCode, user.getUsername()));
 	}
 
-	@MessageMapping("chat.enter")
+	@MessageMapping("/chat/enter")
 	public void enterChatRoom(
 		@RequestBody ChatDto chatDto,
 		SimpMessageHeaderAccessor headerAccessor) {
@@ -88,7 +88,7 @@ public class ChatController {
 		// rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + newChatDto.getRoomCode(), newChatDto);
 	}
 
-	@MessageMapping("chat.send")
+	@MessageMapping("/chat/send")
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
