@@ -7,9 +7,11 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 @Getter
 @Setter
-// @Document(collection = "chat")
+@Document(collection = "chat")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Chat {
@@ -27,7 +29,9 @@ public class Chat {
 	private String message;
 
 	// @CreatedDate
-	private long createdAt;
+	private String createdAt;
+
+	private String imageUrl;
 
 	private Chat(MessageType type, String nickname, String email, String roomCode, String message) {
 		this.type = type;
@@ -39,9 +43,5 @@ public class Chat {
 
 	public static Chat of(MessageType type, String nickname, String email, String roomCode, String message) {
 		return new Chat(type, nickname, email, roomCode, message);
-	}
-
-	public void setCreatedAt(Instant time) {
-		this.createdAt = time.toEpochMilli();
 	}
 }
