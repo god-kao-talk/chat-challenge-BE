@@ -58,7 +58,9 @@ public class ChatService {
 
 		ChatRoom chatRoom = findChatRoom(roomCode);
 		Member member = memberService.findMemberByEmail(memberEmail);
-		memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
+		if (memberChatRoomRepository.findByMemberAndRoom(member, chatRoom).isEmpty()){
+			memberChatRoomRepository.save(MemberChatRoom.of(chatRoom, member));
+		}
 
 		return ChatRoomDto.from(chatRoom);
 	}
