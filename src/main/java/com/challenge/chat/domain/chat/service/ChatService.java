@@ -16,7 +16,8 @@ import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.ChatErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mongodb.core.MongoTemplate;
+
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,13 +78,10 @@ public class ChatService {
 
 	@Transactional(readOnly = true)
 	public List<ChatDto> searchChatList(final String roomCode, final String memberEmail) {
-		ChatRoom chatRoom = findChatRoom(roomCode);
-		List<Chat> chatList = chatRepository.findByRoomCode(roomCode).orElse(null);
-		if (chatList == null) {
-			return null;
-		}
-		return chatList
-			.stream()
+
+		List<Chat> chatList = chatRepository.findByRoomCode(roomCode).orElse(Collections.emptyList());
+
+		return chatList.stream()
 			.map(ChatDto::from)
 			.sorted(Comparator.comparing(ChatDto::getCreatedAt))
 			.collect(Collectors.toList());

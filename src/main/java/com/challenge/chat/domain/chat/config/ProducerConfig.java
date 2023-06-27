@@ -1,6 +1,7 @@
 package com.challenge.chat.domain.chat.config;
 
 import com.challenge.chat.domain.chat.constant.KafkaConstants;
+import com.challenge.chat.domain.chat.dto.ChatDto;
 import com.challenge.chat.domain.chat.entity.Chat;
 
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -27,7 +28,7 @@ public class ProducerConfig {
      * properties나 yaml으로 설정할 수도 있고, 아래처럼 @Bean으로 설정해줄 수도 있음
      */
     @Bean
-    public ProducerFactory<String, Chat> producerFactory() {
+    public ProducerFactory<String, ChatDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
@@ -41,7 +42,7 @@ public class ProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, Chat> kafkaTemplate() {
+    public KafkaTemplate<String, ChatDto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 }

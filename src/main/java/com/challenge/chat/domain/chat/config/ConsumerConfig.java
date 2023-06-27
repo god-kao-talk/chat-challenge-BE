@@ -1,7 +1,7 @@
 package com.challenge.chat.domain.chat.config;
 
 import com.challenge.chat.domain.chat.constant.KafkaConstants;
-import com.challenge.chat.domain.chat.entity.Chat;
+import com.challenge.chat.domain.chat.dto.ChatDto;
 
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -25,15 +25,15 @@ public class ConsumerConfig {
      * AUTO_OFFSET_RESET_CONFIG에는 latest(가장 최근에 생성된 메시지를 offset reset), earliest(가장 오래된 메시지를), none의 값을 입력할 수 있음
      */
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, Chat> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Chat> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    ConcurrentKafkaListenerContainerFactory<String, ChatDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ChatDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, Chat> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(Chat.class));
+    public ConsumerFactory<String, ChatDto> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(ChatDto.class));
     }
 
     @Bean
