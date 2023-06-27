@@ -154,6 +154,7 @@ public class SecurityConfig {
 
 		CorsConfiguration config = new CorsConfiguration();
 		config.addAllowedOrigin("http://localhost:3000");
+		config.addAllowedOrigin("http://this.code.s3-website-us-east-1.amazonaws.com");
 		config.addExposedHeader("Authorization");
 		config.addExposedHeader("Authorization-refresh");
 
