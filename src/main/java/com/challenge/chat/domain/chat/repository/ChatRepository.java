@@ -10,4 +10,6 @@ public interface ChatRepository extends MongoRepository<Chat, String> {
     // Spring Data MongoDB -> https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/
 
     Optional<List<Chat>> findByRoomCode(String roomCode);
+
+    Optional<List<Chat>> findByRoomCodeAndMessageContaining(String roomCode, String message);
 }
