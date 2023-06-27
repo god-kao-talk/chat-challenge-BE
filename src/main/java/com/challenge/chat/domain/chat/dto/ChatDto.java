@@ -40,4 +40,16 @@ public class ChatDto {
 			chatDto.getMessage()
 		);
 	}
+
+	public static ChatDto from(ChatES chat) {
+		return new ChatDto(
+			chat.getType(),
+			chat.getNickname(),
+			chat.getEmail(),
+			chat.getRoomCode(),
+			chat.getMessage(),
+			Instant.ofEpochMilli(chat.getCreatedAt()),
+			chat.getImageUrl()
+		);
+	}
 }

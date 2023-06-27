@@ -8,6 +8,7 @@ import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
+import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
 import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
@@ -20,6 +21,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +35,9 @@ public class ChatService {
 	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRepository chatRepository;
+	private final ChatSearchRepository chatSearchRepository;
 	private final MemberService memberService;
+	private final ElasticsearchOperations elasticsearchOperations;
 
 	@Transactional
 	public ChatRoomDto makeChatRoom(final String roomName, final String memberEmail) {
@@ -102,8 +106,33 @@ public class ChatService {
 		return chatDto;
 	}
 
-	public void sendChatRoom(ChatDto chatDto) {
-		chatRepository.save(ChatDto.toEntity(chatDto));
+	// public void sendChatRoom(ChatDto chatDto) {
+	// 	chatRepository.save(ChatDto.toEntity(chatDto));
+	// }
+
+	public List<ChatDto> findChatList(final String roomCode, final String message) {
+
+		List<Chat> chatList = chatRepository.findByRoomCodeAndMessageContaining(roomCode, message)
+			.orElse(Collections.emptyList());
+
+		return chatList.stream()
+			.map(ChatDto::from)
+			.collect(Collectors.toList());
+
+		// QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+		// 	.must(QueryBuilders.matchQuery("message", message))
+		// 	.must(QueryBuilders.matchQuery("roomCode", roomCode));
+		//
+		// NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+		// 	.withQuery(queryBuilder)
+		// 	.build();
+		//
+		// SearchHits<ChatES> searchHits = elasticsearchOperations.search(searchQuery, ChatES.class);
+		//
+		// return searchHits.stream()
+		// 	.map(SearchHit::getContent)
+		// 	.map(ChatDto::from)
+		// 	.collect(Collectors.toList());
 	}
 
 	public ChatDto leaveChatRoom(SimpMessageHeaderAccessor headerAccessor) {

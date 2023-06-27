@@ -1,0 +1,13 @@
+{
+  "properties" : {
+    "type" : {"type" : "text"},
+    "nickname" : {"type" : "text"},
+    "email" : {"type" : "text"},
+    "roomCode" : {"type" : "text"},
+    "message" : {"type" : "text", "analyzer" : "korean"},
+    "createdAt" : {
+      "type" : "date"
+    },
+    "imageUrl" : {"type" : "text"}
+  }
+}
