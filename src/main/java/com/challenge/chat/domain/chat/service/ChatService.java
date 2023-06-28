@@ -8,7 +8,6 @@ import com.challenge.chat.domain.chat.entity.MemberChatRoom;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 import com.challenge.chat.domain.chat.repository.ChatRoomRepository;
-import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
 import com.challenge.chat.domain.chat.repository.MemberChatRoomRepository;
 import com.challenge.chat.domain.member.entity.Member;
 import com.challenge.chat.domain.member.service.MemberService;
@@ -36,7 +35,6 @@ public class ChatService {
 	private final MemberChatRoomRepository memberChatRoomRepository;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRepository chatRepository;
-	private final ChatSearchRepository chatSearchRepository;
 	private final MemberService memberService;
 	private final ElasticsearchOperations elasticsearchOperations;
 

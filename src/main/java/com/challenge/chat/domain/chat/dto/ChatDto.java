@@ -1,7 +1,6 @@
 package com.challenge.chat.domain.chat.dto;
 
 import com.challenge.chat.domain.chat.entity.Chat;
-import com.challenge.chat.domain.chat.entity.ChatES;
 import com.challenge.chat.domain.chat.entity.MessageType;
 import lombok.*;
 
@@ -56,15 +55,15 @@ public class ChatDto {
 		);
 	}
 
-	public static ChatDto from(ChatES chat) {
-		return new ChatDto(
-			chat.getType(),
-			chat.getNickname(),
-			chat.getEmail(),
-			chat.getRoomCode(),
-			chat.getMessage(),
-			Instant.ofEpochMilli(chat.getCreatedAt()),
-			chat.getImageUrl()
-		);
-	}
+	// public static ChatDto from(ChatES chat) {
+	// 	return new ChatDto(
+	// 		chat.getType(),
+	// 		chat.getNickname(),
+	// 		chat.getEmail(),
+	// 		chat.getRoomCode(),
+	// 		chat.getMessage(),
+	// 		Instant.ofEpochMilli(chat.getCreatedAt()),
+	// 		chat.getImageUrl()
+	// 	);
+	// }
 }

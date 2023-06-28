@@ -10,13 +10,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import com.challenge.chat.domain.chat.repository.ChatRepository;
-import com.challenge.chat.domain.chat.repository.ChatSearchRepository;
 
 @EnableElasticsearchAuditing
 @EnableJpaAuditing
 @EnableJpaRepositories(excludeFilters = @ComponentScan.Filter(
 	type = FilterType.ASSIGNABLE_TYPE,
-	classes = {ChatSearchRepository.class, ChatRepository.class}))
+	classes = {ChatRepository.class}))
 @EnableMongoRepositories(basePackageClasses = {ChatRepository.class})
 @SpringBootApplication
 public class ChatApplication {
