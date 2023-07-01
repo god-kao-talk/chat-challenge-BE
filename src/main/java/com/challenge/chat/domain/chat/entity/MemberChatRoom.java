@@ -1,22 +1,41 @@
 package com.challenge.chat.domain.chat.entity;
 
-import jakarta.persistence.Id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.challenge.chat.domain.member.entity.Member;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "memberchatroom")
+@Entity
 @Getter
 @NoArgsConstructor
 public class MemberChatRoom {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	private String roomId;
-	private String memberEmail;
+	@ManyToOne
+	@JoinColumn(name = "ROOM_ID")
+	private ChatRoom room;
 
-	public MemberChatRoom(String roomId, String email) {
-		this.roomId = roomId;
-		this.memberEmail = email;
+	@ManyToOne
+	@JoinColumn(name = "MEMBER_ID")
+	private Member member;
+
+	private MemberChatRoom(ChatRoom room, Member member) {
+		this.room = room;
+		this.member = member;
+		// room.getMemberList().add(this);
+		// member.getRoomList().add(this);
+	}
+
+	public static MemberChatRoom of(ChatRoom room, Member member) {
+		return new MemberChatRoom(room, member);
 	}
 }

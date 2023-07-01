@@ -1,5 +1,8 @@
 package com.challenge.chat.security.login.handler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,8 +11,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import com.challenge.chat.domain.member.repository.MemberRepository;
 import com.challenge.chat.security.jwt.service.JwtService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

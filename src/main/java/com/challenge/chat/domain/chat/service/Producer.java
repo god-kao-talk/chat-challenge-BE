@@ -1,6 +1,7 @@
 package com.challenge.chat.domain.chat.service;
 
 import com.challenge.chat.domain.chat.dto.ChatDto;
+import com.challenge.chat.domain.chat.entity.Chat;
 import com.challenge.chat.exception.RestApiException;
 import com.challenge.chat.exception.dto.ChatErrorCode;
 

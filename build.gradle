@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.7'
+    id 'org.springframework.boot' version '2.7.12'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'com.google.cloud.tools.jib' version '3.2.0'
 }
@@ -25,7 +25,7 @@ jib {
     }
     to {
         image = 'chat-challenge'
-        tags = ['0.4']
+        tags = ['0.9']
     }
     container {
         mainClass = 'com.challenge.chat.ChatApplication'
@@ -51,7 +51,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     implementation 'com.auth0:java-jwt:4.2.1'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
     runtimeOnly 'com.h2database:h2'
 
@@ -67,6 +66,19 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.apache.kafka:kafka-clients'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    //Prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-core'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    //RabbitMQ
+// https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit
+//    implementation 'org.springframework.boot:spring-boot-starter-amqp:2.6.4'
+//    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:2.6.4'
+
+    // Elasticsearch
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 }
 
 tasks.named('test') {

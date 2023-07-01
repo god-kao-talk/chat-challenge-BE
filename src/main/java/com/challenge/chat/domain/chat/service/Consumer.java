@@ -24,7 +24,6 @@ public class Consumer {
     //         groupId = KafkaConstants.GROUP_ID
     // )
     // public void consume(ChatDto chatDto) {
-    //     log.info("난 컨슈머야 message={}", chatDto);
-    //     msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
+    //     msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
     // }
 }

@@ -5,8 +5,42 @@ spring:
   datasource:
     hikari:
       connection-timeout: 60000
-
+    url: ENC(AtbAmjmXqguvVjtmxT14rzHAGZXtPCNJJ/VUUG7ajPBIGeY/tCv9Dht1wHSnTu4xRD1qFg0jI2J3+4Kky0ZeXYY7CmzGw8RI9/VJuDR4vReoyTkWgVtqEVbd0v2EJNiQRbK+XW1vy3hdZ3wluhgFU7SZZCsAjwM+u2v5S76msntjxsDpjHU7qdrShxqjX3H67+0X59IZjqjr6HPMRjFYhQ==)
+    username: ENC(nZEFzHuwF4wasrpbc2TcJQ==)
+    password: ENC(mJyIfhz6z46U9Q4Exy4LQamYMyEBiJiG)
+    driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
-      uri: ENC(BoHKYlDnL9o0Vv/sb6Kn1KI0+eclffeWXvh3dB0v/NHhEAh46KydF4UBP/vU1Y2CuzaLkzMBz6ktjcFhzs3GC5Sv4LJhj/jMvqCdoAEgHWvC0XgAqqdeUmNqS7V5MEniGVEtp2enEoM=)
+      uri: mongodb+srv://admin:chat1122@thiscode.cpaiaoh.mongodb.net/thiscode?retryWrites=true&w=majority
       auto-index-creation: true
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        hbm2ddl:
+          auto: update
+#  rabbitmq:
+#    host: rabbitMQ
+#    port: 5672
+#    username: guest
+#    password: guest
+
+  application:
+    name: monitoring
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+
+  metrics:
+    tags:
+      application: ${spring.application.name}

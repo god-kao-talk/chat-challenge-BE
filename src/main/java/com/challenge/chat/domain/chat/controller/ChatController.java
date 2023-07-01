@@ -10,6 +10,7 @@ import com.challenge.chat.domain.chat.service.Producer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -31,15 +32,17 @@ public class ChatController {
 	private final Producer producer;
 	private final SimpMessagingTemplate msgOperation;
 
+	// private final RabbitTemplate rabbitTemplate;
+
+	// private final static String CHAT_EXCHANGE_NAME = "chat.exchange";
+
 	@PostMapping("/chat")
 	public ResponseEntity<ChatRoomDto> createChatRoom(
 		@RequestBody final ChatRoomCreateRequest request,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 생성, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.makeChatRoom(ChatRoomDto.from(request), user.getUsername()));
+			.body(chatService.makeChatRoom(request.getRoomName(), user.getUsername()));
 	}
 
 	@PostMapping("/chat/room")
@@ -47,31 +50,25 @@ public class ChatController {
 		@RequestBody final ChatRoomAddRequest request,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 추가, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.registerChatRoom(ChatRoomDto.from(request), user.getUsername()));
+			.body(chatService.registerChatRoom(request.getRoomCode(), user.getUsername()));
 	}
 
 	@GetMapping("/chat/room")
 	public ResponseEntity<List<ChatRoomDto>> showChatRoomList(
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅방 조회, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(chatService.searchChatRoomList(user.getUsername()));
 	}
 
-	@GetMapping("/chat/{room-id}")
+	@GetMapping("/chat/{room-code}")
 	public ResponseEntity<List<ChatDto>> showChatList(
-		@PathVariable("room-id") final String roomId,
+		@PathVariable("room-code") final String roomCode,
 		@AuthenticationPrincipal final User user) {
 
-		log.info("Controller : 채팅 내역 조회, User의 email은 {} 입니다", user.getUsername());
-
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(chatService.searchChatList(roomId, user.getUsername()));
+			.body(chatService.searchChatList(roomCode, user.getUsername()));
 	}
 
 	@MessageMapping("/chat/enter")
@@ -79,28 +76,38 @@ public class ChatController {
 		@RequestBody ChatDto chatDto,
 		SimpMessageHeaderAccessor headerAccessor) {
 
-		log.info("Controller : 채팅방 입장");
-		ChatDto newchatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
+		ChatDto newChatDto = chatService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
 		// producer.send(
-		// 	KafkaConstants.KAFKA_TOPIC, newchatDto
-		// 	);
+		// 	KafkaConstants.KAFKA_TOPIC,
+		// 	newchatDto
+		// );
 
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), newchatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), newChatDto);
+		// rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + newChatDto.getRoomCode(), newChatDto);
 	}
 
 	@MessageMapping("/chat/send")
 	public void sendChatRoom(
 		@RequestBody ChatDto chatDto) {
 
-		log.info("Controller : 채팅 보내기 - {}", chatDto.getMessage());
+		producer.send(
+			KafkaConstants.KAFKA_TOPIC,
+			chatDto
+		);
+		// rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatDto.getRoomCode(), chatDto);
+		// chatService.sendChatRoom(chatDto);
+		msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), chatDto);
+	}
 
-		// producer.send(
-		// 	KafkaConstants.KAFKA_TOPIC,
-		// 	chatDto
-		// );
+	@GetMapping("/chat/{room-code}/{message}")
+	public ResponseEntity<List<ChatDto>> searchChatList(
+		@PathVariable("room-code") final String roomCode,
+		@PathVariable("message") final String message) {
 
-		msgOperation.convertAndSend("/topic/chat/room" + chatDto.getRoomId(), chatDto);
-		chatService.sendChatRoom(chatDto);
+		log.info("Controller : 채팅 메시지 검색");
+
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(chatService.findChatList(roomCode, message));
 	}
 
 	// @EventListener

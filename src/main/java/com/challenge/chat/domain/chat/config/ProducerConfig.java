@@ -2,6 +2,8 @@ package com.challenge.chat.domain.chat.config;
 
 import com.challenge.chat.domain.chat.constant.KafkaConstants;
 import com.challenge.chat.domain.chat.dto.ChatDto;
+import com.challenge.chat.domain.chat.entity.Chat;
+
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

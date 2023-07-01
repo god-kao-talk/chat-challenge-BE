@@ -1,32 +1,42 @@
 package com.challenge.chat.domain.chat.entity;
 
-import jakarta.persistence.Id;
+import java.util.List;
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
-@Document(collection = "chatroom")
+@Entity
 @Getter
 @NoArgsConstructor
-public class ChatRoom {
+public class ChatRoom extends TimeStamped {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ROOM_ID")
+	private Long id;
 
-	private String roomId;
+	private String roomCode;
+
+	@Column(nullable = false)
 	private String roomName;
 
-	@CreatedDate
-	private Instant createdAt;
+	@OneToMany(mappedBy = "room", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<MemberChatRoom> memberList;
 
-	private ChatRoom(String roomId, String roomName) {
-		this.roomId = roomId;
+	private ChatRoom(String roomName) {
+		this.roomCode = UUID.randomUUID().toString();
 		this.roomName = roomName;
 	}
 
-	public static ChatRoom of(String roomId, String roomName) {
-		return new ChatRoom(roomId, roomName);
+	public static ChatRoom of(String roomName) {
+		return new ChatRoom(roomName);
 	}
 }

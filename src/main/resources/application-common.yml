@@ -7,23 +7,11 @@ spring:
 jwt:
   secretKey: ENC(uvRR3r/GGDxBWH5fuINwi8uQVmhDV9lkuDtiDmEJeKnEMNYLlIZ/lfPYSrpn/LLPUtJflpTdSDxXGd6qRIfWrWmvtdS88f8JI3B1yQQ0VQRsywHyg/wB7w==)
   access:
-    expiration: 3600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+    expiration: 604800000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
     header: Authorization
   refresh:
-    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
+    expiration: 604800000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
     header: Authorization-refresh
-
 logging:
   level:
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-
-cloud:
-  aws:
-    s3:
-      bucket: chatchallengebucket
-    stack.auto: false
-    region.static: ENC(0bq5sPO9vq8ID5qNhZiAJw1Kllk8pwUn)
-    credentials:
-      accessKey: ENC(DlgOorwSMoUWRgJVRCLT5bMjNYRFF63S3ZSnOEghuU0=)
-      secretKey: ENC(CMos8FOe37EVh8yf5UYKcSH7zuDzlNCd8gt69yogP8SrBogWqOg0/+vNbJW14Rsw4iyeZxpsjoA=)
-
+    org.springframework.data.elasticsearch.client.WIRE: TRACE

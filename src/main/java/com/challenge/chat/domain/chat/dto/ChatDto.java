@@ -16,18 +16,32 @@ public class ChatDto {
 	private MessageType type;
 	private String nickname;
 	private String email;
-	private String roomId;
+	private String roomCode;
 	private String message;
 	private Instant createdAt;
+	private String imageUrl;
 
 	public static ChatDto from(Chat chat) {
+
+		Instant instant;
+		if (chat.getCreatedAt() == null) {
+			instant = null;
+		} else {
+			double timestampValue = Double.parseDouble(chat.getCreatedAt());
+			long epochSeconds = (long) timestampValue;
+			instant = Instant.ofEpochSecond(
+				epochSeconds,
+				(int) ((timestampValue - epochSeconds) * 1_000_000_000));
+		}
+
 		return new ChatDto(
 			chat.getType(),
-			chat.getSender(),
-			chat.getUserId(),
-			chat.getRoomId(),
+			chat.getNickname(),
+			chat.getEmail(),
+			chat.getRoomCode(),
 			chat.getMessage(),
-			chat.getCreatedAt()
+			instant,
+			chat.getImageUrl()
 		);
 	}
 
@@ -36,8 +50,20 @@ public class ChatDto {
 			chatDto.getType(),
 			chatDto.getNickname(),
 			chatDto.getEmail(),
-			chatDto.getRoomId(),
+			chatDto.getRoomCode(),
 			chatDto.getMessage()
 		);
 	}
+
+	// public static ChatDto from(ChatES chat) {
+	// 	return new ChatDto(
+	// 		chat.getType(),
+	// 		chat.getNickname(),
+	// 		chat.getEmail(),
+	// 		chat.getRoomCode(),
+	// 		chat.getMessage(),
+	// 		Instant.ofEpochMilli(chat.getCreatedAt()),
+	// 		chat.getImageUrl()
+	// 	);
+	// }
 }
