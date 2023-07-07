@@ -12,4 +12,3 @@ spring:
             scope:
               - profile
               - email
-#            redirect-uri: https://www.hhaegg.o-r.kr/login/oauth2/code/google

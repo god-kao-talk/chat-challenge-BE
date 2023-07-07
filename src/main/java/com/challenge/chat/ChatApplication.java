@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import com.challenge.chat.domain.chat.repository.ChatRepository;
 
-@EnableElasticsearchAuditing
+// @EnableElasticsearchAuditing
 @EnableJpaAuditing
 @EnableJpaRepositories(excludeFilters = @ComponentScan.Filter(
 	type = FilterType.ASSIGNABLE_TYPE,
