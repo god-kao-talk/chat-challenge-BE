@@ -3,9 +3,34 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:h2:mem:db;MODE=MYSQL
-    username: sa
-    password: ''
-  h2:
-    console:
+    url: ENC(nO+Yz1fjaAdfeapyxMz3LRg1l9qWreTC4bnYIuU8aZlJypeJWHA/pKb7nHtWBCi3Mx1RL6vLwN/dXUdzOU7JJ+pseWRThdSrZOQmkcupSh7pTq+ElnLZS+oP8FpZyW60KOMGq5tD/jC/nwXdo3Jgbg==)
+    username: ENC(ZEng86zrePe0CBIXf5P/7g==)
+    password: ENC(VXOqo1qiAlQfdl7Ar6RBaQ==)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    mongodb:
+      uri: ENC(FxPyVw3znL5nfB7IiaqEzTZ3Y27DrSRNucEJeKcm7ydyRd7tvGwLGPhf6VI36AjANARGtKOQ40lKNE5/PZqNRLUYXpu9AnweQbnYhRaU9sTDFY6tHrGKodkbZdtJ/geGeiV9BP9IX4CSGvPMh2cj2g==)
+      auto-index-creation: true
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        hbm2ddl:
+          auto: update
+  application:
+    name: monitoring
+
+management:
+  endpoint:
+    metrics:
       enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
