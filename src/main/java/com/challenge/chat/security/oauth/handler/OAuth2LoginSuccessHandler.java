@@ -70,7 +70,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 //		jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
 
-		String redirectUrl = "http://this.code.s3-website-us-east-1.amazonaws.com/userslist?" + "Authorization" + "=" +
+		String redirectUrl = "http://localhost/userslist?" + "Authorization" + "=" +
 			URLEncoder.encode("Bearer " + accessToken, "UTF-8") +
 			"&" + "Authorization-refresh" + "=" + URLEncoder.encode("Bearer " + refreshToken, "UTF-8");
 		response.sendRedirect(redirectUrl);
