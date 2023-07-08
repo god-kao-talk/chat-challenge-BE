@@ -34,13 +34,11 @@ public class MemberRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("멤버 조회하기")
+	@DisplayName("멤버 이메일로 조회하기")
 	void findMemberByEmail() {
-		//given
-		final Member member = getMember("user@gmail.com", "1111");
 		//when
 		final Member findMember = memberRepository.findByEmail("user@gmail.com").get();
 		//then
-		assertThat(findMember.getEmail()).isEqualTo(member.getEmail());
+		assertThat(findMember.getEmail()).isEqualTo("user@gmail.com");
 	}
 }
